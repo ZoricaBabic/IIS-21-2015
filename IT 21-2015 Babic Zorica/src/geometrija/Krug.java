@@ -50,6 +50,8 @@ public class Krug extends PovrsinskiOblik implements Pomerljiv{
 	
 	
 	public boolean equals(Object obj){
+		
+		
 		if(obj instanceof Krug){
 			Krug pomocni = (Krug) obj;
 			if(centar.equals(pomocni.centar) && r == pomocni.r)
