@@ -474,7 +474,6 @@ public class Controller {
 
 	public void mouseClickedPnl(int x, int y) {
 
-
 		checkIfSelectedShapeExists();
 
 
@@ -517,7 +516,7 @@ public class Controller {
 						}
 					} 
 
-				}
+				} 
 
 
 			}
@@ -989,53 +988,81 @@ public class Controller {
 
 	public void undo() {
 
-		System.out.println(model.getStackUndo().size());
+
+
+
+
 
 
 		if(model.getStackUndo().isEmpty() == false) {
 
-			model.addToStackRedo(model.getLastShapeOnStackUndo());
 
-			cmdUpdate.unexecute();
+			if(checkIfSelectedShapeExists() == 1) {
 
-			for(int i=0; i<model.getListaObjekata().size(); i++) {
 
-				if(model.getListaObjekata().get(i).equals(model.getLastShapeOnStackUndo())) {
 
-					model.getListaObjekata().set(i, cmdUpdate.getOriginal());
-					model.removeFromStackUndo();
+				model.addToStackRedo(model.getLastShapeOnStackUndo()); //dodajem na redo
 
-					if(model.getStackUndo().isEmpty() == false) {
-						
-						Oblik s = CopyShape(model.getLastShapeOnStackUndo());
-						model.removeFromStackUndo();
-						
-						if(model.getStackUndo().size() >= 1) {
-							
-							cmdUpdate = new CmdUpdateShape(model.getLastShapeOnStackUndo(),s);
-							cmdUpdate.execute();
+				cmdUpdate.unexecute(); //menjam
 
-							
-							
+				for(int i=0; i<model.getListaObjekata().size(); i++) {
+
+					if(model.getListaObjekata().get(i).equals(model.getLastShapeOnStackUndo())) {
+
+						model.getListaObjekata().set(i, cmdUpdate.getOriginal());
+						model.removeFromStackUndo(); //brišem sa undo
+
+						if(model.getStackUndo().isEmpty() == false) {
+
+							Oblik s = CopyShape(model.getLastShapeOnStackUndo());
+
+							model.removeFromStackUndo(); //biršem poslendji
+
+							if(model.getStackUndo().size() == 0) {
+
+								model.addToStackUndo(s);
+							}
+
+
+
+							if(model.getStackUndo().size() >= 1) {
+
+
+								cmdUpdate = new CmdUpdateShape(model.getLastShapeOnStackUndo(),s);
+								model.addToStackUndo(s);
+								cmdUpdate.execute();
+
+
+							} 
+
+
 						}
-						
-						
+
 
 					}
-					
-
-
-
 				}
-			}
 
+
+			} else if(checkIfSelectedShapeExists() == 0) {
+
+				System.out.println("Da li ima obilka?");
+
+
+				cmdAddShape.unexecute();
+				model.addToStackRedo(model.getLastShapeOnStackUndo());
+				model.removeFromStackUndo();
+
+			}
 
 		}
 
-		
+
+	
+
 
 
 		checkIfSelectedShapeExists();
+
 
 
 
@@ -1046,6 +1073,8 @@ public class Controller {
 
 
 	public void redo() {
+
+		cmdAddShape.execute();
 
 
 
