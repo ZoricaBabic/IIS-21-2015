@@ -44,6 +44,8 @@ public class Controller {
 	private int position=-1;
 	private String lastAction;
 	private Oblik previouslySelectedShape;
+	
+	private int firstClick = 0;
 
 	Button button;
 
@@ -521,6 +523,9 @@ public class Controller {
 
 			}
 
+
+
+
 			if(m==0) {
 
 				for(Oblik o: model.getListaObjekata()) {
@@ -542,6 +547,9 @@ public class Controller {
 
 
 		}
+
+		
+
 
 
 		if(model.getOdabranOblik() == "Tacka" || model.getOdabranOblik() == null)
@@ -988,45 +996,48 @@ public class Controller {
 
 	public void undo() {
 
-
-
-
-
-
-
 		if(model.getStackUndo().isEmpty() == false) {
 
 
 			if(checkIfSelectedShapeExists() == 1) {
-
-
+				
+				
 
 				model.addToStackRedo(model.getLastShapeOnStackUndo()); //dodajem na redo
+				
+			
 
 				cmdUpdate.unexecute(); //menjam
+			
 
 				for(int i=0; i<model.getListaObjekata().size(); i++) {
 
 					if(model.getListaObjekata().get(i).equals(model.getLastShapeOnStackUndo())) {
 
-						model.getListaObjekata().set(i, cmdUpdate.getOriginal());
+						Oblik k = CopyShape(cmdUpdate.getOriginal());
+				
+						model.getListaObjekata().set(i, k);
 						model.removeFromStackUndo(); //brišem sa undo
 
 						if(model.getStackUndo().isEmpty() == false) {
+							
+						
 
 							Oblik s = CopyShape(model.getLastShapeOnStackUndo());
 
 							model.removeFromStackUndo(); //biršem poslendji
 
 							if(model.getStackUndo().size() == 0) {
+								
+								System.out.println("Ovdeee jEEEEEEEEEEEEEEEEEEEEEEEE");
 
 								model.addToStackUndo(s);
 							}
-
-
-
+							
+							
 							if(model.getStackUndo().size() >= 1) {
-
+								
+								System.out.println("Ovdeee jeeeeeeeeeeee");
 
 								cmdUpdate = new CmdUpdateShape(model.getLastShapeOnStackUndo(),s);
 								model.addToStackUndo(s);
@@ -1043,21 +1054,33 @@ public class Controller {
 				}
 
 
-			} else if(checkIfSelectedShapeExists() == 0) {
+			} else if(checkIfSelectedShapeExists() == 0 && model.getLastShapeOnStackUndo().isSelektovan() == false) {
 
-				System.out.println("Da li ima obilka?");
-
-
+				
 				cmdAddShape.unexecute();
 				model.addToStackRedo(model.getLastShapeOnStackUndo());
 				model.removeFromStackUndo();
 
-			}
+			}  else if(checkIfSelectedShapeExists() == 0 && model.getLastShapeOnStackUndo().isSelektovan() == true) {
+				
 
+				for(int i=0; i<model.getListaObjekata().size(); i++){
+
+
+					if(model.getListaObjekata().get(i).equals(model.getLastShapeOnStackUndo())) {
+
+						model.getListaObjekata().get(i).setSelektovan(true);
+					}
+
+				}
+			}
+			
+			
+			
 		}
 
 
-	
+
 
 
 
@@ -1073,22 +1096,58 @@ public class Controller {
 
 
 	public void redo() {
-
-		cmdAddShape.execute();
-
-
-
-
+		
+		
 		if(model.getStackRedo().isEmpty() == false) {
+			
+			for(int i=0; i<model.getListaObjekata().size(); i++) {
+				
+				if(model.getListaObjekata().get(i).equals(model.getLastShapeOnStackRedo())) {
+					
+					Oblik fromList = CopyShape(model.getListaObjekata().get(i));
+					Oblik s = CopyShape(model.getLastShapeOnStackRedo());
+					Oblik k = CopyShape(model.getListaObjekata().get(i));
+					model.getListaObjekata().set(i, s);
+					model.addToStackUndo(model.getLastShapeOnStackRedo());
+					model.removeFromStackRedo();
+					
+					cmdUpdate = new CmdUpdateShape(fromList,s);
+					System.out.println(cmdUpdate.getOriginal());
+					System.out.println(cmdUpdate.getNewState());
+					cmdUpdate.execute();
+					
+					System.out.println(cmdUpdate.getOriginal());
+					System.out.println(cmdUpdate.getNewState());
+					
+					
+				}
+			}
+			
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//model.addToStackUndo(model.getLastShapeOnStackRedo());
+		
+
+		/*if(model.getStackRedo().isEmpty() == false) {
 
 
 
 			if(model.getLastShapeOnStackRedo().isSelektovan() == false) {
 
 
-				cmdRemove.unexecute();
+				cmdAddShape.execute();
+				model.addToStackUndo(model.getLastShapeOnStackRedo());
 				model.removeFromStackRedo();
-				model.addToStackUndo(cmdRemove.getO());
+				
 
 
 
@@ -1105,23 +1164,23 @@ public class Controller {
 
 					if(model.getListaObjekata().get(i).equals(cmdUpdate.getOldState())) {
 
+						Oblik s = CopyShape(model.getLastShapeOnStackUndo());
 						//model.getListaObjekata().get(i).setSelektovan(true);
-						model.getListaObjekata().set(i, model.getLastShapeOnStackUndo());
-						cmdUpdate = new CmdUpdateShape(model.getListaObjekata().get(i),model.getLastShapeOnStackUndo());
-						cmdUpdate.execute();
+						model.getListaObjekata().set(i, s);
+						/*cmdUpdate = new CmdUpdateShape(model.getListaObjekata().get(i),model.getLastShapeOnStackUndo());
+						cmdUpdate.execute();*/
 						//System.out.println(model.getLastShapeOnStackRedo().toString());
 
 					}
-				}
+				
 
 
 
-			}
+			
 
 
-		}
+		
 
-	}
 
 
 
