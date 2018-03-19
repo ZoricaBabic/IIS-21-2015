@@ -69,18 +69,21 @@ public class Pravougaonik extends Kvadrat {
 
 	public boolean equals(Object o){
 		
+	/*	System.out.println(duzinaStranice);
+		System.out.println(sirina);
+		
+		System.out.println(((Kvadrat) o).getDuzinaStranice());
+		System.out.println(((Pravougaonik) o).getSirina());*/
 		
 		if(o instanceof Pravougaonik){
 			
-			System.out.println(duzinaStranice);
-			System.out.println(sirina);
-			
 			Pravougaonik pomocni = (Pravougaonik) o;
 			
-			System.out.println(pomocni.getDuzinaStranice());
-			System.out.println(pomocni.getSirina());
+			/*((Kvadrat) pomocni).gettGoreLevo();
 			
-			if(tGoreLevo.equals(pomocni) && duzinaStranice == pomocni.duzinaStranice && sirina == pomocni.sirina){
+			((Kvadrat) pomocni).getDuzinaStranice();*/
+			
+			if(tGoreLevo.equals(((Kvadrat) pomocni).gettGoreLevo()) && duzinaStranice == ((Kvadrat) pomocni).getDuzinaStranice() && sirina == pomocni.sirina){
 				return true;
 			}
 			return false;

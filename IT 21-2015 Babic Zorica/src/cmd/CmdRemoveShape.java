@@ -20,7 +20,7 @@ public class CmdRemoveShape implements Command {
 	@Override
 	public void execute() {
 
-		if(o instanceof HexagonAdapter) {
+		/*if(o instanceof HexagonAdapter) {
 
 
 			for(int i =0; i<model.getListaObjekata().size(); i++) {
@@ -34,7 +34,7 @@ public class CmdRemoveShape implements Command {
 
 			}
 
-		}else if(o instanceof Pravougaonik) {
+		}*//*else if(o instanceof Pravougaonik) {
 			
 			
 			int k = model.getListaObjekata().indexOf(o);
@@ -46,12 +46,14 @@ public class CmdRemoveShape implements Command {
 			}
 			
 
-		} else {
+		}*/ /*else {
 
-			model.remove(o);
+			
 
 
-		}
+		}*/
+		
+		model.remove(o);
 
 
 

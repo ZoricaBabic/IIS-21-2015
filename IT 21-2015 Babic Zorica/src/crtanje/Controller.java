@@ -729,6 +729,9 @@ public class Controller {
 		}
 
 		if(model.getOdabranOblik() == "Pravougaonik"){
+			
+			model.setX(x);
+			model.setY(y);
 
 
 			String d=JOptionPane.showInputDialog("Unesi duzinu pravougaonika");
@@ -740,18 +743,19 @@ public class Controller {
 
 					model.setDuzina(duzina);
 					String s = JOptionPane.showInputDialog("Unesi sirinu pravougoonika");
+					
+					
 					try{
 
 						int sirina = Integer.parseInt(s);
 						if(sirina>0){
 
 							model.setSirina(sirina);
-							model.setX(x);
-							model.setY(y);
+							
+							model.setDuzina(duzina);
 							//view.repaint();
 							Pravougaonik p = new Pravougaonik(new Tacka(model.getX(),model.getY()), model.getDuzina(),model.getSirina());
-
-
+							
 							p.setBojaIvice(model.getBojaIvice());
 							p.setBojaUnutrasnjosti(model.getBojaUnutrasnjosti());
 							
