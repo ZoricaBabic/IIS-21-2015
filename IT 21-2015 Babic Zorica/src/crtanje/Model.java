@@ -59,12 +59,12 @@ public class Model {
 	public void add(Oblik s) {
 		
 		
-		int endOfList = listaObjekata.size();
-        listaObjekata.add(endOfList, s);
+		/*int endOfList = listaObjekata.size();
+        listaObjekata.add(endOfList, s);*/
         
-        System.out.println(listaObjekata.indexOf(s));
 
-		//listaObjekata.add(s);
+
+		listaObjekata.add(s);
 	}
 	public Oblik get(int i) {
 		
