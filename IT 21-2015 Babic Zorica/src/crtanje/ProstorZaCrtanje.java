@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.util.Iterator;
 
 import javax.jws.WebParam.Mode;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import geometrija.HexagonAdapter;
@@ -249,10 +250,10 @@ public class ProstorZaCrtanje extends JPanel  {
 		if (model != null) {
 
 			Iterator<Oblik> it = model.getListaObjekata().iterator();
-			while(it.hasNext()) {
-				it.next().crtajSe(g);
 				
-
+			while(it.hasNext()) {
+				
+			it.next().crtajSe(g);
 			}
 			repaint();
 		}
@@ -278,7 +279,7 @@ public class ProstorZaCrtanje extends JPanel  {
 				((Krug) o).popuni(g);
 				
 				
-			} 
+			}  
 
 		}
 		

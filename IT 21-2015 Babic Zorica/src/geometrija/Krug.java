@@ -8,7 +8,6 @@ public class Krug extends PovrsinskiOblik implements Pomerljiv{
 	private int r;
 	
 	public Krug(){
-		
 	}
 	
 	public Krug(Tacka centar, int r){
@@ -40,7 +39,7 @@ public class Krug extends PovrsinskiOblik implements Pomerljiv{
 	public String toString(){
 		
 		//return "Centar="+centar+", poluprecnik="+r+", " + "Selektovan? " + isSelektovan() + ".";
-		
+	
 
 		//return "Circle: (" + centar.getX() + "," + centar.getY() + "), outline: "+getHex(getBojaIvice())+", "+"Selected? " + isSelektovan();
 		return "Circle: (" + centar.getX() + "," + centar.getY() + "), radius: "  + getR() + ", outline: " + getHex(getBojaIvice())+ ", fill: " + getHex(getBojaUnutrasnjosti()) + ", Selected? " + isSelektovan(); 

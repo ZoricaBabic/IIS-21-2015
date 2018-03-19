@@ -5,22 +5,31 @@ import java.awt.Graphics;
 
 import hexagon.Hexagon;
 
-public class HexagonAdapter extends PovrsinskiOblik  {
+public class HexagonAdapter extends PovrsinskiOblik {
 	
 	private Hexagon hexagon;
 	private Tacka centar;
+	private int r;
 	
 	
 	public HexagonAdapter() {
 		
+	
 		
 	}
 	
-	public HexagonAdapter(Tacka centar, int r) {
-		
+	public HexagonAdapter(Tacka centar, int r,Color bojaIvice,Color bojaUnutrasnjosti) {
+
 		
 		hexagon = new Hexagon(centar.getX(), centar.getY(), r);
+		hexagon.setBorderColor(bojaIvice);
+		hexagon.setAreaColor(bojaUnutrasnjosti);
+		setBojaIvice(bojaIvice);
+		setBojaUnutrasnjosti(bojaUnutrasnjosti);
+		
 		this.centar = centar;
+		this.r=r;
+	
 		
 		
 	}
@@ -28,23 +37,12 @@ public class HexagonAdapter extends PovrsinskiOblik  {
 	public String toString(){
 		
 		centar = new Tacka(hexagon.getX(),hexagon.getY());
-		
-		return "Hexagon: (" + centar.getX() + "," + centar.getY() + "), radius: "  + hexagon.getR() + ", outline: " + getHex(getBojaIvice())+ ", fill: " + getHex(getBojaUnutrasnjosti()) + ", Selected? " + isSelektovan(); 
+	
+		return "Hexagon: (" + centar.getX() + "," + centar.getY() + "), radius: "  + hexagon.getR() + ", outline: " + getHex(hexagon.getBorderColor())+ ", fill: " + getHex(hexagon.getAreaColor()) + ", Selected? " + isSelektovan(); 
 	}
-	public boolean equals(Object obj){
-		
-		if(obj instanceof Hexagon){
-			Hexagon pomocni = (Hexagon) obj;
-			Tacka centarPomocni = new Tacka(pomocni.getX(),pomocni.getY());
-			if(centar.equals(centarPomocni) && hexagon.getR() == pomocni.getR())
-				return true;
-			else
-				return false;
+	
+	
 
-		}
-		else
-			return false;
-	}
 	public boolean sadrzi(int x, int y){
 		Tacka mestoKlika = new Tacka(x, y);
 		if(mestoKlika.udaljenost(centar)<=hexagon.getR())
@@ -61,7 +59,14 @@ public class HexagonAdapter extends PovrsinskiOblik  {
 		hexagon.setSelected(true);
 		//setSelektovan(true);
 		
+		
+		
 
+	}
+	
+	public void  unselect() {
+		
+		hexagon.setSelected(false);
 	}
 	
 	
@@ -71,9 +76,12 @@ public class HexagonAdapter extends PovrsinskiOblik  {
 		g.setColor(getBojaIvice());
 		//g.drawOval(centar.getX()-r, centar.getY()-r, 2*r, r+r);
 		/*if(isSelektovan())
-			selektovan(g);*/
+			selektovan(g);*/	
+
 		hexagon.paint(g);
 	}
+	
+	
 	public void popuni(Graphics g) {
 		
 		g.setColor(getBojaUnutrasnjosti());
@@ -89,10 +97,24 @@ public class HexagonAdapter extends PovrsinskiOblik  {
 		}
 		else
 			return 0;
+		
+		
 	}
+	
+	/*public boolean isSelektovan() {
+		
+		if(hexagon.isSelected() == true) {
+			
+			return true;
+		} else {
+			
+			return false;
+		}
+	}*/
 	
 	
 	public Tacka getCentar() {
+		
 		return centar;
 	}
 	public void setCentar(Tacka centar) {
@@ -100,12 +122,31 @@ public class HexagonAdapter extends PovrsinskiOblik  {
 	}
 
 	public Hexagon getHexagon() {
+		
 		return hexagon;
 	}
 
 	public void setHexagon(Hexagon hexagon) {
+		
 		this.hexagon = hexagon;
+		
 	}
+
+	public void setR(int r) {
+	
+		this.r = r;
+		hexagon.setR(r);
+		
+	}
+
+	public int getR() {
+		
+		return hexagon.getR();
+	}
+
+	
+
+
 	
 
 }

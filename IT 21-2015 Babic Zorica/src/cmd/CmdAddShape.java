@@ -13,7 +13,7 @@ public class CmdAddShape implements Command {
 		this.model = model;
 		this.o = o;
 	}
-	
+
 
 	@Override
 	public void execute() {
@@ -45,7 +45,6 @@ public class CmdAddShape implements Command {
 		
 		
 	
-		
 		
 		
 	}

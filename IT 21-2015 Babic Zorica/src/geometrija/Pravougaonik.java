@@ -11,7 +11,7 @@ public class Pravougaonik extends Kvadrat {
 	public Pravougaonik(){
 
 	}
-
+	
 	public Pravougaonik(Tacka tGoreLevo,int duzina,int sirina){
 
 		super(tGoreLevo,duzina);
@@ -29,7 +29,6 @@ public class Pravougaonik extends Kvadrat {
 		this(tGoreLevo,duzina,sirina,bojaIvice);
 		setBojaUnutrasnjosti(bojaUnutrasnjosti);
 	}
-
 	public double obim(){
 
 		return 2*duzinaStranice + 2*sirina; 
@@ -65,12 +64,22 @@ public class Pravougaonik extends Kvadrat {
 
 		//return "Tacka gore levo je: " + tGoreLevo + "duzina: " + duzinaStranice + ", sirina: "+sirina + "Selektovan? " + isSelektovan() + ".";
 		
-		return "Square: (" + tGoreLevo.getX() + ", "+tGoreLevo.getY()+"), width: " + duzinaStranice + ", height: " + sirina + ", outline: " + getHex(getBojaIvice())+ ", fill: " + getHex(getBojaUnutrasnjosti()) + ", Selected? " + isSelektovan(); 
+		return "Rectangle: (" + tGoreLevo.getX() + ", "+tGoreLevo.getY()+"), width: " + duzinaStranice + ", height: " + sirina + ", outline: " + getHex(getBojaIvice())+ ", fill: " + getHex(getBojaUnutrasnjosti()) + ", Selected? " + isSelektovan(); 
 	}
 
 	public boolean equals(Object o){
+		
+		
 		if(o instanceof Pravougaonik){
+			
+			System.out.println(duzinaStranice);
+			System.out.println(sirina);
+			
 			Pravougaonik pomocni = (Pravougaonik) o;
+			
+			System.out.println(pomocni.getDuzinaStranice());
+			System.out.println(pomocni.getSirina());
+			
 			if(tGoreLevo.equals(pomocni) && duzinaStranice == pomocni.duzinaStranice && sirina == pomocni.sirina){
 				return true;
 			}

@@ -6,6 +6,8 @@ import java.util.Stack;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import geometrija.HexagonAdapter;
 import geometrija.Krug;
 import geometrija.Kvadrat;
 import geometrija.Linija;
@@ -49,20 +51,34 @@ public class Model {
 	private boolean removeFromSelection = false;
 	private boolean undoClicked = false;
 	private int position;
+	
+	
 
 
 
 	public void add(Oblik s) {
+		
+		
+		int endOfList = listaObjekata.size();
+        listaObjekata.add(endOfList, s);
+        
+        System.out.println(listaObjekata.indexOf(s));
 
-		listaObjekata.add(s);
+		//listaObjekata.add(s);
 	}
-
 	public Oblik get(int i) {
+		
 		return listaObjekata.get(i);
 	}
 
 	public boolean remove(Oblik s) {
+		
 		return listaObjekata.remove(s);
+	}
+	
+	public boolean removeAllFromList() {
+		
+		return listaObjekata.removeAll(listaObjekata);
 	}
 
 	public void addToStackUndo(Oblik s) {

@@ -368,7 +368,7 @@ public class NaslovnaPokretanje extends JFrame {
 						btnObrisi.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
 								
-								//controller.actionPerfomedDelete(e);
+								controller.actionPerfomedDelete(e);
 				
 				
 								/*if(pnlZaCrtanje.stekSelekcija.isEmpty() == true){

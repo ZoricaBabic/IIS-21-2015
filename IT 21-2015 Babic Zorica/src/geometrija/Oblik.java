@@ -5,7 +5,7 @@ import java.awt.Graphics;
 
 
 
-public abstract class Oblik implements Cloneable {
+public abstract class Oblik implements Cloneable  {
 
 	public Color bojaIvice;
 	public boolean selektovan;
@@ -25,7 +25,7 @@ public abstract class Oblik implements Cloneable {
 	public Object clone()throws CloneNotSupportedException{  
 		
 		return super.clone();  
-	}  
+	} 
 
 	public abstract void crtajSe(Graphics g);
 	public abstract void selektovan(Graphics g);

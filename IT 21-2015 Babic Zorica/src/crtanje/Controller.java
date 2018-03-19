@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 import javax.swing.JColorChooser;
@@ -26,6 +28,7 @@ import geometrija.Linija;
 import geometrija.Oblik;
 import geometrija.Pravougaonik;
 import geometrija.Tacka;
+import hexagon.Hexagon;
 import observer.Button;
 import observer.ButtonObserver;
 import geometrija.PovrsinskiOblik;
@@ -44,7 +47,7 @@ public class Controller {
 	private int position=-1;
 	private String lastAction;
 	private Oblik previouslySelectedShape;
-	
+
 	private int firstClick = 0;
 
 	Button button;
@@ -77,67 +80,56 @@ public class Controller {
 		model.setBojaIvice(c);
 	}
 
-	/*public void actionPerfomedDelete(ActionEvent e) {
+	public void actionPerfomedDelete(ActionEvent e) { //treba odraditi za hexagon
 
-		if(model.stackIsEmpty() == true){
-
+		if(checkIfSelectedShapeExists() == 0){
 			JOptionPane.showMessageDialog(null, "Niste ništa selektovali");
 
 		} else  {
 
 			int odgovor = JOptionPane.YES_NO_OPTION;
+
 			JOptionPane.showConfirmDialog (null, "Da li želite obrisati oblik koji ste selektovali","Poruka", odgovor);
 
 			if(odgovor == JOptionPane.YES_OPTION){
+				
+			ArrayList<Oblik> oblici = new ArrayList<Oblik>();
+				
+				for(int i=0; i<model.getListaObjekata().size(); i++) {
+					
+					
+					if(model.getListaObjekata().get(i).isSelektovan() == true) {
+						
+							oblici.add(model.getListaObjekata().get(i));
 
-				if(model.stackPeek() instanceof Pravougaonik){
-
-
-					model.remove(model.stackPeek());
-					//model.removeFromStack();
-					model.removeAll();
-					//view.repaint();
-
-
-				} else if(model.stackPeek() instanceof Tacka){
-
-					model.getListaObjekata().remove(model.stackPeek());
-					//model.removeFromStack();
-					model.removeAll();
-					//view.repaint();
-
-				} else if(model.stackPeek() instanceof Linija){
-
-					model.remove(model.stackPeek());
-					//model.removeFromStack();
-					model.removeAll();
-					//view.repaint();
-
-
-				} else if(model.stackPeek() instanceof Kvadrat){
-
-					model.remove(model.stackPeek());
-					//model.removeFromStack();
-					model.removeAll();
-					//view.repaint();
+					}
+					
+					
+				}	
+				
+				for(int i=0; i<oblici.size(); i++) {
+					
+					
+					
+					cmdRemove = new CmdRemoveShape(model,oblici.get(i));
+					model.addToStackUndo(oblici.get(i));
+					cmdRemove.execute();
+					
+	
+				}
+				
+				}
 
 
-				} else if (model.stackPeek() instanceof Krug) {
+				
 
-					model.remove(model.stackPeek());
-					//model.removeFromStack();
-					model.removeAll();
-					//view.repaint();
-
-
-				} 
 			}
 		}
 
-	}*/
+	
 
 
-	public void actionPerfomedModify(ActionEvent e) {
+	public void actionPerfomedModify(ActionEvent e) { //za hexagon odradraditi
 
 		int count = 0;
 		for(Oblik o: model.getListaObjekata()) {
@@ -192,10 +184,17 @@ public class Controller {
 						if(osobine.isVisible() == false) {
 
 							Pravougaonik novi = new Pravougaonik(new Tacka(osobine.getX(),osobine.getY()),osobine.getDuzina(),osobine.getSirina(),osobine.getBojaIvice(),osobine.getBojaUnutrasnjosti());
+							novi.setSelektovan(true);
 
+							Oblik s = CopyShape(novi);
+
+							model.addToStackUndo(s);
 
 							cmdUpdate = new CmdUpdateShape(o,novi);
+
 							cmdUpdate.execute();
+
+						
 
 							//model.setOblik(l);
 
@@ -220,18 +219,15 @@ public class Controller {
 						Tacka t = osobine.getT();
 						//view.repaint();
 
-						for(Oblik l: model.listaObjekata) {
+						t.setSelektovan(true);
 
-							if(l.equals(o)) {
+						Oblik s = CopyShape(t);
 
+						model.addToStackUndo(s);
 
-								cmdUpdate = new CmdUpdateShape(l,t);
-								cmdUpdate.execute();
-								model.setOblik(l);
+						cmdUpdate = new CmdUpdateShape(o,t);
 
-							}
-
-						}
+						cmdUpdate.execute();
 
 						/*model.remove(model.stackPeek());
 
@@ -273,19 +269,84 @@ public class Controller {
 						if(osobine.isVisible() == false) {
 
 							Linija novi = new Linija(new Tacka(osobine.getxPocetna(),osobine.getyPocetna()), new Tacka (osobine.getxKrajnja(),osobine.getyKrajnja()),osobine.getBojaIvice());
+							novi.setSelektovan(true);
+
+							Oblik s = CopyShape(novi);
+
+							model.addToStackUndo(s);
 
 							cmdUpdate = new CmdUpdateShape(o,novi);
+
 							cmdUpdate.execute();
+						
 
 							//model.setOblik(l);
 
 						}
 
+					}else if(o instanceof HexagonAdapter) { 
+						
+						
+						
+						DlgOsobineKruga osobine = new DlgOsobineKruga();
+						osobine.setX(((HexagonAdapter) o).getCentar().getX());
+						osobine.setY(((HexagonAdapter) o).getCentar().getY());
+						osobine.setPoluprecnik(((HexagonAdapter) o).getHexagon().getR());
+						osobine.setBojaIvice(((HexagonAdapter) o).getHexagon().getBorderColor());
+						osobine.setBojaUnutrasnjosti(((HexagonAdapter) o).getHexagon().getAreaColor());
+
+						osobine.getTxtXKoordinata().setText(Integer.toString(osobine.getX()));
+						osobine.getTxtYKoordinata().setText(Integer.toString(osobine.getY()));
+						osobine.getTxtPoluprecnik().setText(Integer.toString(osobine.getPoluprecnik()));
+						osobine.getEdpBojaIvice().setBackground(osobine.getBojaIvice());
+						osobine.getEdpBojaUnutrasnjosti().setBackground(osobine.getBojaUnutrasnjosti());
+						osobine.setVisible(true);
+
+						if(osobine.isVisible() == false) {
+
+							HexagonAdapter novi = new HexagonAdapter(new Tacka(osobine.getX(),osobine.getY()),osobine.getPoluprecnik(),osobine.getBojaIvice(),osobine.getBojaUnutrasnjosti());
+							//novi.setSelektovan(true);
+							novi.setSelektovan(true);
+							
+							
+							
+
+							Oblik s = CopyShape(novi);
+
+							model.addToStackUndo(s);
+							
+							
+							cmdUpdate = new CmdUpdateShape(o,novi);
+							cmdUpdate.execute();
+							
+							System.out.println(cmdUpdate.getOldState());
+							System.out.println(cmdUpdate.getOriginal());
+							
+							
+
+
+							//lastAction = "Modify";
 
 
 
+							//model.setOblik(l);
 
-					} else if(o instanceof Kvadrat){
+						}
+
+						/*model.remove(model.stackPeek());
+
+						CmdAddShape cmd = new CmdAddShape(model,kr);
+						cmd.execute();
+
+						model.removeAll();*/
+						//view.repaint();
+						
+						
+						
+						
+						
+						
+					} else  if(o instanceof Kvadrat){
 
 						DlgOsobineKvadrata osobine = new DlgOsobineKvadrata();
 						osobine.setX(((Kvadrat) o).gettGoreLevo().getX());
@@ -306,9 +367,16 @@ public class Controller {
 						if(osobine.isVisible() == false) {
 
 							Kvadrat novi = new Kvadrat(new Tacka(osobine.getX(),osobine.getY()),osobine.getDuzinaStranice(),osobine.getBojaIvice(),osobine.getBojaUnutrasnjosti());
+							novi.setSelektovan(true);
+
+							Oblik s = CopyShape(novi);
+
+							model.addToStackUndo(s);
 
 							cmdUpdate = new CmdUpdateShape(o,novi);
+
 							cmdUpdate.execute();
+							
 
 							//model.setOblik(l);
 
@@ -527,8 +595,15 @@ public class Controller {
 
 
 			if(m==0) {
+				
+			
 
 				for(Oblik o: model.getListaObjekata()) {
+					
+					if(o instanceof HexagonAdapter) {
+						
+						((HexagonAdapter) o).unselect();
+					} //premestiti drugačije!
 
 					o.setSelektovan(false);
 					button.setStatus(false);
@@ -548,7 +623,7 @@ public class Controller {
 
 		}
 
-		
+
 
 
 
@@ -589,17 +664,18 @@ public class Controller {
 					model.setX(x);
 					model.setY(y);
 					//view.repaint();
-					HexagonAdapter h = new HexagonAdapter(new Tacka(model.getX(),model.getY()),model.getR());
-					h.getHexagon().setAreaColor(model.getBojaUnutrasnjosti());
-					h.getHexagon().setBorderColor(model.getBojaIvice());
+					HexagonAdapter h = new HexagonAdapter(new Tacka(model.getX(),model.getY()),model.getR(),model.getBojaIvice(),model.getBojaUnutrasnjosti());
+					
 					cmdAddShape = new CmdAddShape(model,h);
 					cmdAddShape.execute();
-
-
+					
+					
 
 					frame.getBtnRedo().setEnabled(false);
 					frame.getBtnUndo().setEnabled(true);
 					frame.getBtnSelektuj().setEnabled(true);
+					
+					frame.getTextArea().append(h.toString() +"\n");
 
 
 
@@ -644,6 +720,8 @@ public class Controller {
 				frame.getBtnRedo().setEnabled(false);
 				frame.getBtnUndo().setEnabled(true);
 				frame.getBtnSelektuj().setEnabled(true);
+				
+				frame.getTextArea().append(l.toString() +"\n");
 
 				model.setDvaKlika(false);
 			}
@@ -676,12 +754,18 @@ public class Controller {
 
 							p.setBojaIvice(model.getBojaIvice());
 							p.setBojaUnutrasnjosti(model.getBojaUnutrasnjosti());
+							
 							cmdAddShape = new CmdAddShape(model,p);
 							cmdAddShape.execute();
 
 							frame.getBtnRedo().setEnabled(false);
 							frame.getBtnUndo().setEnabled(true);
 							frame.getBtnSelektuj().setEnabled(true);
+							
+							frame.getTextArea().append(p.toString() +"\n");
+							
+							
+							
 
 						}
 						else{
@@ -738,6 +822,8 @@ public class Controller {
 
 					frame.getBtnRedo().setEnabled(false);
 					frame.getBtnSelektuj().setEnabled(true);
+					
+					frame.getTextArea().append(kv.toString() +"\n");
 
 				} else {
 					JOptionPane.showMessageDialog(null, "Niste  dobro uneli dužinu stranice kvadrata!");
@@ -782,6 +868,8 @@ public class Controller {
 
 
 					Oblik l = CopyShape(kr);
+
+
 					model.addToStackUndo(l);
 
 					/*cmdUpdate = new CmdUpdateShape(kr,kr); //postavljam vrednosti u cmdUpdate
@@ -791,6 +879,8 @@ public class Controller {
 					frame.getBtnUndo().setEnabled(true);
 					frame.getBtnRedo().setEnabled(false);
 					frame.getBtnSelektuj().setEnabled(true);
+					
+					frame.getTextArea().append(kr.toString() +"\n");
 
 
 
@@ -996,47 +1086,40 @@ public class Controller {
 
 	public void undo() {
 
-		if(model.getStackUndo().isEmpty() == false) {
+		if(model.getStackUndo().isEmpty() == false) { //da li je stek prazan? 
 
 
-			if(checkIfSelectedShapeExists() == 1) {
-				
-				
+			if(checkIfSelectedShapeExists() == 1) { //provera da li je jedan oblik selektovan u listi
 
-				model.addToStackRedo(model.getLastShapeOnStackUndo()); //dodajem na redo
-				
-			
+				model.addToStackRedo(model.getLastShapeOnStackUndo()); //premestanje iz undo u redo stack
+				cmdUpdate.unexecute(); //menjanje vrednost
 
-				cmdUpdate.unexecute(); //menjam
-			
+				for(int i=0; i<model.getListaObjekata().size(); i++) {  //primena na listu
 
-				for(int i=0; i<model.getListaObjekata().size(); i++) {
-
-					if(model.getListaObjekata().get(i).equals(model.getLastShapeOnStackUndo())) {
+					if(model.getListaObjekata().get(i).equals(model.getLastShapeOnStackUndo())) { //pronalazim u listi
 
 						Oblik k = CopyShape(cmdUpdate.getOriginal());
-				
-						model.getListaObjekata().set(i, k);
-						model.removeFromStackUndo(); //brišem sa undo
 
-						if(model.getStackUndo().isEmpty() == false) {
-							
-						
+						model.getListaObjekata().set(i, k); //menjanje ublik u listi
+						model.removeFromStackUndo(); //brisanje sa undo
 
-							Oblik s = CopyShape(model.getLastShapeOnStackUndo());
+						if(model.getStackUndo().isEmpty() == false) { //provera da li ima jšo na stacku
+
+
+							Oblik s = CopyShape(model.getLastShapeOnStackUndo()); //uzimanje poslednjeg obliks
 
 							model.removeFromStackUndo(); //biršem poslendji
 
-							if(model.getStackUndo().size() == 0) {
-								
+							if(model.getStackUndo().size() == 0) { //ako nema više sad, vrati prethodno obrisani
+
 								System.out.println("Ovdeee jEEEEEEEEEEEEEEEEEEEEEEEE");
 
 								model.addToStackUndo(s);
 							}
-							
-							
+
+
 							if(model.getStackUndo().size() >= 1) {
-								
+
 								System.out.println("Ovdeee jeeeeeeeeeeee");
 
 								cmdUpdate = new CmdUpdateShape(model.getLastShapeOnStackUndo(),s);
@@ -1056,13 +1139,15 @@ public class Controller {
 
 			} else if(checkIfSelectedShapeExists() == 0 && model.getLastShapeOnStackUndo().isSelektovan() == false) {
 
-				
+
 				cmdAddShape.unexecute();
+
 				model.addToStackRedo(model.getLastShapeOnStackUndo());
+
 				model.removeFromStackUndo();
 
 			}  else if(checkIfSelectedShapeExists() == 0 && model.getLastShapeOnStackUndo().isSelektovan() == true) {
-				
+
 
 				for(int i=0; i<model.getListaObjekata().size(); i++){
 
@@ -1074,68 +1159,74 @@ public class Controller {
 
 				}
 			}
-			
-			
-			
+
+
+
 		}
 
-
-
-
-
-
 		checkIfSelectedShapeExists();
-
-
-
-
-
-
 
 	}
 
 
 	public void redo() {
-		
-		
+
 		if(model.getStackRedo().isEmpty() == false) {
-			
-			for(int i=0; i<model.getListaObjekata().size(); i++) {
-				
-				if(model.getListaObjekata().get(i).equals(model.getLastShapeOnStackRedo())) {
-					
-					Oblik fromList = CopyShape(model.getListaObjekata().get(i));
-					Oblik s = CopyShape(model.getLastShapeOnStackRedo());
-					Oblik k = CopyShape(model.getListaObjekata().get(i));
-					model.getListaObjekata().set(i, s);
-					model.addToStackUndo(model.getLastShapeOnStackRedo());
-					model.removeFromStackRedo();
-					
-					cmdUpdate = new CmdUpdateShape(fromList,s);
-					System.out.println(cmdUpdate.getOriginal());
-					System.out.println(cmdUpdate.getNewState());
-					cmdUpdate.execute();
-					
-					System.out.println(cmdUpdate.getOriginal());
-					System.out.println(cmdUpdate.getNewState());
-					
-					
-				}
-			}
-			
-			
+
+			System.out.println(model.getStackRedo().size());
+
+
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
+
+		/*if(model.getStackRedo().isEmpty() == false) {
+
+			if(model.getStackRedo().size() > 1) {
+
+
+				for(int i=0; i<model.getListaObjekata().size(); i++) {
+
+					if(model.getListaObjekata().get(i).equals(model.getLastShapeOnStackRedo())) {
+
+						Oblik fromList = CopyShape(model.getListaObjekata().get(i));
+						Oblik s = CopyShape(model.getLastShapeOnStackRedo());
+						Oblik k = CopyShape(model.getListaObjekata().get(i));
+						model.getListaObjekata().set(i, s);
+						model.addToStackUndo(model.getLastShapeOnStackRedo());
+						model.removeFromStackRedo();
+
+						cmdUpdate = new CmdUpdateShape(fromList,s);
+						cmdUpdate.execute();
+
+
+
+					}
+				}
+
+
+			} else if (model.getStackRedo().size() == 1) {
+
+
+				cmdAddShape.execute();
+				model.addToStackUndo(model.getLastShapeOnStackRedo());
+				model.removeFromStackRedo();
+			}
+
+
+
+
+		}*/
+
+
+
+
+
+
+
+
+
 		//model.addToStackUndo(model.getLastShapeOnStackRedo());
-		
+
 
 		/*if(model.getStackRedo().isEmpty() == false) {
 
@@ -1147,7 +1238,7 @@ public class Controller {
 				cmdAddShape.execute();
 				model.addToStackUndo(model.getLastShapeOnStackRedo());
 				model.removeFromStackRedo();
-				
+
 
 
 
@@ -1169,17 +1260,17 @@ public class Controller {
 						model.getListaObjekata().set(i, s);
 						/*cmdUpdate = new CmdUpdateShape(model.getListaObjekata().get(i),model.getLastShapeOnStackUndo());
 						cmdUpdate.execute();*/
-						//System.out.println(model.getLastShapeOnStackRedo().toString());
+		//System.out.println(model.getLastShapeOnStackRedo().toString());
 
-					}
-				
-
+	}
 
 
-			
 
 
-		
+
+
+
+
 
 
 
