@@ -1270,21 +1270,28 @@ public class Controller {
 		if(model.getStackRedo().isEmpty() == false) {
 
 
-			if(model.getLastShapeOnStackUndo().isSelektovan() == true) {
+			if(model.getLastShapeOnStackRedo().isSelektovan() == true) {
 
-				cmdUpdate.unexecute();
-				model.getListaObjekata().set(model.getListaObjekata().indexOf(model.getLastShapeOnStackUndo()), cmdUpdate.getOriginal());
-				model.addToStackRedo(model.getLastShapeOnStackUndo());
-				model.removeFromStackUndo();
+				cmdUpdate.execute();
+				model.getListaObjekata().set(model.getListaObjekata().indexOf(model.getLastShapeOnStackRedo()), cmdUpdate.getOriginal());
+				model.addToStackUndo(model.getLastShapeOnStackRedo());
+				model.removeFromStackRedo();
+				
+				if(model.getStackRedo().isEmpty() == false) {
+					
+					if(model.getLastShapeOnStackRedo().isSelektovan() == true) {
 
-				if(model.getLastShapeOnStackUndo().isSelektovan() == true) {
-
-					Oblik s = CopyShape(model.getLastShapeOnStackUndo());
-					s.setSelektovan(false);
-					cmdUpdate.setOldState(s);
-					cmdUpdate.setOriginal(model.getLastShapeOnStackUndo());
-					cmdUpdate.setNewState(model.getLastShapeOnStackUndo());
+						Oblik s = CopyShape(model.getLastShapeOnStackRedo());
+						s.setSelektovan(false);
+						cmdUpdate.setOldState(s);
+						cmdUpdate.setOriginal(s);
+						cmdUpdate.setNewState(model.getLastShapeOnStackRedo());
+					}
+					
+					
 				}
+
+			
 
 
 			} else {
