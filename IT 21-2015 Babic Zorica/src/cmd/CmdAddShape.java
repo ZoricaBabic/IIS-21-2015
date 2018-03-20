@@ -32,15 +32,26 @@ public class CmdAddShape implements Command {
 	@Override
 	public void unexecute() {
 		
-
 		
-		
-		
-	
 		model.remove(o);
 	
 		
 	
+	}
+
+
+	public void setShape(Oblik o) {
+		
+		this.o = o;
+		
+		
+	}
+
+
+	public Oblik getShape() {
+		
+		return o;
+		
 	}
 
 }

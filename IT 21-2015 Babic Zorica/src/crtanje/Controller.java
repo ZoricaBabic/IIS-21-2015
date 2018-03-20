@@ -92,39 +92,39 @@ public class Controller {
 			JOptionPane.showConfirmDialog (null, "Da li želite obrisati oblik koji ste selektovali","Poruka", odgovor);
 
 			if(odgovor == JOptionPane.YES_OPTION){
-				
-			ArrayList<Oblik> oblici = new ArrayList<Oblik>();
-				
+
+				ArrayList<Oblik> oblici = new ArrayList<Oblik>();
+
 				for(int i=0; i<model.getListaObjekata().size(); i++) {
-					
-					
+
+
 					if(model.getListaObjekata().get(i).isSelektovan() == true) {
-						
-							oblici.add(model.getListaObjekata().get(i));
+
+						oblici.add(model.getListaObjekata().get(i));
 
 					}
-					
-					
+
+
 				}	
-				
+
 				for(int i=0; i<oblici.size(); i++) {
-					
-					
-					
+
+
+
 					cmdRemove = new CmdRemoveShape(model,oblici.get(i));
 					model.addToStackUndo(oblici.get(i));
 					cmdRemove.execute();
-					
+
 					frame.getTextArea().append("Deleted: " + oblici.get(i) + "\n");
 
 				}
-				
-				}
 
 			}
-		}
 
-	
+		}
+	}
+
+
 
 
 	public void actionPerfomedModify(ActionEvent e) { //za hexagon odradraditi
@@ -191,10 +191,10 @@ public class Controller {
 							cmdUpdate = new CmdUpdateShape(o,novi);
 
 							cmdUpdate.execute();
-							
+
 							frame.getTextArea().append(novi + "\n");
 
-						
+
 
 							//model.setOblik(l);
 
@@ -228,7 +228,7 @@ public class Controller {
 						cmdUpdate = new CmdUpdateShape(o,t);
 
 						cmdUpdate.execute();
-						
+
 						frame.getTextArea().append(t + "\n");
 
 						/*model.remove(model.stackPeek());
@@ -280,18 +280,18 @@ public class Controller {
 							cmdUpdate = new CmdUpdateShape(o,novi);
 
 							cmdUpdate.execute();
-							
+
 							frame.getTextArea().append(novi + "\n");
-						
+
 
 							//model.setOblik(l);
 
 						}
 
 					}else if(o instanceof HexagonAdapter) { 
-						
-						
-						
+
+
+
 						DlgOsobineKruga osobine = new DlgOsobineKruga();
 						osobine.setX(((HexagonAdapter) o).getCentar().getX());
 						osobine.setY(((HexagonAdapter) o).getCentar().getY());
@@ -311,20 +311,20 @@ public class Controller {
 							HexagonAdapter novi = new HexagonAdapter(new Tacka(osobine.getX(),osobine.getY()),osobine.getPoluprecnik(),osobine.getBojaIvice(),osobine.getBojaUnutrasnjosti());
 							//novi.setSelektovan(true);
 							novi.setSelektovan(true);
-							
-							
-							
+
+
+
 
 							Oblik s = CopyShape(novi);
 
 							model.addToStackUndo(s);
-							
-							
+
+
 							cmdUpdate = new CmdUpdateShape(o,novi);
 							cmdUpdate.execute();
-							
+
 							frame.getTextArea().append(novi + "\n");
-							
+
 
 
 							//lastAction = "Modify";
@@ -342,12 +342,12 @@ public class Controller {
 
 						model.removeAll();*/
 						//view.repaint();
-						
-						
-						
-						
-						
-						
+
+
+
+
+
+
 					} else  if(o instanceof Kvadrat){
 
 						DlgOsobineKvadrata osobine = new DlgOsobineKvadrata();
@@ -378,9 +378,9 @@ public class Controller {
 							cmdUpdate = new CmdUpdateShape(o,novi);
 
 							cmdUpdate.execute();
-							
+
 							frame.getTextArea().append(novi + "\n");
-							
+
 
 							//model.setOblik(l);
 
@@ -421,7 +421,7 @@ public class Controller {
 							cmdUpdate = new CmdUpdateShape(o,novi);
 
 							cmdUpdate.execute();
-							
+
 							frame.getTextArea().append(novi + "\n");
 
 
@@ -543,6 +543,7 @@ public class Controller {
 
 			model.setOdabranOblik("");
 
+
 		}
 
 
@@ -573,15 +574,17 @@ public class Controller {
 
 					model.addToStackUndo(s);
 
-					cmdUpdate = new CmdUpdateShape(q,model.getListaObjekata().get(i));
+					cmdUpdate = new CmdUpdateShape(q,s);
 					cmdUpdate.execute(); //selektovan oblik
 
 					button.setStatus(true);
 					frame.getBtnRedo().setEnabled(false);
-					
+
 					frame.getTextArea().append(s.toString() +"\n");
-					
-					
+
+
+
+
 
 					if(m>1) {
 
@@ -605,18 +608,18 @@ public class Controller {
 
 
 			if(m==0) {
-				
-			
+
+
 
 				for(Oblik o: model.getListaObjekata()) {
-					
+
 					if(o instanceof HexagonAdapter) {
-						
+
 						((HexagonAdapter) o).unselect();
 					} //premestiti drugačije!
 
 					o.setSelektovan(false);
-					
+
 					frame.getTextArea().append(o.toString() +"\n");
 					button.setStatus(false);
 
@@ -651,6 +654,12 @@ public class Controller {
 			cmdAddShape = new CmdAddShape(model,t);
 			cmdAddShape.execute();
 
+
+			Oblik l = CopyShape(t);
+
+
+			model.addToStackUndo(l);
+
 			frame.getBtnRedo().setEnabled(false);
 			frame.getBtnUndo().setEnabled(true);
 			frame.getBtnSelektuj().setEnabled(true);
@@ -677,16 +686,18 @@ public class Controller {
 					model.setY(y);
 					//view.repaint();
 					HexagonAdapter h = new HexagonAdapter(new Tacka(model.getX(),model.getY()),model.getR(),model.getBojaIvice(),model.getBojaUnutrasnjosti());
-					
+
 					cmdAddShape = new CmdAddShape(model,h);
 					cmdAddShape.execute();
-					
-					
+
+					Oblik l = CopyShape(h);
+					model.addToStackUndo(l);
+
 
 					frame.getBtnRedo().setEnabled(false);
 					frame.getBtnUndo().setEnabled(true);
 					frame.getBtnSelektuj().setEnabled(true);
-					
+
 					frame.getTextArea().append(h.toString() +"\n");
 
 
@@ -727,12 +738,17 @@ public class Controller {
 				cmdAddShape = new CmdAddShape(model,l);
 				cmdAddShape.execute();
 
+				Oblik k = CopyShape(l);
+
+
+				model.addToStackUndo(k);
+
 
 
 				frame.getBtnRedo().setEnabled(false);
 				frame.getBtnUndo().setEnabled(true);
 				frame.getBtnSelektuj().setEnabled(true);
-				
+
 				frame.getTextArea().append(l.toString() +"\n");
 
 				model.setDvaKlika(false);
@@ -741,7 +757,7 @@ public class Controller {
 		}
 
 		if(model.getOdabranOblik() == "Pravougaonik"){
-			
+
 			model.setX(x);
 			model.setY(y);
 
@@ -755,33 +771,40 @@ public class Controller {
 
 					model.setDuzina(duzina);
 					String s = JOptionPane.showInputDialog("Unesi sirinu pravougoonika");
-					
-					
+
+
 					try{
 
 						int sirina = Integer.parseInt(s);
 						if(sirina>0){
 
 							model.setSirina(sirina);
-							
+
 							model.setDuzina(duzina);
 							//view.repaint();
 							Pravougaonik p = new Pravougaonik(new Tacka(model.getX(),model.getY()), model.getDuzina(),model.getSirina());
-							
+
 							p.setBojaIvice(model.getBojaIvice());
 							p.setBojaUnutrasnjosti(model.getBojaUnutrasnjosti());
-							
+
 							cmdAddShape = new CmdAddShape(model,p);
 							cmdAddShape.execute();
+
+
+							Oblik l = CopyShape(p);
+
+
+							model.addToStackUndo(l);
+
 
 							frame.getBtnRedo().setEnabled(false);
 							frame.getBtnUndo().setEnabled(true);
 							frame.getBtnSelektuj().setEnabled(true);
-							
+
 							frame.getTextArea().append(p.toString() +"\n");
-							
-							
-							
+
+
+
 
 						}
 						else{
@@ -833,12 +856,15 @@ public class Controller {
 					kv.setBojaUnutrasnjosti(model.getBojaUnutrasnjosti());
 					cmdAddShape = new CmdAddShape(model,kv);
 					cmdAddShape.execute();
+
+					Oblik l = CopyShape(kv);
+					model.addToStackUndo(l);
+
+
 					frame.getBtnUndo().setEnabled(true);
-
-
 					frame.getBtnRedo().setEnabled(false);
 					frame.getBtnSelektuj().setEnabled(true);
-					
+
 					frame.getTextArea().append(kv.toString() +"\n");
 
 				} else {
@@ -860,6 +886,8 @@ public class Controller {
 		}
 
 		if(model.getOdabranOblik() == "Krug"){
+
+
 
 			s=true;
 
@@ -895,8 +923,10 @@ public class Controller {
 					frame.getBtnUndo().setEnabled(true);
 					frame.getBtnRedo().setEnabled(false);
 					frame.getBtnSelektuj().setEnabled(true);
-					
+
 					frame.getTextArea().append(kr.toString() +"\n");
+
+
 
 
 
@@ -1003,9 +1033,8 @@ public class Controller {
 
 	public void setOdabranOblik(String s) {
 
-
-
 		model.setOdabranOblik(s);
+
 	}
 
 
@@ -1102,6 +1131,58 @@ public class Controller {
 
 	public void undo() {
 
+
+
+		//nacrtam - obrisem sa steka, obrisem sa liste,dodam ga na redo
+
+		if(model.getStackUndo().isEmpty() == false ) {
+
+			if(model.getLastShapeOnStackUndo().isSelektovan() == true) {
+
+				cmdUpdate.unexecute();
+				model.getListaObjekata().set(model.getListaObjekata().indexOf(model.getLastShapeOnStackUndo()), cmdUpdate.getOriginal());
+				model.addToStackRedo(model.getLastShapeOnStackUndo());
+				model.removeFromStackUndo();
+
+				if(model.getLastShapeOnStackUndo().isSelektovan() == true) {
+
+					Oblik s = CopyShape(model.getLastShapeOnStackUndo());
+					s.setSelektovan(false);
+					cmdUpdate.setOldState(s);
+					cmdUpdate.setOriginal(model.getLastShapeOnStackUndo());
+					cmdUpdate.setNewState(model.getLastShapeOnStackUndo());
+				}
+
+
+			} else {
+
+				model.addToStackRedo(model.getLastShapeOnStackUndo());
+				cmdAddShape.unexecute();
+				model.removeFromStackUndo();
+
+				frame.getTextArea().append("Deleted: " + model.getLastShapeOnStackRedo().toString() +"\n");
+
+				if(model.getStackUndo().isEmpty() == false) {
+
+					cmdAddShape.setShape(model.getLastShapeOnStackUndo());
+
+				}
+
+
+			}
+
+
+
+
+
+
+
+		}
+
+
+
+
+
 		/*if(model.getStackUndo().isEmpty() == false) { //da li je stek prazan? 
 
 
@@ -1184,8 +1265,50 @@ public class Controller {
 
 	}
 
-
 	public void redo() {
+
+		if(model.getStackRedo().isEmpty() == false) {
+
+
+			if(model.getLastShapeOnStackUndo().isSelektovan() == true) {
+
+				cmdUpdate.unexecute();
+				model.getListaObjekata().set(model.getListaObjekata().indexOf(model.getLastShapeOnStackUndo()), cmdUpdate.getOriginal());
+				model.addToStackRedo(model.getLastShapeOnStackUndo());
+				model.removeFromStackUndo();
+
+				if(model.getLastShapeOnStackUndo().isSelektovan() == true) {
+
+					Oblik s = CopyShape(model.getLastShapeOnStackUndo());
+					s.setSelektovan(false);
+					cmdUpdate.setOldState(s);
+					cmdUpdate.setOriginal(model.getLastShapeOnStackUndo());
+					cmdUpdate.setNewState(model.getLastShapeOnStackUndo());
+				}
+
+
+			} else {
+				
+				model.addToStackUndo(model.getLastShapeOnStackRedo());
+				cmdAddShape.execute();
+				model.removeFromStackRedo();
+
+				frame.getTextArea().append("Paint: " + model.getLastShapeOnStackUndo().toString() +"\n");
+
+				if(model.getStackRedo().isEmpty() == false) {
+
+					cmdAddShape.setShape(model.getLastShapeOnStackRedo());
+				}
+				
+				
+			}
+
+
+
+			
+
+
+		}
 
 		/*if(model.getStackRedo().isEmpty() == false) {
 
@@ -1344,7 +1467,6 @@ public class Controller {
 		}
 
 
-
 	}*/
 
 	public void moveToFront() {
@@ -1360,8 +1482,8 @@ public class Controller {
 
 					Collections.swap(model.getListaObjekata(), i, i+1); 
 					i=model.getListaObjekata().size();
-					
-					
+
+
 
 				}
 

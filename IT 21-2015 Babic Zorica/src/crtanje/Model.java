@@ -61,9 +61,7 @@ public class Model {
 		
 		/*int endOfList = listaObjekata.size();
         listaObjekata.add(endOfList, s);*/
-        
-
-
+   
 		listaObjekata.add(s);
 	}
 	public Oblik get(int i) {
