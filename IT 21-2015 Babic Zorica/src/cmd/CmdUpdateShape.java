@@ -80,6 +80,10 @@ public class CmdUpdateShape implements Command {
 			original.setBojaIvice(newState.getBojaIvice());
 			((Krug) original).setBojaUnutrasnjosti(((Krug) newState).getBojaUnutrasnjosti());
 			original.setSelektovan(newState.isSelektovan());
+			
+			
+
+			
 
 		} else if(original instanceof Pravougaonik) {
 
@@ -149,7 +153,6 @@ public class CmdUpdateShape implements Command {
 		if(original instanceof Tacka) {
 
 
-
 			((Tacka) original).setX(((Tacka) oldState).getX());
 			((Tacka) original).setY(((Tacka) oldState).getY());
 			original.setBojaIvice(oldState.getBojaIvice());
@@ -174,6 +177,9 @@ public class CmdUpdateShape implements Command {
 			((Krug) original).setBojaIvice(oldState.getBojaIvice());
 			((Krug) original).setBojaUnutrasnjosti(((Krug) oldState).getBojaUnutrasnjosti());
 			original.setSelektovan(oldState.isSelektovan());
+			
+			
+		
 			
 			
 

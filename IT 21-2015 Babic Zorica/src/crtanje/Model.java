@@ -24,7 +24,11 @@ public class Model {
 
 	Stack <Oblik> stackUndo = new Stack<Oblik>();
 	Stack <Oblik> stackRedo = new Stack<Oblik>();
-	Stack <Oblik> stackSelection = new Stack<Oblik>();
+	ArrayList <Oblik> unselectedShapes = new ArrayList<Oblik>();
+	
+	
+
+	ArrayList<Oblik> undoRedo = new ArrayList<Oblik>();
 
 	private int x;
 	private int y;
@@ -51,31 +55,31 @@ public class Model {
 	private boolean removeFromSelection = false;
 	private boolean undoClicked = false;
 	private int position;
-	
-	
+
+
 
 
 
 	public void add(Oblik s) {
-		
-		
+
+
 		/*int endOfList = listaObjekata.size();
         listaObjekata.add(endOfList, s);*/
-   
+
 		listaObjekata.add(s);
 	}
 	public Oblik get(int i) {
-		
+
 		return listaObjekata.get(i);
 	}
 
 	public boolean remove(Oblik s) {
-		
+
 		return listaObjekata.remove(s);
 	}
-	
+
 	public boolean removeAllFromList() {
-		
+
 		return listaObjekata.removeAll(listaObjekata);
 	}
 
@@ -109,22 +113,12 @@ public class Model {
 		return stackRedo.peek();
 	}
 	
-	//
 	
-	public void addToStackSelection(Oblik s) {
 
-		stackSelection.push(s);
-	}
 
-	public void removeFromStackSelection() {
+	
 
-		stackSelection.pop();
-	}
-
-	public Oblik getLastShapeOnStackSelection() {
-
-		return stackSelection.peek();
-	}
+	
 
 
 	/*public void addToStack(Oblik s) {
@@ -394,13 +388,6 @@ public class Model {
 		this.position = position;
 	}
 
-	public Stack<Oblik> getStackSelection() {
-		return stackSelection;
-	}
-
-	public void setStackSelection(Stack<Oblik> stackSelection) {
-		this.stackSelection = stackSelection;
-	}
 
 	public int getrHexagon() {
 		return rHexagon;
@@ -408,6 +395,18 @@ public class Model {
 
 	public void setrHexagon(int rHexagon) {
 		this.rHexagon = rHexagon;
+	}
+	public ArrayList<Oblik> getUndoRedo() {
+		return undoRedo;
+	}
+	public void setUndoRedo(ArrayList<Oblik> undoRedo) {
+		this.undoRedo = undoRedo;
+	}
+	public ArrayList<Oblik> getUnselectedShapes() {
+		return unselectedShapes;
+	}
+	public void setUnselectedShapes(ArrayList<Oblik> unselectedShapes) {
+		this.unselectedShapes = unselectedShapes;
 	}
 
 

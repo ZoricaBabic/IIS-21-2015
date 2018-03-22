@@ -11,10 +11,12 @@ public class Krug extends PovrsinskiOblik implements Pomerljiv{
 	}
 	
 	public Krug(Tacka centar, int r){
+		
 		this.centar = centar;
 		this.r = r;
 	}
 	public Krug(Tacka centar, int r,Color bojaIvice){
+		
 		this(centar, r);
 		setBojaIvice(bojaIvice);
 	}
@@ -40,7 +42,6 @@ public class Krug extends PovrsinskiOblik implements Pomerljiv{
 		
 		//return "Centar="+centar+", poluprecnik="+r+", " + "Selektovan? " + isSelektovan() + ".";
 	
-
 		//return "Circle: (" + centar.getX() + "," + centar.getY() + "), outline: "+getHex(getBojaIvice())+", "+"Selected? " + isSelektovan();
 		return "Circle: (" + centar.getX() + "," + centar.getY() + "), radius: "  + getR() + ", outline: " + getHex(getBojaIvice())+ ", fill: " + getHex(getBojaUnutrasnjosti()) + ", Selected? " + isSelektovan(); 
 				
@@ -50,14 +51,23 @@ public class Krug extends PovrsinskiOblik implements Pomerljiv{
 	
 	public boolean equals(Object obj){
 		
-		
 		if(obj instanceof Krug){
+			
 			Krug pomocni = (Krug) obj;
-			if(centar.equals(pomocni.centar) && r == pomocni.r)
+		
+			
+			if(centar.equals(pomocni.centar) && r == pomocni.r) {
+			
+				
 				return true;
-			else
+			}
+				
+			else {
+				
 				return false;
 
+			}
+				
 		}
 		else
 			return false;
