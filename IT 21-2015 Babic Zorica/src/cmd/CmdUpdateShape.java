@@ -28,6 +28,11 @@ public class CmdUpdateShape implements Command {
 		this.newState = newState;
 
 	}
+	
+	public CmdUpdateShape() {
+		
+		
+	}
 
 	@Override
 	public void execute() {
