@@ -43,6 +43,7 @@ public class Controller {
 	private int position=-1;
 	private String lastAction;
 	private Oblik previouslySelectedShape;
+	private boolean n = false;
 	
 	//private CmdUndo undoRedo;
 
@@ -552,39 +553,19 @@ public class Controller {
 
 	public void mouseClickedPnl(int x, int y) {
 		
-	
-	
-			
-			for(int i =0; i<model.getListaObjekata().size(); i++) {
+		for(int i =0; i<model.getListaObjekata().size(); i++) {
 				
 				if(model.getListaObjekata().get(i).isSelektovan() == true) {
+
+					model.getUnselectedShapes().add(model.getListaObjekata().get(i));
+					countForRedo++;
 					
-				
-						//if(model.getUnselectedShapes().isEmpty() == true) {
 							
-							model.getUnselectedShapes().add(model.getListaObjekata().get(i));
-							
-						//} else {
-							
-							/*for(int k = 0; k<model.getUnselectedShapes().size(); k++) {
-								
-								if(model.getUnselectedShapes().get(k).equals(model.getListaObjekata().get(i)) == false) {
-									
-									System.out.println("Dodajem ako nisu isti");
-									model.getUnselectedShapes().add(model.getListaObjekata().get(i));
-									
-								}
-							}*/
-					//	}
 						
-					
 				}
 			}
 			
 		
-		
-		
-
 		if(model.getOdabranOblik() == ""){
 			
 			
@@ -624,6 +605,7 @@ public class Controller {
 
 					if(m>1) { // sleketovanje poslednje nacrtanog
 
+
 						for(int k=0; k<model.getListaObjekata().size(); k++) {
 
 							if(!model.getListaObjekata().get(k).equals(model.getLastShapeOnStackUndo())) {
@@ -640,12 +622,15 @@ public class Controller {
 
 			}
 
-			System.out.println(m);
+			
 
 
 
 
 			if(m==0) {
+				
+				System.out.println("Ne sadrzi nijedan oblik!");
+				n=true;
 
 				for(Oblik o: model.getListaObjekata()) {
 
@@ -663,7 +648,8 @@ public class Controller {
 
 
 			}
-
+			
+			
 
 
 			lastAction = "Selekcija";
@@ -1175,36 +1161,43 @@ public class Controller {
 
 		checkIfSelectedShapeExists();
 		
-		if(model.getUnselectedShapes().isEmpty() == false) {
+		if(countForRedo != 0 && n == true) {
 			
-			System.out.println("U listi je: " + model.getUnselectedShapes().size());
+			System.out.println("Vraćanje slektovanih oblika!");
 			
 			
-			for(int i = 0; i<model.getUnselectedShapes().size(); i++) {
+			if(model.getUnselectedShapes().isEmpty() == false) {
 				
-				for(int k=0; k<model.getListaObjekata().size(); k++) {
+				System.out.println("U listi je: " + model.getUnselectedShapes().size());
+				
+				
+				for(int i = 0; i<model.getUnselectedShapes().size(); i++) {
 					
-					if(model.getUnselectedShapes().get(i).equals(model.getListaObjekata().get(k))) {
+					for(int k=0; k<model.getListaObjekata().size(); k++) {
 						
-						System.out.println("Selektuj");
-						model.addToStackRedo(model.getListaObjekata().get(k));
-						countForRedo++;
-						model.getListaObjekata().get(k).setSelektovan(true);
-						
+						if(model.getUnselectedShapes().get(i).equals(model.getListaObjekata().get(k))) {
+							
+							System.out.println("Selektuj");
+							model.addToStackRedo(model.getListaObjekata().get(k));
+							countForRedo++;
+							model.getListaObjekata().get(k).setSelektovan(true);
+							
+						}
 					}
 				}
-			}
-			
-			model.getUnselectedShapes().removeAll(model.getUnselectedShapes());
-			
-			
-			
-			
-			
+				
+				model.getUnselectedShapes().removeAll(model.getUnselectedShapes());
+				
+				
+				
+				n=false;
+				
+				
+			} 
 			
 		} else {
 			
-			
+			System.out.println("ovdeeeeee jeeeeeeeeeeee!");
 
 			if(model.getStackUndo().isEmpty() == false) {
 
@@ -1306,6 +1299,9 @@ public class Controller {
 			
 			
 		}
+		
+		
+		
 
 
 
@@ -1368,9 +1364,6 @@ public class Controller {
 		}*/
 
 
-
-
-
 		checkIfSelectedShapeExists();
 
 	}
@@ -1383,15 +1376,19 @@ public class Controller {
 				
 				for(int k = 0; k<model.getListaObjekata().size(); k++) {
 					
-					for(int i = 0; i<countForRedo; i++) {
-					
-					if(model.getStackRedo().get(i).equals(model.getListaObjekata().get(k))) {
+					for(int i = 0; i<model.getStackRedo().size(); i++) {
 						
-						model.getListaObjekata().get(k).setSelektovan(false);
-						model.getUnselectedShapes().add(model.getListaObjekata().get(k));
-						model.removeFromStackRedo();
+						if(model.getListaObjekata().get(k).equals(model.getStackRedo().get(i))) {
+							
+							model.getListaObjekata().get(k).setSelektovan(false);
+							model.getUnselectedShapes().add(model.getListaObjekata().get(k));
+							
+							n=true;
+							
+						}
 					}
-				}
+					
+					
 			}
 			
 			
