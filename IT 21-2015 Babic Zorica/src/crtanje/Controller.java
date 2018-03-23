@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 
 import cmd.CmdAddShape;
 import cmd.CmdRemoveShape;
-import cmd.CmdUndo;
+import cmd.CmdUndoRedo;
 import cmd.CmdUpdateShape;
 import dlg.DlgOsobineKruga;
 import dlg.DlgOsobineKvadrata;
@@ -44,6 +44,7 @@ public class Controller {
 	private String lastAction;
 	private Oblik previouslySelectedShape;
 	private boolean n = false;
+	private CmdUndoRedo cmdUndoRedo;
 	
 	//private CmdUndo undoRedo;
 
@@ -58,6 +59,7 @@ public class Controller {
 		this.frame = frame;
 
 		button = new Button(frame);
+		cmdUndoRedo = new CmdUndoRedo(model);
 
 
 	} 
@@ -415,6 +417,8 @@ public class Controller {
 							Oblik s = CopyShape(novi);
 
 							model.addToStackUndo(s);
+							
+							cmdUndoRedo.add(s);
 
 							//undoRedo.add(s);
 
@@ -587,6 +591,8 @@ public class Controller {
 
 
 					model.addToStackUndo(s);
+					
+					cmdUndoRedo.add(s);
 
 					//undoRedo.add(s);
 
@@ -673,12 +679,13 @@ public class Controller {
 
 			Tacka t = new Tacka(model.getX(),model.getY());
 			t.setBojaIvice(model.getBojaIvice());
+			
+			
 			cmdAddShape = new CmdAddShape(model,t);
 			cmdAddShape.execute();
 
 
 			Oblik l = CopyShape(t);
-
 
 			model.addToStackUndo(l);
 
@@ -928,14 +935,16 @@ public class Controller {
 					kr.setBojaIvice(model.getBojaIvice());
 					kr.setBojaUnutrasnjosti(model.getBojaUnutrasnjosti());
 
-					cmdAddShape = new CmdAddShape(model,kr); 
-					cmdAddShape.execute(); //dodajem ga u listu
+					/*cmdAddShape = new CmdAddShape(model,kr); 
+					cmdAddShape.execute(); //dodajem ga u listu*/
 
 
 					Oblik l = CopyShape(kr);
 
 
 					model.addToStackUndo(l);
+					
+					cmdUndoRedo.add(kr);
 
 					//	undoRedo.add(l);
 
@@ -1163,11 +1172,13 @@ public class Controller {
 
 		checkIfSelectedShapeExists();
 		
-		if(countForRedo != 0 && n == true) {
+		cmdUndoRedo.unexecute();
+		
+		
+		
+		/*if(countForRedo != 0 && n == true) {
 			
-			System.out.println("Vraćanje slektovanih oblika!");
-			
-			
+
 			if(model.getUnselectedShapes().isEmpty() == false) {
 				
 				System.out.println("U listi je: " + model.getUnselectedShapes().size());
@@ -1199,37 +1210,63 @@ public class Controller {
 			
 		} else {
 			
-			System.out.println("ovdeeeeee jeeeeeeeeeeee!");
-
+			
 			if(model.getStackUndo().isEmpty() == false) {
 
 				System.out.println(model.getStackUndo().size());
 
 				if(model.getStackUndo().size() > 1) {
+					
+					System.out.println("Na undo stacku postoje " + model.getStackUndo().size());
 
 					if(model.getLastShapeOnStackUndo().equals(model.getStackUndo().get(model.getStackUndo().size()-2)) == true) {
 
-						System.out.println("undo modifikacijaaaaaa");
-						//modifikacija
-						cmdUpdate.unexecute();
-						System.out.println(cmdUpdate.getOriginal().toString());
-						Oblik original = CopyShape(cmdUpdate.getOriginal());
-						int index = model.getListaObjekata().indexOf(original);
-						model.getListaObjekata().set(index, original); //ovde samstala, ne kontam
-						System.out.println(model.getListaObjekata().get(index).toString());
-						model.addToStackRedo(model.getLastShapeOnStackUndo());
-						model.removeFromStackUndo();
-						
-						if(model.getStackUndo().size() >=2) {
+						if(model.getStackUndo().size() == 2) {
 							
+							cmdUpdate.unexecute();
+							
+							Oblik k = CopyShape(model.getLastShapeOnStackUndo());
+							int i = model.getListaObjekata().indexOf(k);
+							model.getListaObjekata().get(i).setSelektovan(false);
+							model.addToStackRedo(model.getLastShapeOnStackUndo());
+							model.removeFromStackUndo();
+							
+							
+							
+						} else {
+							
+							
+							cmdUpdate.unexecute();
+							Oblik original = CopyShape(cmdUpdate.getOriginal());
+							int index = model.getListaObjekata().indexOf(original);
+							model.getListaObjekata().set(index, original); //ovde samstala, ne kontam
+							model.addToStackRedo(model.getLastShapeOnStackUndo());
+							model.removeFromStackUndo();
+							
+							
+						}
+						
+						
+						
+					
+						
+						if(model.getStackUndo().size() >= 2) {
+							
+				
 							if(model.getLastShapeOnStackUndo().equals(model.getStackUndo().get(model.getStackUndo().size()-2)) == false) {
-
+								
+								System.out.println("1 if");
+							
 								Oblik s = CopyShape(model.getLastShapeOnStackUndo());
 								s.setSelektovan(false);
 								cmdUpdate = new CmdUpdateShape(s,model.getLastShapeOnStackUndo());
 								cmdUpdate.execute();
 
 							} else {
+								
+								System.out.println("2 if");
+								
+								System.out.println("Isti su, treba da se odselektuje");
 
 								cmdUpdate = new CmdUpdateShape(model.getStackUndo().get(model.getStackUndo().size()-2),model.getLastShapeOnStackUndo());
 								cmdUpdate.execute();
@@ -1238,8 +1275,7 @@ public class Controller {
 							}
 							
 							
-						}
-						
+						} 
 					
 						
 						
@@ -1295,6 +1331,7 @@ public class Controller {
 				} else {
 
 					System.out.println("Ima još jedan oblik i treba da se obriše!");
+					
 
 					cmdAddShape.unexecute();
 					model.addToStackRedo(model.getLastShapeOnStackUndo());
@@ -1305,19 +1342,25 @@ public class Controller {
 			}
 			
 			
-		}
+		}*/
 		
 		
 
 		checkIfSelectedShapeExists();
+		
+		System.out.println(model.getStackUndo().size());
 
 	}
 
 	public void redo() {
 		
-		CmdUpdateShape cmdUpdateRedo = new CmdUpdateShape();
 		
-		if(countForRedo > 0) {
+		cmdUndoRedo.execute();
+		
+		
+		
+		
+		/*if(countForRedo > 0) {
 			
 			
 				
@@ -1340,363 +1383,53 @@ public class Controller {
 			
 		}  else {
 			
-			
-
-			if(model.getStackRedo().isEmpty() == false) {
-
 		
-				if(model.getStackRedo().size() > 1 && model.getStackUndo().isEmpty() == false) {
-
-					if(model.getLastShapeOnStackRedo().equals(model.getLastShapeOnStackUndo()) == true) { //ako je isti kao prethodni radi se o modifikaciji
-
-						System.out.println("REDO RADI SE O MODIFIKACIJI");
-						//modifikacija
+			
+			if(model.getStackRedo().isEmpty() == false) {
+				
+				if(model.getStackUndo().isEmpty() == false) {
+					
+					if(model.getLastShapeOnStackRedo().equals(model.getLastShapeOnStackUndo()) == true) {
+						
+						System.out.println("Potrebna je modfikacija");
+						
 						cmdUpdate.execute();
-						Oblik original = CopyShape(cmdUpdate.getOriginal());
-						int index = model.getListaObjekata().indexOf(original);
-						model.getListaObjekata().set(index, model.getStackRedo().get(model.getStackRedo().size()-2));
+						int index = model.getListaObjekata().indexOf(cmdUpdate.getOriginal());
+						Oblik k = CopyShape(model.getLastShapeOnStackRedo());
+						model.getListaObjekata().set(index,k);
 						model.addToStackUndo(model.getLastShapeOnStackRedo());
 						model.removeFromStackRedo();
 						
 						
-						/*if(model.getLastShapeOnStackRedo().equals(model.getStackRedo().get(model.getStackRedo().size()-2)) == false) {
-
-							Oblik s = CopyShape(model.getLastShapeOnStackRedo());
-							s.setSelektovan(false);
-							cmdUpdate = new CmdUpdateShape(s,model.getLastShapeOnStackUndo());
-							cmdUpdate.execute();
-
-						} else {
-
-							cmdUpdate = new CmdUpdateShape(model.getStackUndo().get(model.getStackUndo().size()-2),model.getLastShapeOnStackUndo());
-							cmdUpdate.execute();
-
-
-						}*/
+					} else {
 						
+						System.out.println("Potrebno je brisanje");
 						
-						
-
-					} else if(model.getLastShapeOnStackRedo().equals(model.getStackRedo().get(model.getStackRedo().size()-2)) == false && model.getLastShapeOnStackRedo().isSelektovan() == true) {
-
-						System.out.println("Odselektuj ga!");
-
-						cmdUpdate.execute();
-
-						Oblik original = CopyShape(cmdUpdate.getOriginal());
-						int index = model.getListaObjekata().indexOf(original);
-						model.getListaObjekata().set(index, original);
-						model.addToStackUndo(model.getLastShapeOnStackRedo());
-						model.removeFromStackRedo();
-
-						/*if(model.getLastShapeOnStackRedo().equals(model.getStackRedo().get(model.getStackRedo().size()-2)) == false) {
-
-							Oblik s = CopyShape(model.getLastShapeOnStackRedo());
-							s.setSelektovan(false);
-							cmdUpdate = new CmdUpdateShape(s,model.getLastShapeOnStackUndo());
-							cmdUpdate.execute();
-
-						} else {
-
-							cmdUpdate = new CmdUpdateShape(model.getStackUndo().get(model.getStackUndo().size()-2),model.getLastShapeOnStackUndo());
-							cmdUpdate.execute();
-
-
-						}*/
-
-
-
-					} else if(model.getLastShapeOnStackRedo().equals(model.getStackRedo().get(model.getStackRedo().size()-2)) == false && model.getLastShapeOnStackRedo().isSelektovan() == false) {
-
-
+						cmdAddShape = new CmdAddShape(model,model.getLastShapeOnStackRedo());
 						cmdAddShape.execute();
 						model.addToStackUndo(model.getLastShapeOnStackRedo());
 						model.removeFromStackRedo();
-
-						/*if(model.getStackRedo().isEmpty() == false) {
-
-							cmdAddShape.setShape(model.getLastShapeOnStackRedo());
-
-
-						}*/
-
-
-					} 
-
-
+					}
+					
+					
 				} else {
-
-					System.out.println("Ima još jedan oblik i treba da se obriše!");
-
+					
+					System.out.println("Potrebno je brisanje");
+					cmdAddShape = new CmdAddShape(model,model.getLastShapeOnStackRedo());
 					cmdAddShape.execute();
 					model.addToStackUndo(model.getLastShapeOnStackRedo());
 					model.removeFromStackRedo();
-				}
-
-
-			}
-			
-			
-		}
-
-
-
-
-		/*if(model.getStackRedo().isEmpty() == false) {
-
-			//proveravam da li je poslednji na steku selektovan
-			//proveravam da li poslednji na steku nije selektovan
-
-			if(model.getLastShapeOnStackRedo().isSelektovan() == true) {
-
-				System.out.println("Oblik na redo je selektovan!");
-
-
-
-
-
-			} else {
-
-
-				System.out.println("Oblik na redo nije selektovan!");
-
-				model.addToStackUndo(model.getLastShapeOnStackRedo());
-
-				cmdAddShape.execute();
-				model.removeFromStackRedo();
-
-				if(model.getStackRedo().isEmpty() == false) {
-
-					cmdAddShape.setShape(model.getLastShapeOnStackRedo());
-
-
+					
+					
 
 				}
-
-
+				
+				
 			}
 		}*/
 
-
-
-
-
-		/*if(model.getStackRedo().isEmpty() == false) {
-
-
-			if(model.getLastShapeOnStackRedo().isSelektovan() == true) {
-
-				System.out.println("Poslenji je selektovan!");
-
-				cmdUpdate.execute();
-				Oblik s = CopyShape(model.getLastShapeOnStackRedo());
-				Oblik original = CopyShape(cmdUpdate.getOriginal());
-				model.getListaObjekata().set(model.getListaObjekata().indexOf(s), original);
-				model.addToStackUndo(model.getLastShapeOnStackRedo());
-				model.removeFromStackRedo();
-
-				if(model.getStackRedo().isEmpty() == false) {
-
-					if(model.getLastShapeOnStackRedo().isSelektovan() == true) {
-
-						Oblik k = CopyShape(model.getLastShapeOnStackRedo());
-						Oblik p = CopyShape(model.getLastShapeOnStackRedo());
-						cmdUpdate.setNewState(p);
-						k.setSelektovan(false);
-						cmdUpdate.setOldState(k);
-						cmdUpdate.setOriginal(k);
-
-					}
-
-
-				}
-
-
-			} else {
-
-
-				System.out.println("Poslenji je nije selektovan!");
-
-
-				model.addToStackUndo(model.getLastShapeOnStackRedo());
-				cmdAddShape.execute();
-				model.removeFromStackRedo();
-
-				frame.getTextArea().append("Paint: " + model.getLastShapeOnStackUndo().toString() +"\n");
-
-				if(model.getStackRedo().isEmpty() == false) {
-
-					cmdAddShape.setShape(model.getLastShapeOnStackRedo());
-				}
-
-
-			}
-
-
-
-
-
-
-		}*/
-
-		/*if(model.getStackRedo().isEmpty() == false) {
-
-			System.out.println(model.getStackRedo().size());
-
-
-		}*/
-
-
-		/*if(model.getStackRedo().isEmpty() == false) {
-
-			if(model.getStackRedo().size() > 1) {
-
-
-				for(int i=0; i<model.getListaObjekata().size(); i++) {
-
-					if(model.getListaObjekata().get(i).equals(model.getLastShapeOnStackRedo())) {
-
-						Oblik fromList = CopyShape(model.getListaObjekata().get(i));
-						Oblik s = CopyShape(model.getLastShapeOnStackRedo());
-						Oblik k = CopyShape(model.getListaObjekata().get(i));
-						model.getListaObjekata().set(i, s);
-						model.addToStackUndo(model.getLastShapeOnStackRedo());
-						model.removeFromStackRedo();
-
-						cmdUpdate = new CmdUpdateShape(fromList,s);
-						cmdUpdate.execute();
-
-
-
-					}
-				}
-
-
-			} else if (model.getStackRedo().size() == 1) {
-
-
-				cmdAddShape.execute();
-				model.addToStackUndo(model.getLastShapeOnStackRedo());
-				model.removeFromStackRedo();
-			}
-
-
-
-
-		}*/
-
-
-
-
-
-
-
-
-
-		//model.addToStackUndo(model.getLastShapeOnStackRedo());
-
-
-		/*if(model.getStackRedo().isEmpty() == false) {
-
-
-
-			if(model.getLastShapeOnStackRedo().isSelektovan() == false) {
-
-
-				cmdAddShape.execute();
-				model.addToStackUndo(model.getLastShapeOnStackRedo());
-				model.removeFromStackRedo();
-
-
-
-
-			} else {
-
-
-				cmdUpdate.unexecute();
-				System.out.println(model.getLastShapeOnStackRedo().toString());
-				model.addToStackUndo(model.getLastShapeOnStackRedo());
-				model.removeFromStackRedo();
-
-				for(int i=0; i<model.getListaObjekata().size(); i++) {
-
-
-					if(model.getListaObjekata().get(i).equals(cmdUpdate.getOldState())) {
-
-						Oblik s = CopyShape(model.getLastShapeOnStackUndo());
-						//model.getListaObjekata().get(i).setSelektovan(true);
-						model.getListaObjekata().set(i, s);
-						/*cmdUpdate = new CmdUpdateShape(model.getListaObjekata().get(i),model.getLastShapeOnStackUndo());
-						cmdUpdate.execute();*/
-		//System.out.println(model.getLastShapeOnStackRedo().toString());
 
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	/*checkIfSelectedShapeExists();
-
-		if(lastAction == "Selekcija") {
-
-
-			if(model.getStackRedo().isEmpty() == false) {
-
-				Oblik s;
-				s = (Oblik) model.getLastShapeOnStackRedo();
-				s.setSelektovan(true);
-
-				cmdUpdate = new CmdUpdateShape(model.getLastShapeOnStackRedo(),s);
-				cmdUpdate.execute();
-
-				for(int i=0; i<model.getListaObjekata().size(); i++) {
-
-
-					if(cmdUpdate.getOldState().equals(model.getListaObjekata().get(i))) {
-
-
-						try {
-
-
-							Oblik q = (Oblik) cmdUpdate.getOriginal().clone();
-							model.getListaObjekata().set(i, q);
-							model.addToStackUndo(model.getLastShapeOnStackRedo());
-							model.removeFromStackRedo();
-
-
-
-
-						} catch (CloneNotSupportedException e) {
-
-							System.out.println("greška");
-						}
-
-
-					}
-
-				}
-
-				checkIfSelectedShapeExists();
-
-
-			} 
-
-
-		}
-
-
-	}*/
 
 	public void moveToFront() {
 
