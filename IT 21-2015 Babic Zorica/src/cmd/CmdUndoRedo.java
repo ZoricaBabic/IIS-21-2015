@@ -12,6 +12,7 @@ public class CmdUndoRedo implements Command {
 	private int currentPostition = -1;
 	private Model model = new Model();
 	private CmdAddShape cmdAddShape;
+	private CmdUpdateShape cmdUpdateShape;
 
 	public CmdUndoRedo() {
 
@@ -23,9 +24,25 @@ public class CmdUndoRedo implements Command {
 	}
 
 	public void add(Oblik s) {
+		
+		
+		Oblik o = null;
+		try {
 
-		commands.add(s);
-		currentPostition++;
+
+			o = (Oblik) s.clone();
+
+
+		} catch (CloneNotSupportedException e) {
+
+			System.out.println("Error!");
+		}
+		
+		
+		
+
+		commands.add(o);
+		currentPostition = commands.size()-1;
 
 		boolean exists = false;
 
@@ -51,10 +68,32 @@ public class CmdUndoRedo implements Command {
 
 		}
 
+	}
+	
+	public void update(Oblik original, Oblik newState) {
+		
+		
+		Oblik o = null;
+		try {
 
 
+			o = (Oblik) newState.clone();
 
 
+		} catch (CloneNotSupportedException e) {
+
+			System.out.println("Error!");
+		}
+		
+		commands.add(o);
+		currentPostition = commands.size()-1;
+		
+		cmdUpdateShape = new CmdUpdateShape(original,newState);
+		cmdUpdateShape.execute();
+		
+		
+		
+		
 	}
 
 	public void remove(Oblik s) {
@@ -81,7 +120,7 @@ public class CmdUndoRedo implements Command {
 					
 				} else {
 					
-					//modfikacija
+					System.out.println("Modifikacija redo");
 				}
 				
 				
@@ -99,100 +138,102 @@ public class CmdUndoRedo implements Command {
 			
 			
 		}
-
-
-
-
-
 	}
 
 	@Override
 	public void unexecute() {
 
 		System.out.println("Current: " + currentPostition);
-
+		System.out.println("Komandi ima: " + commands.size());
+		
 		if(currentPostition >  0) {
+			
+		
+			if(commands.get(currentPostition).equals(commands.get(currentPostition-1)) == false && commands.get(currentPostition-1).isSelektovan() == false) {
 
-
-			if(commands.get(currentPostition).equals(commands.get(currentPostition-1)) == false) {
-
-				//treba da se obriše trentuni i smanji se current posititon 
-				//setujem oblik na trenutni
-				
+				System.out.println("Nisu isti i nisu selektovani!");
 				cmdAddShape.unexecute();
 				currentPostition--;
 				cmdAddShape.setShape(commands.get(currentPostition));
 				
-			} else {
+				
+			} else if(commands.get(currentPostition).equals(commands.get(currentPostition-1)) == false && commands.get(currentPostition-1).isSelektovan() == true) {
+				
+				System.out.println("Odeselektuj");
+				currentPostition--;
+				
+				
+			}  else if (commands.get(currentPostition).equals(commands.get(currentPostition-1)) == true && commands.get(currentPostition-1).isSelektovan() == true) {
+				
+				
+				System.out.println("Ovde je pocela");
+				
+				cmdUpdateShape.unexecute();
+				
+				Oblik l = null;
+				try {
 
-				System.out.println("Modifikacija!");
+
+					l = (Oblik) commands.get(currentPostition).clone();
+
+
+				} catch (CloneNotSupportedException e) {
+
+					System.out.println("Error!");
+				}
+				
+				int index = model.getListaObjekata().indexOf(l); //njega treba da menjam
+				
+				Oblik o = null;
+				try {
+
+
+					o = (Oblik) cmdUpdateShape.getOriginal().clone();
+
+
+				} catch (CloneNotSupportedException e) {
+
+					System.out.println("Error!");
+				}
+				
+				model.getListaObjekata().set(index, o);
+				
+				currentPostition--;
+
+				if(currentPostition > 0) {//ima prethodnika
+
+					cmdUpdateShape = new CmdUpdateShape(commands.get(currentPostition-1),commands.get(currentPostition));
+					cmdUpdateShape.execute();
+					
+					
+				}
+				
+				
+				System.out.println("Ovde se zavrsila");
+				
+				cmdAddShape.setShape(commands.get(currentPostition));
+				
+			} else {
+				
+				cmdAddShape.unexecute();
+				currentPostition--;
+				cmdAddShape.setShape(commands.get(currentPostition));
 			}
 
 			
 
 		} else {
 			
+			
+			if(model.getListaObjekata().size() == 1) {
+				
+				cmdAddShape.setShape(model.getListaObjekata().get(0));
+			}
 			cmdAddShape.unexecute();
+			
 			currentPostition = -1;
 			
-			
-
-
 		}
-
-
-		/*if(currentPostition > 0) {
-
-			if(commands.get(currentPostition).equals(commands.get(currentPostition-1)) == false) {
-
-				cmdAddShape.unexecute();
-				currentPostition--;
-				cmdAddShape.setShape(commands.get(currentPostition));
-
-			} else {
-
-
-				System.out.println("Modifikacija!");
-			}
-
-		} else if(currentPostition == 0) {
-
-			cmdAddShape.unexecute();
-			currentPostition--;
-
-
-		}*/
-
-		/*currentPostition--;
-
-		if(model.getListaObjekata().size() > 1) {
-
-			if(commands.get(currentPostition).equals(commands.get(currentPostition+1)) == false){
-
-				cmdAddShape.unexecute();
-				cmdAddShape.setShape(commands.get(currentPostition));
-
-			}
-
-
-		} else if(model.getListaObjekata().size() > 0) {
-
-			cmdAddShape.unexecute();
-			cmdAddShape.setShape(commands.get(currentPostition));
-
-		}*/
-
-
-
-
-
-
-
-
-
-
-
-		//cmdAddShape.unexecute();
 
 
 

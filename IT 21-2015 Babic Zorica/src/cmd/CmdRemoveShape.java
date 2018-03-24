@@ -19,17 +19,8 @@ public class CmdRemoveShape implements Command {
 
 	@Override
 	public void execute() {
-
 		
-		
-		model.remove(o);
-
-
-
-
-
-
-
+			model.remove(o);
 
 
 	}

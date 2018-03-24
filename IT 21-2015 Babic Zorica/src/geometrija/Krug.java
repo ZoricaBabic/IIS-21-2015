@@ -12,7 +12,7 @@ public class Krug extends PovrsinskiOblik implements Pomerljiv{
 	
 	public Krug(Tacka centar, int r){
 		
-		this.centar = centar;
+	this.centar = centar;
 		this.r = r;
 	}
 	public Krug(Tacka centar, int r,Color bojaIvice){
@@ -55,17 +55,14 @@ public class Krug extends PovrsinskiOblik implements Pomerljiv{
 			
 			Krug pomocni = (Krug) obj;
 		
-			
 			if(centar.equals(pomocni.centar) && r == pomocni.r) {
 			
-				
 				return true;
 			}
 				
 			else {
 				
 				return false;
-
 			}
 				
 		}
