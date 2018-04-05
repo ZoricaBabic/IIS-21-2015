@@ -45,7 +45,7 @@ public class Controller {
 	private Oblik previouslySelectedShape;
 	private boolean n = false;
 	private CmdUndoRedo cmdUndoRedo;
-	
+
 	//private CmdUndo undoRedo;
 
 	private int firstClick = 0;
@@ -417,9 +417,9 @@ public class Controller {
 							Oblik s = CopyShape(novi);
 
 							model.addToStackUndo(s);
-							
+
 							//cmdUndoRedo.add(s);
-							
+
 							cmdUndoRedo.update(o, novi);
 
 							//undoRedo.add(s);
@@ -447,25 +447,25 @@ public class Controller {
 						cmd.execute();
 
 						model.removeAll();*/
-						//view.repaint();
+							//view.repaint();
+
+						}
+
+
 
 					}
-
 
 
 				}
 
 
+
+
+
+
+
 			}
 
-
-
-
-
-
-
-		}
-			
 		}
 
 
@@ -560,24 +560,25 @@ public class Controller {
 	}
 
 	public void mouseClickedPnl(int x, int y) {
+
+		model.getUnselectedShapes().removeAll(model.getUnselectedShapes());
 		
 		for(int i =0; i<model.getListaObjekata().size(); i++) {
-				
-				if(model.getListaObjekata().get(i).isSelektovan() == true) {
-
-					model.getUnselectedShapes().add(model.getListaObjekata().get(i));
-					countForRedo++;
-					
-							
-						
-				}
-			}
 			
+			if(model.getListaObjekata().get(i).isSelektovan() == true) {
+				
+				
+				model.getUnselectedShapes().add(model.getListaObjekata().get(i));
+				countForRedo++;
+				
+						
+					
+			}
+		}
 		
 		if(model.getOdabranOblik() == ""){
-			
-			
-			
+
+
 			int m=0;
 
 			for(int i=0; i<model.getListaObjekata().size(); i++) {
@@ -585,62 +586,72 @@ public class Controller {
 				//selektovanje oblika na koji je kliknut
 				if(model.getListaObjekata().get(i).sadrzi(x, y)){
 
-					Oblik q = CopyShape(model.getListaObjekata().get(i));
-
-					m++;
-
-					model.getListaObjekata().get(i).setSelektovan(true);
-
-					Oblik s = CopyShape(model.getListaObjekata().get(i));
-
-
-					model.addToStackUndo(s);
+					if(model.getListaObjekata().get(i).isSelektovan() == false) {
+						
+						model.getUnselectedShapes().removeAll(model.getUnselectedShapes());
 					
-					//cmdUndoRedo.add(s);
-					
-					cmdUndoRedo.update(q, model.getListaObjekata().get(i));
+						
 
-					//undoRedo.add(s);
+						Oblik q = CopyShape(model.getListaObjekata().get(i));
 
-					//undoRedo = new CmdUndo(cmdUpdate);
-					/*cmdUpdate = new CmdUpdateShape(q,model.getListaObjekata().get(i));
-					cmdUpdate.execute(); //selektovan oblik*/
+						m++;
 
-					button.setStatus(true);
-					frame.getBtnRedo().setEnabled(false);
+						//model.getListaObjekata().get(i).setSelektovan(true);
 
-					frame.getTextArea().append(s.toString() +"\n");
+						Oblik s = CopyShape(model.getListaObjekata().get(i));
+						s.setSelektovan(true);
 
 
+						model.addToStackUndo(s);
+
+						//cmdUndoRedo.add(s);
+
+						cmdUndoRedo.update( model.getListaObjekata().get(i), s);
+
+						//undoRedo.add(s);
+
+						//undoRedo = new CmdUndo(cmdUpdate);
+						/*cmdUpdate = new CmdUpdateShape(q,model.getListaObjekata().get(i));
+						cmdUpdate.execute(); //selektovan oblik*/
+
+						button.setStatus(true);
+						frame.getBtnRedo().setEnabled(false);
+
+						frame.getTextArea().append(s.toString() +"\n");
 
 
 
-					if(m>1) { // sleketovanje poslednje nacrtanog
+						if(m>1) { // sleketovanje poslednje nacrtanog
 
 
-						for(int k=0; k<model.getListaObjekata().size(); k++) {
+							for(int k=0; k<model.getListaObjekata().size(); k++) {
 
-							if(!model.getListaObjekata().get(k).equals(model.getLastShapeOnStackUndo())) {
+								if(!model.getListaObjekata().get(k).equals(model.getLastShapeOnStackUndo())) {
 
-								model.getListaObjekata().get(k).setSelektovan(false);
-								frame.getTextArea().append(model.getListaObjekata().get(k) +"\n"); //KAD SE ODSELEKTUJEE!
+									model.getListaObjekata().get(k).setSelektovan(false);
+									frame.getTextArea().append(model.getListaObjekata().get(k) +"\n"); //KAD SE ODSELEKTUJEE!
 
+								}
 							}
-						}
-					} 
+						} 
+					}
+
+
+
+
 
 				} 
 
 
 			}
 
-			
+
 
 
 
 
 			if(m==0) {
-				
+
 				System.out.println("Ne sadrzi nijedan oblik!");
 				n=true;
 
@@ -651,6 +662,7 @@ public class Controller {
 						((HexagonAdapter) o).unselect();
 					} //premestiti drugačije!
 
+					cmdUndoRedo.add(CopyShape(o));
 					o.setSelektovan(false);
 
 					frame.getTextArea().append(o.toString() +"\n");
@@ -660,8 +672,8 @@ public class Controller {
 
 
 			}
-			
-			
+
+
 
 
 			lastAction = "Selekcija";
@@ -670,7 +682,7 @@ public class Controller {
 
 
 
-		}
+		} 
 
 
 
@@ -685,8 +697,8 @@ public class Controller {
 
 			Tacka t = new Tacka(model.getX(),model.getY());
 			t.setBojaIvice(model.getBojaIvice());
-			
-			
+
+
 			cmdAddShape = new CmdAddShape(model,t);
 			cmdAddShape.execute();
 
@@ -949,7 +961,7 @@ public class Controller {
 
 
 					model.addToStackUndo(l);
-					
+
 					cmdUndoRedo.add(kr);
 
 					//	undoRedo.add(l);
@@ -1169,34 +1181,34 @@ public class Controller {
 
 		}
 	}*/
-	
+
 	private int countForRedo = 0;
 
 	public void undo() {
-		
+
 		countForRedo = 0;
 
 		checkIfSelectedShapeExists();
-		
+
 		cmdUndoRedo.unexecute();
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
 
 		checkIfSelectedShapeExists();
-		
+
 		System.out.println(model.getStackUndo().size());
 
 	}
 
 	public void redo() {
-		
-		
+
+
 		cmdUndoRedo.execute();
-		
+
 
 	}
 

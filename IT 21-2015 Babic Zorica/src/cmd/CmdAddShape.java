@@ -30,7 +30,7 @@ public class CmdAddShape implements Command {
 	@Override
 	public void unexecute() {
 		
-		
+
 		model.remove(o);
 	
 		
