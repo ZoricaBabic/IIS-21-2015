@@ -9,7 +9,7 @@ import geometrija.Oblik;
 public class CmdUndoRedo implements Command {
 
 	private ArrayList<Oblik> commands = new ArrayList<Oblik> ();
-	private int currentPosition = -1;
+	private int cp = -1;
 	private Model model = new Model();
 	private CmdAddShape cmdAddShape;
 	private CmdUpdateShape cmdUpdateShape;
@@ -40,10 +40,10 @@ public class CmdUndoRedo implements Command {
 			System.out.println("Error!");
 		}
 
-		if(currentPosition < commands.size()-1) {
+		if(cp < commands.size()-1) {
 
 
-			for(int i = currentPosition+1; i<commands.size(); i++) {
+			for(int i = cp+1; i<commands.size(); i++) {
 
 				commands.remove(i);
 
@@ -53,9 +53,9 @@ public class CmdUndoRedo implements Command {
 
 		commands.add(o);
 
-		currentPosition = commands.size()-1;
+		cp = commands.size()-1;
 
-		System.out.println("Current je: " + currentPosition);
+		System.out.println("Current je: " + cp);
 
 
 		boolean exists = false;
@@ -99,10 +99,10 @@ public class CmdUndoRedo implements Command {
 			System.out.println("Error!");
 		}
 
-		if(currentPosition < commands.size()-1) {
+		if(cp < commands.size()-1) {
 
 
-			for(int i = currentPosition+1; i<commands.size(); i++) {
+			for(int i = cp+1; i<commands.size(); i++) {
 
 				commands.remove(i);
 
@@ -112,7 +112,7 @@ public class CmdUndoRedo implements Command {
 
 		commands.add(o);
 
-		currentPosition = commands.size()-1;
+		cp = commands.size()-1;
 
 
 
@@ -133,28 +133,25 @@ public class CmdUndoRedo implements Command {
 	@Override
 	public void execute() {
 
-		int size = commands.size()-1;
-		if(redo > 0) {
+		if(cp == -1) {
 
-			for(int i=size; i>=redo; i--) {
+			cmdAddShape.execute();
+			cp = 0;
+		} else if (cp >=0 && commands.size()-1 != cp) {
+			
+			if(commands.get(cp).equals(commands.get(cp+1))) {
 
-				model.getListaObjekata().get(model.getListaObjekata().indexOf(commands.get(i))).setSelektovan(false);
-				model.getUnselectedShapes().add(model.getListaObjekata().get(model.getListaObjekata().indexOf(commands.get(i))));
-
+				cmdUpdateShape.execute();
+				cp++;
+				
+				/*System.out.println(cmdUpdateShape.getOldState());
+				System.out.println(cmdUpdateShape.getOriginal());
+				System.out.println(cmdUpdateShape.getNewState());*/
+				/*cmdUpdateShape.setNewState(commands.get(cp));
+				model.getListaObjekata().set(model.getListaObjekata().indexOf(commands.get(cp)),commands.get(cp));*/
+				
 			}
-
-
-
 		}
-
-		redo = 0;
-
-
-
-
-
-
-
 
 	}
 
@@ -164,60 +161,88 @@ public class CmdUndoRedo implements Command {
 		System.out.println("Duzina liste undo je: " + commands.size());
 		System.out.println("Duzina liste nacrtaniih oblika je : " +  model.getListaObjekata().size());
 
-		if(currentPosition != -1) {
+		if(cp == 0) {
 
-			System.out.println("Trenutna pozicija je: " + currentPosition);
-			
-			if(model.getUnselectedShapes().isEmpty()==false) {
+			cmdAddShape.unexecute();
+			cp = -1;
+
+		} else if (cp != -1) {
+
+			System.out.println("Proveravam da li je isti kao prethodni");
+
+			if(commands.get(cp).equals(commands.get(cp-1))) {
+
+				cmdUpdateShape.unexecute();
+				cp--;
+				model.getListaObjekata().set(model.getListaObjekata().indexOf(commands.get(cp)),commands.get(cp));
+				//System.out.println(commands.get(cp));
+				if(cp > 0) {
+					
+					cmdUpdateShape.setOldState(commands.get(cp-1));
+				}
 				
+				/*System.out.println(commands.get(cp-1));
+				System.out.println(cmdUpdateShape.getOldState());
+				System.out.println(cmdUpdateShape.getOriginal());
+				System.out.println(cmdUpdateShape.getNewState());*/
+				
+			}
+		}
+
+		/*if(cp != -1) {
+
+			System.out.println("Trenutna pozicija je: " + cp);
+
+			if(model.getUnselectedShapes().isEmpty()==false) {
+
 				System.out.println("Broj selektovanih oblika je: " + model.getUnselectedShapes().size());
 				for(int i = 0; i<model.getUnselectedShapes().size(); i++) {
 
 					model.getUnselectedShapes().get(i).setSelektovan(true);
 				//kako ubaciti!!!!
-					
+
 				}
-			
-				
+
+
 			} else
 
-			if(currentPosition == 0) { // ako je prvi oblik u listi onda ga obrisi
+			if(cp == 0) { // ako je prvi oblik u listi onda ga obrisi
 
 				cmdAddShape.unexecute();
-				currentPosition = -1; 
+				cp = -1; 
 
-			} else if (commands.get(currentPosition).isSelektovan() == true &&  commands.get(currentPosition).equals(commands.get(currentPosition-1)) == false) {
-				
-				model.getListaObjekata().get(model.getListaObjekata().indexOf(commands.get(currentPosition))).setSelektovan(false);
-				currentPosition--;
-				
-				if(commands.get(currentPosition).isSelektovan() == true &&  commands.get(currentPosition).equals(commands.get(currentPosition-1)) == true) {
-					
-					cmdUpdateShape.setOldState(commands.get(currentPosition-1));
-					cmdUpdateShape.setOriginal(model.getListaObjekata().get(model.getListaObjekata().indexOf(commands.get(currentPosition))));
-					cmdUpdateShape.setNewState(commands.get(currentPosition+1));
+			} else if (commands.get(cp).isSelektovan() == true &&  commands.get(cp).equals(commands.get(cp-1)) == false) {
+
+				model.getListaObjekata().get(model.getListaObjekata().indexOf(commands.get(cp))).setSelektovan(false);
+				cp--;
+
+				if(commands.get(cp).isSelektovan() == true &&  commands.get(cp).equals(commands.get(cp-1)) == true) {
+
+					cmdUpdateShape.setOldState(commands.get(cp-1));
+					cmdUpdateShape.setOriginal(model.getListaObjekata().get(model.getListaObjekata().indexOf(commands.get(cp))));
+					cmdUpdateShape.setNewState(commands.get(cp+1));
 				}
-				
 
-			} else if(commands.get(currentPosition).isSelektovan() == false && commands.get(currentPosition).equals(commands.get(currentPosition-1)) == false) {
+
+			} else if(commands.get(cp).isSelektovan() == false && commands.get(cp).equals(commands.get(cp-1)) == false) {
 
 				System.out.println("Treba da se obrise!");
 				cmdAddShape.unexecute();
-				currentPosition--;
-				cmdAddShape.setShape(commands.get(currentPosition));
+				cp--;
+				cmdAddShape.setShape(commands.get(cp));
 
 
-			} else if(commands.get(currentPosition).isSelektovan() == true && commands.get(currentPosition-1).isSelektovan() == false){
-				
+			} else if(commands.get(cp).isSelektovan() == true && commands.get(cp-1).isSelektovan() == false){
+
 				System.out.println("Tretnuni oblik je selektovan!");
 				cmdUpdateShape.unexecute();
-				currentPosition--;
+				cp--;
 
-				if(currentPosition > 0)
+				if(cp > 0)
 
-				cmdUpdateShape.setOldState(commands.get(currentPosition-1));
-				cmdUpdateShape.setOriginal(model.getListaObjekata().get(model.getListaObjekata().indexOf(commands.get(currentPosition))));
-				cmdUpdateShape.setNewState(commands.get(currentPosition+1));
+				cmdUpdateShape.setOldState(commands.get(cp-1));
+				cmdUpdateShape.setOriginal(model.getListaObjekata().get(model.getListaObjekata().indexOf(commands.get(cp))));
+				cmdUpdateShape.setNewState(commands.get(cp+1));
 			}
 
 
@@ -225,12 +250,12 @@ public class CmdUndoRedo implements Command {
 
 
 
-			
 
 
 
 
-		}
+
+		}*/
 
 
 
@@ -239,32 +264,32 @@ public class CmdUndoRedo implements Command {
 		/*System.out.println("Broj odselektovanih oblika: " + model.getUnselectedShapes().size());
 
 
-		System.out.println("Current: " + currentPosition);
+		System.out.println("Current: " + cp);
 		System.out.println("Komandi ima: " + commands.size());
 
 
 		if(model.getUnselectedShapes().isEmpty() == true) {
 
-			if(currentPosition > 0 ) {
+			if(cp > 0 ) {
 
-				if(commands.get(currentPosition).equals(commands.get(currentPosition-1)) == true) {
+				if(commands.get(cp).equals(commands.get(cp-1)) == true) {
 
 					cmdUpdateShape.unexecute();
-					currentPosition--;
+					cp--;
 
-					if(currentPosition > 0) {
+					if(cp > 0) {
 
 
-						Oblik s =  model.getListaObjekata().get(model.getListaObjekata().indexOf(commands.get(currentPosition-1)));
-						if(commands.get(currentPosition).equals(commands.get(currentPosition-1)) == true) {
+						Oblik s =  model.getListaObjekata().get(model.getListaObjekata().indexOf(commands.get(cp-1)));
+						if(commands.get(cp).equals(commands.get(cp-1)) == true) {
 						 System.out.println("Ulazi ovde");
 
 							System.out.println(s); //true
-							System.out.println(commands.get(currentPosition)); //true
-							System.out.println(commands.get(currentPosition-1)); // false				
-							cmdUpdateShape.setOldState(commands.get(currentPosition-1));
+							System.out.println(commands.get(cp)); //true
+							System.out.println(commands.get(cp-1)); // false				
+							cmdUpdateShape.setOldState(commands.get(cp-1));
 							cmdUpdateShape.setOriginal(s);
-							cmdUpdateShape.setNewState(commands.get(currentPosition));
+							cmdUpdateShape.setNewState(commands.get(cp));
 
 
 						}  else {
@@ -281,12 +306,12 @@ public class CmdUndoRedo implements Command {
 
 				} else {
 
-					if(commands.get(currentPosition).isSelektovan() == true) {
+					if(commands.get(cp).isSelektovan() == true) {
 
-						if(currentPosition != -1) {
+						if(cp != -1) {
 
-							model.getListaObjekata().get(model.getListaObjekata().indexOf(commands.get(currentPosition))).setSelektovan(false);
-							currentPosition--;
+							model.getListaObjekata().get(model.getListaObjekata().indexOf(commands.get(cp))).setSelektovan(false);
+							cp--;
 
 
 						}
@@ -297,8 +322,8 @@ public class CmdUndoRedo implements Command {
 
 
 						cmdAddShape.unexecute();
-						currentPosition--;
-						cmdAddShape.setShape(commands.get(currentPosition));
+						cp--;
+						cmdAddShape.setShape(commands.get(cp));
 					}
 
 
@@ -307,7 +332,7 @@ public class CmdUndoRedo implements Command {
 
 				System.out.println("Ima jedan oblik");
 				cmdAddShape.unexecute();
-				currentPosition = -1;
+				cp = -1;
 
 			}
 
@@ -371,13 +396,13 @@ public class CmdUndoRedo implements Command {
 			System.out.println(commands.get(i));
 		}*/
 
-		/*if(currentPosition > 0) {
+		/*if(cp > 0) {
 
 			System.out.println("Ima prethodnika");
 
-			System.out.println(commands.get(currentPosition));
-			System.out.println(commands.get(currentPosition-1));
-			if(commands.get(currentPosition).equals(commands.get(currentPosition-1)) || commands.get(currentPosition).isSelektovan() == true) {
+			System.out.println(commands.get(cp));
+			System.out.println(commands.get(cp-1));
+			if(commands.get(cp).equals(commands.get(cp-1)) || commands.get(cp).isSelektovan() == true) {
 
 				System.out.println("Isti je sa prethodnikom, treba da se izvrsi modifikacija");
 
@@ -400,15 +425,15 @@ public class CmdUndoRedo implements Command {
 					System.out.println("Error!");
 				}
 
-				int index = model.getListaObjekata().indexOf(commands.get(currentPosition));
+				int index = model.getListaObjekata().indexOf(commands.get(cp));
 				model.getListaObjekata().set(index, original);
-				currentPosition--;
+				cp--;
 
 				Oblik oldState = null;
 				try {
 
 
-					oldState = (Oblik) commands.get(currentPosition-1).clone();
+					oldState = (Oblik) commands.get(cp-1).clone();
 
 
 				} catch (CloneNotSupportedException e) {
@@ -420,7 +445,7 @@ public class CmdUndoRedo implements Command {
 				try {
 
 
-					newState = (Oblik) commands.get(currentPosition).clone();
+					newState = (Oblik) commands.get(cp).clone();
 
 
 				} catch (CloneNotSupportedException e) {
@@ -439,8 +464,8 @@ public class CmdUndoRedo implements Command {
 
 
 					cmdAddShape.unexecute();
-					currentPosition--;
-					cmdAddShape.setShape(commands.get(currentPosition));
+					cp--;
+					cmdAddShape.setShape(commands.get(cp));
 
 
 				}
@@ -455,7 +480,7 @@ public class CmdUndoRedo implements Command {
 
 			System.out.println("Ima samo jedan oblik i treba da se obrise");
 			cmdAddShape.unexecute();
-			currentPosition = -1;
+			cp = -1;
 		}*/
 
 
@@ -463,15 +488,15 @@ public class CmdUndoRedo implements Command {
 
 
 
-		/*if(currentPosition > 0) { //ima prethodnika
+		/*if(cp > 0) { //ima prethodnika
 
-			System.out.println(commands.get(currentPosition));
-			System.out.println(commands.get(currentPosition-1));
-			if(commands.get(currentPosition).equals(commands.get(currentPosition-1))) {
+			System.out.println(commands.get(cp));
+			System.out.println(commands.get(cp-1));
+			if(commands.get(cp).equals(commands.get(cp-1))) {
 
 				System.out.println("Isti su, treba da se modifikuje");
 				cmdUpdateShape.unexecute();
-				int indeks = model.getListaObjekata().indexOf(commands.get(currentPosition)); //pronadjem u listi onaj koji treba da izmenim
+				int indeks = model.getListaObjekata().indexOf(commands.get(cp)); //pronadjem u listi onaj koji treba da izmenim
 				Oblik help = null;
 				try {
 
@@ -486,11 +511,11 @@ public class CmdUndoRedo implements Command {
 
 				model.getListaObjekata().set(indeks, help);
 
-				currentPosition--;
+				cp--;
 
-				if(currentPosition > 0) {
+				if(cp > 0) {
 
-					cmdUpdateShape = new CmdUpdateShape(commands.get(currentPosition-1),commands.get(currentPosition));
+					cmdUpdateShape = new CmdUpdateShape(commands.get(cp-1),commands.get(cp));
 					cmdUpdateShape.execute();
 				}
 
@@ -501,7 +526,7 @@ public class CmdUndoRedo implements Command {
 
 				System.out.println("Nisu isti, treba da se obriše");
 				cmdAddShape.unexecute();
-				currentPosition--;
+				cp--;
 			}
 
 
@@ -509,30 +534,30 @@ public class CmdUndoRedo implements Command {
 
 			System.out.println("Postoji samo jedan oblik!");
 			cmdAddShape.unexecute();
-			currentPosition--;
+			cp--;
 		}*/
 
 
 
 
-		/*if(currentPosition >  0) {
+		/*if(cp >  0) {
 
 
-			if(commands.get(currentPosition).equals(commands.get(currentPosition-1)) == false && commands.get(currentPosition-1).isSelektovan() == false) {
+			if(commands.get(cp).equals(commands.get(cp-1)) == false && commands.get(cp-1).isSelektovan() == false) {
 
 				System.out.println("Nisu isti i nisu selektovani!");
 				cmdAddShape.unexecute();
-				currentPosition--;
-				cmdAddShape.setShape(commands.get(currentPosition));
+				cp--;
+				cmdAddShape.setShape(commands.get(cp));
 
 
-			} else if(commands.get(currentPosition).equals(commands.get(currentPosition-1)) == false && commands.get(currentPosition-1).isSelektovan() == true) {
+			} else if(commands.get(cp).equals(commands.get(cp-1)) == false && commands.get(cp-1).isSelektovan() == true) {
 
 				System.out.println("Odeselektuj");
-				currentPosition--;
+				cp--;
 
 
-			}  else if (commands.get(currentPosition).equals(commands.get(currentPosition-1)) == true && commands.get(currentPosition-1).isSelektovan() == true) {
+			}  else if (commands.get(cp).equals(commands.get(cp-1)) == true && commands.get(cp-1).isSelektovan() == true) {
 
 
 				System.out.println("Ovde je pocela");
@@ -543,7 +568,7 @@ public class CmdUndoRedo implements Command {
 				try {
 
 
-					l = (Oblik) commands.get(currentPosition).clone();
+					l = (Oblik) commands.get(cp).clone();
 
 
 				} catch (CloneNotSupportedException e) {
@@ -567,11 +592,11 @@ public class CmdUndoRedo implements Command {
 
 				model.getListaObjekata().set(index, o);
 
-				currentPosition--;
+				cp--;
 
-				if(currentPosition > 0) {//ima prethodnika
+				if(cp > 0) {//ima prethodnika
 
-					cmdUpdateShape = new CmdUpdateShape(commands.get(currentPosition-1),commands.get(currentPosition));
+					cmdUpdateShape = new CmdUpdateShape(commands.get(cp-1),commands.get(cp));
 					cmdUpdateShape.execute();
 
 
@@ -580,13 +605,13 @@ public class CmdUndoRedo implements Command {
 
 				System.out.println("Ovde se zavrsila");
 
-				cmdAddShape.setShape(commands.get(currentPosition));
+				cmdAddShape.setShape(commands.get(cp));
 
 			} else {
 
 				cmdAddShape.unexecute();
-				currentPosition--;
-				cmdAddShape.setShape(commands.get(currentPosition));
+				cp--;
+				cmdAddShape.setShape(commands.get(cp));
 			}
 
 
@@ -600,7 +625,7 @@ public class CmdUndoRedo implements Command {
 			}
 			cmdAddShape.unexecute();
 
-			currentPosition = -1;
+			cp = -1;
 
 		}*/
 
