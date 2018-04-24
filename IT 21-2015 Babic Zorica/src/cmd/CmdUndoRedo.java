@@ -13,6 +13,7 @@ public class CmdUndoRedo implements Command {
 	private Model model = new Model();
 	private CmdAddShape cmdAddShape;
 	private CmdUpdateShape cmdUpdateShape;
+	private CmdRemoveShape cmdRemoveShape;
 	private int redo = 0;
 
 
@@ -23,6 +24,7 @@ public class CmdUndoRedo implements Command {
 	public CmdUndoRedo(Model model) {
 
 		this.model = model;
+		cmdRemoveShape = new CmdRemoveShape(model);
 	}
 
 	public void add(Oblik s) {
@@ -132,24 +134,78 @@ public class CmdUndoRedo implements Command {
 
 	@Override
 	public void execute() {
+		
+		System.out.println("Trenutni INDEX JE: " + cp);
 
 		if(cp == -1) {
 
 			cmdAddShape.execute();
 			cp = 0;
+			if(commands.size() > 1) {
+
+				cmdAddShape.setShape(commands.get(cp+1));
+			}
+
+
 		} else if (cp >=0 && commands.size()-1 != cp) {
-			
+
 			if(commands.get(cp).equals(commands.get(cp+1))) {
 
+				System.out.println("Isti su!");
 				cmdUpdateShape.execute();
+
 				cp++;
+
+				Oblik s = Controller.CopyShape(commands.get(cp));
+				model.getListaObjekata().set(model.getListaObjekata().indexOf(s),s);
+
+
+
+
+
+			} else {
 				
-				/*System.out.println(cmdUpdateShape.getOldState());
-				System.out.println(cmdUpdateShape.getOriginal());
-				System.out.println(cmdUpdateShape.getNewState());*/
-				/*cmdUpdateShape.setNewState(commands.get(cp));
-				model.getListaObjekata().set(model.getListaObjekata().indexOf(commands.get(cp)),commands.get(cp));*/
+				System.out.println("Nisu isti");
 				
+				if(commands.get(cp+1).isSelektovan() == true && commands.get(cp).isSelektovan() == true) {
+					
+					System.out.println("Ulazi");
+					Oblik s = Controller.CopyShape(commands.get(cp+1));
+					model.getListaObjekata().set(model.getListaObjekata().indexOf(s),s);
+					cp++;
+					
+					cmdUpdateShape.setNewState(commands.get(cp));
+					Oblik old = Controller.CopyShape(commands.get(cp));
+					old.setSelektovan(false);
+					cmdUpdateShape.setOriginal(commands.get(cp));
+					cmdUpdateShape.setOldState(old);
+
+					
+					
+					
+					
+					
+					
+				} else if(commands.get(cp+1).isSelektovan() == true && commands.get(cp).isSelektovan() == false) {
+					
+
+					
+				} else {
+					
+					cmdAddShape.execute();
+					
+					cp++;
+
+					if(commands.size()-1 > cp){
+
+						cmdAddShape.setShape(commands.get(cp+1));
+					}
+				}
+				
+
+
+
+			
 			}
 		}
 
@@ -161,7 +217,92 @@ public class CmdUndoRedo implements Command {
 		System.out.println("Duzina liste undo je: " + commands.size());
 		System.out.println("Duzina liste nacrtaniih oblika je : " +  model.getListaObjekata().size());
 
+
+
 		if(cp == 0) {
+
+			cmdAddShape.unexecute();
+			cp = -1;
+			cmdAddShape.setShape(commands.get(0));
+
+		} else if (cp >0) {
+
+			//proveravam da li mu je prethodnoik isti
+			if(commands.get(cp).equals(commands.get(cp-1))) {
+
+				cmdUpdateShape.unexecute();
+				cp--;
+
+				Oblik s = Controller.CopyShape(commands.get(cp));
+				model.getListaObjekata().set(model.getListaObjekata().indexOf(s),s);
+
+
+
+
+
+
+			} else {
+
+				if(commands.get(cp-1).isSelektovan() == true && commands.get(cp).isSelektovan()) {
+
+
+					cmdUpdateShape.unexecute();
+
+					Oblik s = Controller.CopyShape(cmdUpdateShape.getOriginal());
+					model.getListaObjekata().set(model.getListaObjekata().indexOf(s),s);
+
+					
+					
+					cp--;
+					
+					cmdUpdateShape.setNewState(commands.get(cp));
+					Oblik old = Controller.CopyShape(commands.get(cp));
+					old.setSelektovan(false);
+					cmdUpdateShape.setOriginal(commands.get(cp));
+					cmdUpdateShape.setOldState(old);
+
+					
+					
+
+
+
+				} else if(commands.get(cp-1).isSelektovan() == false && commands.get(cp).isSelektovan()) {
+
+
+					cmdUpdateShape.unexecute();
+					Oblik s = Controller.CopyShape(cmdUpdateShape.getOriginal());
+					model.getListaObjekata().set(model.getListaObjekata().indexOf(s),s);
+					
+					
+					cp--;
+					
+					cmdUpdateShape.setNewState(commands.get(cp));
+					Oblik old = Controller.CopyShape(commands.get(cp));
+					old.setSelektovan(false);
+					cmdUpdateShape.setOriginal(commands.get(cp));
+					cmdUpdateShape.setOldState(old);
+					
+					
+
+				
+
+
+				}else {
+					cmdAddShape.unexecute();
+					cp--;
+					cmdAddShape.setShape(commands.get(cp));
+
+				}
+
+
+
+			}
+
+		}
+
+
+
+		/*if(cp == 0) {
 
 			cmdAddShape.unexecute();
 			cp = -1;
@@ -177,17 +318,17 @@ public class CmdUndoRedo implements Command {
 				model.getListaObjekata().set(model.getListaObjekata().indexOf(commands.get(cp)),commands.get(cp));
 				//System.out.println(commands.get(cp));
 				if(cp > 0) {
-					
+
 					cmdUpdateShape.setOldState(commands.get(cp-1));
 				}
-				
+
 				/*System.out.println(commands.get(cp-1));
 				System.out.println(cmdUpdateShape.getOldState());
 				System.out.println(cmdUpdateShape.getOriginal());
-				System.out.println(cmdUpdateShape.getNewState());*/
-				
-			}
-		}
+				System.out.println(cmdUpdateShape.getNewState());
+
+
+		}*/
 
 		/*if(cp != -1) {
 

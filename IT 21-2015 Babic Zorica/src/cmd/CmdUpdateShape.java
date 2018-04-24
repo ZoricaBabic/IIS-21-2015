@@ -4,6 +4,7 @@ package cmd;
 
 import java.awt.Color;
 
+import crtanje.Controller;
 import crtanje.Model;
 import geometrija.HexagonAdapter;
 import geometrija.Krug;
@@ -19,7 +20,7 @@ public class CmdUpdateShape implements Command {
 	private Oblik original;
 	private Oblik newState;
 	private Oblik oldState;
-	private Model model = new Model();
+	private Model model;
 
 	public CmdUpdateShape(Oblik original,Oblik newState) {
 
@@ -187,17 +188,8 @@ public class CmdUpdateShape implements Command {
 		
 			
 			
-
 			
-
-
-
-
-
-
-
-
-
+		
 
 
 		} else if(original instanceof Pravougaonik) {

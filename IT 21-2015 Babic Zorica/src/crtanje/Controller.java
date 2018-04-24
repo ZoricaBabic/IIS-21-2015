@@ -60,6 +60,7 @@ public class Controller {
 
 		button = new Button(frame);
 		cmdUndoRedo = new CmdUndoRedo(model);
+		
 
 
 	} 
@@ -1363,7 +1364,7 @@ public class Controller {
 
 	}
 
-	public Oblik CopyShape(Oblik s) {
+	public static Oblik CopyShape(Oblik s) {
 
 
 		Oblik o = null;

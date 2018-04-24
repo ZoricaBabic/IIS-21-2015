@@ -16,6 +16,12 @@ public class CmdRemoveShape implements Command {
 		this.model = model;
 		this.o = o;
 	}
+	
+	public CmdRemoveShape(Model model) {
+
+		this.model = model;
+		
+	}
 
 	@Override
 	public void execute() {
