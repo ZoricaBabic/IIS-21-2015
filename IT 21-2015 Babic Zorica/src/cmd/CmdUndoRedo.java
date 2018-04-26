@@ -134,7 +134,7 @@ public class CmdUndoRedo implements Command {
 
 	@Override
 	public void execute() {
-		
+
 		System.out.println("Trenutni INDEX JE: " + cp);
 
 		if(cp == -1) {
@@ -147,7 +147,7 @@ public class CmdUndoRedo implements Command {
 			}
 
 
-		} else if (cp >=0 && commands.size()-1 != cp) {
+		} else if (cp >=0 && commands.size()-1 != cp) { // ako nije poslednji
 
 			if(commands.get(cp).equals(commands.get(cp+1))) {
 
@@ -164,48 +164,69 @@ public class CmdUndoRedo implements Command {
 
 
 			} else {
-				
+
 				System.out.println("Nisu isti");
-				
+				for(int i=0; i<commands.size(); i++) {
+
+					System.out.println(commands.get(i));
+				}
+
+				System.out.println("Trenutni je:" + commands.get(cp));
+				System.out.println("na update je: " + cmdUpdateShape.getOriginal());
+
+
 				if(commands.get(cp+1).isSelektovan() == true && commands.get(cp).isSelektovan() == true) {
-					
+
 					System.out.println("Ulazi");
 					Oblik s = Controller.CopyShape(commands.get(cp+1));
 					model.getListaObjekata().set(model.getListaObjekata().indexOf(s),s);
 					cp++;
-					
-					cmdUpdateShape.setNewState(commands.get(cp));
+
+					Oblik u = Controller.CopyShape(commands.get(cp));
+					cmdUpdateShape.setNewState(u);
 					Oblik old = Controller.CopyShape(commands.get(cp));
 					old.setSelektovan(false);
-					cmdUpdateShape.setOriginal(commands.get(cp));
+					cmdUpdateShape.setOriginal(u);
 					cmdUpdateShape.setOldState(old);
+					
+	
 
-					
-					
-					
-					
-					
-					
 				} else if(commands.get(cp+1).isSelektovan() == true && commands.get(cp).isSelektovan() == false) {
-					
 
-					
-				} else {
-					
-					cmdAddShape.execute();
-					
+
+					System.out.println("Da li ovde ulaziiiiiiiiiiiiiiiiiiiiiii");
+					Oblik s = Controller.CopyShape(commands.get(cp+1));
+					model.getListaObjekata().set(model.getListaObjekata().indexOf(s),s);
 					cp++;
 
-					if(commands.size()-1 > cp){
+					Oblik u = Controller.CopyShape(commands.get(cp));
+					cmdUpdateShape.setNewState(u);
+					Oblik old = Controller.CopyShape(commands.get(cp));
+					old.setSelektovan(false);
+					cmdUpdateShape.setOriginal(u);
+					cmdUpdateShape.setOldState(old);
+					
+
+				} else {
+					
+					Oblik u = Controller.CopyShape(commands.get(cp+1));
+					cmdAddShape.setShape(u);
+					cmdAddShape.execute();
+
+					cp++;
+
+					/*if(commands.size()-1 > cp){
 
 						cmdAddShape.setShape(commands.get(cp+1));
-					}
+					}*/
+					
+					
 				}
-				
 
 
 
-			
+
+
 			}
 		}
 
@@ -213,6 +234,11 @@ public class CmdUndoRedo implements Command {
 
 	@Override
 	public void unexecute() {
+		
+		for(int i=0; i<commands.size(); i++) {
+
+			System.out.println(commands.get(i));
+		}
 
 		System.out.println("Duzina liste undo je: " + commands.size());
 		System.out.println("Duzina liste nacrtaniih oblika je : " +  model.getListaObjekata().size());
@@ -243,7 +269,7 @@ public class CmdUndoRedo implements Command {
 
 			} else {
 
-				if(commands.get(cp-1).isSelektovan() == true && commands.get(cp).isSelektovan()) {
+				if(commands.get(cp-1).isSelektovan() == true && commands.get(cp).isSelektovan() == true) {
 
 
 					cmdUpdateShape.unexecute();
@@ -251,43 +277,47 @@ public class CmdUndoRedo implements Command {
 					Oblik s = Controller.CopyShape(cmdUpdateShape.getOriginal());
 					model.getListaObjekata().set(model.getListaObjekata().indexOf(s),s);
 
-					
-					
+
+
 					cp--;
-					
-					cmdUpdateShape.setNewState(commands.get(cp));
+
+					Oblik u = Controller.CopyShape(commands.get(cp));
+					cmdUpdateShape.setNewState(u);
 					Oblik old = Controller.CopyShape(commands.get(cp));
 					old.setSelektovan(false);
-					cmdUpdateShape.setOriginal(commands.get(cp));
+					cmdUpdateShape.setOriginal(u);
 					cmdUpdateShape.setOldState(old);
 
-					
-					
 
 
 
-				} else if(commands.get(cp-1).isSelektovan() == false && commands.get(cp).isSelektovan()) {
+
+
+				} else if(commands.get(cp-1).isSelektovan() == false && commands.get(cp).isSelektovan() == true) {
 
 
 					cmdUpdateShape.unexecute();
 					Oblik s = Controller.CopyShape(cmdUpdateShape.getOriginal());
 					model.getListaObjekata().set(model.getListaObjekata().indexOf(s),s);
-					
-					
+
+
 					cp--;
-					
-					cmdUpdateShape.setNewState(commands.get(cp));
+
+					Oblik u = Controller.CopyShape(commands.get(cp));
+					cmdUpdateShape.setNewState(u);
 					Oblik old = Controller.CopyShape(commands.get(cp));
 					old.setSelektovan(false);
-					cmdUpdateShape.setOriginal(commands.get(cp));
+					cmdUpdateShape.setOriginal(u);
 					cmdUpdateShape.setOldState(old);
-					
-					
 
-				
+
+
+
 
 
 				}else {
+					
+					System.out.println("koji je na redu?");
 					cmdAddShape.unexecute();
 					cp--;
 					cmdAddShape.setShape(commands.get(cp));
