@@ -14,6 +14,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingConstants;
+
+import cmd.CmdUpdateShape;
+
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
@@ -34,6 +37,7 @@ public class App {
 		NaslovnaPokretanje frame = new NaslovnaPokretanje();
 		frame.getView().setModel(model);
 		Controller controller = new Controller(model, frame);
+		CmdUpdateShape.model = model;
 		/*Button button = new Button(frame);
 		button.addObserver(frame.getBtnModifikuj());
 		button.addObserver(frame.getBtnObrisi());

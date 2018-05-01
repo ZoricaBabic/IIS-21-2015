@@ -25,6 +25,7 @@ public class Model {
 	Stack <Oblik> stackUndo = new Stack<Oblik>();
 	Stack <Oblik> stackRedo = new Stack<Oblik>();
 	ArrayList <Oblik> unselectedShapes = new ArrayList<Oblik>();
+	private ArrayList<Oblik> commands = new ArrayList<Oblik> ();
 	
 	
 
@@ -62,11 +63,8 @@ public class Model {
 
 	public void add(Oblik s) {
 
-
-		/*int endOfList = listaObjekata.size();
-        listaObjekata.add(endOfList, s);*/
-
 		listaObjekata.add(s);
+		commands.add(s);
 	}
 	public Oblik get(int i) {
 
@@ -115,62 +113,26 @@ public class Model {
 	
 	
 
-
-	
-
-	
-
-
-	/*public void addToStack(Oblik s) {
-
-		stekSelekcija.push(s);
-	}
-
-	public void removeFromStack() {
-
-		stekSelekcija.pop();
-	}
-
-	public boolean stackIsEmpty() {
-
-		return stekSelekcija.isEmpty();
-	}
-
-	public Oblik stackPeek() {
-
-		return stekSelekcija.peek();
-	}
-
-	public void removeAll() {
-
-		stekSelekcija.removeAllElements();
-	}
-
-	public void addToListSelection(Oblik s) {
-
-		listaSelekcija.add(s);
-
-
-	}*/
-
-	/*public void removeAllFromListSelection() {
-
-		listaSelekcija.removeAll(listaSelekcija);
-	}*/
-
-
 	public ArrayList<Oblik> getListaObjekata() {
 		return listaObjekata;
 	}
 	public void setListaObjekata(ArrayList<Oblik> listaObjekata) {
 		this.listaObjekata = listaObjekata;
 	}
-	/*public Stack<Oblik> getStekSelekcija() {
-		return stekSelekcija;
-	}
-	public void setStekSelekcija(Stack<Oblik> stekSelekcija) {
-		this.stekSelekcija = stekSelekcija;
-	}*/
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
 
 	public int getX() {
 		return x;
@@ -407,6 +369,12 @@ public class Model {
 	}
 	public void setUnselectedShapes(ArrayList<Oblik> unselectedShapes) {
 		this.unselectedShapes = unselectedShapes;
+	}
+	public ArrayList<Oblik> getCommands() {
+		return commands;
+	}
+	public void setCommands(ArrayList<Oblik> commands) {
+		this.commands = commands;
 	}
 
 

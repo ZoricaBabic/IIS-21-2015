@@ -20,7 +20,7 @@ public class CmdUpdateShape implements Command {
 	private Oblik original;
 	private Oblik newState;
 	private Oblik oldState;
-	private Model model;
+	public static Model model;
 
 	public CmdUpdateShape(Oblik original,Oblik newState) {
 
@@ -29,18 +29,18 @@ public class CmdUpdateShape implements Command {
 		this.newState = newState;
 
 	}
-	
+
 	public CmdUpdateShape() {
-		
-		
+
+
 	}
 
 	@Override
 	public void execute() {
 
 		if(original instanceof Tacka) {
-			
-			
+
+
 			oldState = new Tacka();
 
 			((Tacka) oldState).setX(((Tacka) original).getX());
@@ -86,10 +86,17 @@ public class CmdUpdateShape implements Command {
 			original.setBojaIvice(newState.getBojaIvice());
 			((Krug) original).setBojaUnutrasnjosti(((Krug) newState).getBojaUnutrasnjosti());
 			original.setSelektovan(newState.isSelektovan());
-			
-			
 
-			
+
+
+
+			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
+
+
+
+
+
+
 
 		} else if(original instanceof Pravougaonik) {
 
@@ -135,19 +142,19 @@ public class CmdUpdateShape implements Command {
 			original.setSelektovan(newState.isSelektovan());
 
 		} else if (original instanceof HexagonAdapter) {
-			
 
-		oldState = new HexagonAdapter(new Tacka(((HexagonAdapter) original).getHexagon().getX(),((HexagonAdapter) original).getHexagon().getY()), 
-							((HexagonAdapter) original).getHexagon().getR(),((HexagonAdapter) original).getHexagon().getAreaColor(),((HexagonAdapter) original).getHexagon().getBorderColor());
-		
-		((HexagonAdapter) oldState).getHexagon().setSelected(((HexagonAdapter) original).getHexagon().isSelected());
-		((HexagonAdapter) original).getHexagon().setX(((HexagonAdapter) newState).getHexagon().getX());
-		((HexagonAdapter) original).getHexagon().setY(((HexagonAdapter) newState).getHexagon().getY());
-		((HexagonAdapter) original).getHexagon().setR(((HexagonAdapter) newState).getHexagon().getR());
-		((HexagonAdapter) original).getHexagon().setAreaColor(((HexagonAdapter) newState).getHexagon().getAreaColor());
-		((HexagonAdapter) original).getHexagon().setBorderColor(((HexagonAdapter) newState).getHexagon().getBorderColor());
-		((HexagonAdapter) original).getHexagon().setSelected(((HexagonAdapter) newState).getHexagon().isSelected());
-		
+
+			oldState = new HexagonAdapter(new Tacka(((HexagonAdapter) original).getHexagon().getX(),((HexagonAdapter) original).getHexagon().getY()), 
+					((HexagonAdapter) original).getHexagon().getR(),((HexagonAdapter) original).getHexagon().getAreaColor(),((HexagonAdapter) original).getHexagon().getBorderColor());
+
+			((HexagonAdapter) oldState).getHexagon().setSelected(((HexagonAdapter) original).getHexagon().isSelected());
+			((HexagonAdapter) original).getHexagon().setX(((HexagonAdapter) newState).getHexagon().getX());
+			((HexagonAdapter) original).getHexagon().setY(((HexagonAdapter) newState).getHexagon().getY());
+			((HexagonAdapter) original).getHexagon().setR(((HexagonAdapter) newState).getHexagon().getR());
+			((HexagonAdapter) original).getHexagon().setAreaColor(((HexagonAdapter) newState).getHexagon().getAreaColor());
+			((HexagonAdapter) original).getHexagon().setBorderColor(((HexagonAdapter) newState).getHexagon().getBorderColor());
+			((HexagonAdapter) original).getHexagon().setSelected(((HexagonAdapter) newState).getHexagon().isSelected());
+
 
 		}
 
@@ -175,9 +182,9 @@ public class CmdUpdateShape implements Command {
 			original.setSelektovan(oldState.isSelektovan());
 
 		} else if(original instanceof Krug) {
-			
-		
-			
+
+
+
 			((Krug) original).setCentar(((Krug) oldState).getCentar());
 			((Krug) original).setR(((Krug) oldState).getR());
 			((Krug) original).setBojaIvice(oldState.getBojaIvice());
@@ -185,11 +192,14 @@ public class CmdUpdateShape implements Command {
 			original.setSelektovan(oldState.isSelektovan());
 			
 			
-		
-			
-			
-			
-		
+			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
+
+
+
+
+
+
+
 
 
 		} else if(original instanceof Pravougaonik) {
@@ -225,7 +235,7 @@ public class CmdUpdateShape implements Command {
 
 
 		} else if(original instanceof HexagonAdapter) {
-			
+
 			((HexagonAdapter) original).setCentar(((HexagonAdapter) oldState).getCentar());
 			((HexagonAdapter) original).getHexagon().setR(((HexagonAdapter) oldState).getHexagon().getR());
 			((HexagonAdapter) original).setBojaIvice(oldState.getBojaIvice());
@@ -264,9 +274,10 @@ public class CmdUpdateShape implements Command {
 		return model;
 	}
 
-	public void setModel(Model model) {
-		this.model = model;
+	public static void setModel(Model model) {
+		model = model;
 	}
+
 
 
 
