@@ -48,6 +48,7 @@ public class Controller {
 	private Oblik previouslySelectedShape;
 	private boolean n = false;
 	//private CmdUndoRedo cmdUndoRedo;
+	private ArrayList<Oblik> selectedShapes = new ArrayList<Oblik>();
 
 	//private CmdUndo undoRedo;
 
@@ -622,10 +623,11 @@ public class Controller {
 		if(model.getOdabranOblik() == ""){
 
 
-			int m=0;
-
+			
+			int m =0;
 			for(int i=0; i<model.getListaObjekata().size(); i++) {
-
+				
+				
 				//selektovanje oblika na koji je kliknut
 				if(model.getListaObjekata().get(i).sadrzi(x, y)){
 
@@ -671,27 +673,38 @@ public class Controller {
 							cmdUpdate.execute(); 
 							cmdUndoRedo1.addToCommandList(cmdUpdate);
 							//model.getCommands().add(s);
-							frame.getTextArea().append(s.toString() +"\n");
+							frame.getTextArea().append("Selected: " + s.toString() +"\n");
 							
 						} else {
 							
+							if(m==1) {
+								
+								System.out.println("Već neki sadrži");
+							} else {
+								
+								Oblik q = CopyShape(model.getListaObjekata().get(i));
+								m++;
+								System.out.println(q);
+								
+								Oblik s = CopyShape(model.getListaObjekata().get(i));
+								s.setSelektovan(true);
+								
+								System.out.println(q.toString());
+								System.out.println(s.toString());
+							
+								//model.addToStackUndo(s);
+								CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
+								cmdUpdate.execute(); 
+								cmdUndoRedo1.addToCommandList(cmdUpdate);
+								//model.getCommands().add(s);
+								frame.getTextArea().append("Selected: " + s.toString() +"\n");
+								
+								selectedShapes.add(s);
+							}
+							
 
-							Oblik q = CopyShape(model.getListaObjekata().get(i));
-							m++;
-							System.out.println(q);
 							
-							Oblik s = CopyShape(model.getListaObjekata().get(i));
-							s.setSelektovan(true);
 							
-							System.out.println(q.toString());
-							System.out.println(s.toString());
-						
-							//model.addToStackUndo(s);
-							CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
-							cmdUpdate.execute(); 
-							cmdUndoRedo1.addToCommandList(cmdUpdate);
-							//model.getCommands().add(s);
-							frame.getTextArea().append(s.toString() +"\n");
 						}
 						
 
@@ -700,22 +713,27 @@ public class Controller {
 						button.setStatus(true);
 						frame.getBtnRedo().setEnabled(false);
 						
-
-
-
-						if(m>1) { // sleketovanje poslednje nacrtanog
-
+						
+						/*if(m>1) { // sleketovanje poslednje nacrtanog
+							
+							System.out.println("Selektovano je vise oblika!");
+						
 
 							for(int k=0; k<model.getListaObjekata().size(); k++) {
 
-								if(!model.getListaObjekata().get(k).equals(model.getLastShapeOnStackUndo())) {
+								if(!model.getListaObjekata().get(k).equals(cmdUndoRedo1.getUndo().peek())) {
 
 									model.getListaObjekata().get(k).setSelektovan(false);
 									frame.getTextArea().append(model.getListaObjekata().get(k) +"\n"); //KAD SE ODSELEKTUJEE!
 
 								}
 							}
-						} 
+						} */
+						
+
+
+
+						 
 					}
 
 
@@ -739,22 +757,7 @@ public class Controller {
 
 				for(Oblik o: model.getListaObjekata()) {
 
-					/*if(o instanceof HexagonAdapter) {
-
-						
-						Oblik q = CopyShape(o);
-						m++;
-						Oblik s = CopyShape(o);
-						s.setSelektovan(false);
-						
-						//model.addToStackUndo(s);
-						CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
-						cmdUpdate.execute(); 
-						cmdUndoRedo1.addToCommandList(cmdUpdate);
-						//((HexagonAdapter) o).unselect();
-					} *///premestiti drugačije!
-
-					//cmdUndoRedo.add(CopyShape(o));
+				
 					
 					Oblik q = CopyShape(o);
 					m++;
@@ -768,7 +771,7 @@ public class Controller {
 					
 					
 
-					frame.getTextArea().append(o.toString() +"\n");
+					frame.getTextArea().append("Deselected " + s.toString() +"\n");
 					button.setStatus(false);
 
 				}
@@ -815,7 +818,7 @@ public class Controller {
 					CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
 					cmdUpdate.execute(); 
 					cmdUndoRedo1.addToCommandList(cmdUpdate);
-					frame.getTextArea().append(s.toString() +"\n");
+					frame.getTextArea().append("Deselected " + s.toString() +"\n");
 					
 				} else {
 					
@@ -830,7 +833,7 @@ public class Controller {
 						cmdUpdate.execute(); 
 						cmdUndoRedo1.addToCommandList(cmdUpdate);
 						//model.getCommands().add(s);
-						frame.getTextArea().append(s.toString() +"\n");
+						frame.getTextArea().append("Deselected " + s.toString() +"\n");
 					}
 				}
 				
@@ -840,21 +843,7 @@ public class Controller {
 			}
 		
 			
-			/*for(Oblik o: model.getListaObjekata()) {
-
-				if(o instanceof HexagonAdapter) {
-
-					((HexagonAdapter) o).unselect();
-				} //premestiti drugačije!
-
-				//cmdUndoRedo.add(CopyShape(o));
-				o.setSelektovan(false);
-				
-
-				frame.getTextArea().append(o.toString() +"\n");
-				button.setStatus(false);
-
-			}*/
+			
 		}
 
 
@@ -1262,6 +1251,7 @@ public class Controller {
 	//UNDO
 	public void undo() {
 		
+		
 		if(!cmdUndoRedo1.getUndo().isEmpty()) {
 			
 			cmdUndoRedo1.execute();
@@ -1299,23 +1289,6 @@ public class Controller {
 		
 	
 		
-		/*if(cmdUndoRedo1.getCurrentPosition() == cmdUndoRedo1.getCommandList().size()-1) {
-			
-			frame.getBtnRedo().setEnabled(false);
-		} else {
-			
-			frame.getBtnRedo().setEnabled(true);
-			frame.getBtnUndo().setEnabled(true);
-		}*/
-		
-		
-		
-		
-		
-		
-		
-		
-	
 		
 		
 
@@ -1324,6 +1297,7 @@ public class Controller {
 
 	}
 
+	
 	
 	public void moveToFront() {
 
@@ -1338,8 +1312,8 @@ public class Controller {
 
 					Collections.swap(model.getListaObjekata(), i, i+1); 
 					i=model.getListaObjekata().size();
-
-
+					frame.getTextArea().append("Move to front: " + model.getListaObjekata().get(i) +"\n");
+					
 
 				}
 
@@ -1368,6 +1342,7 @@ public class Controller {
 
 					Collections.swap(model.getListaObjekata(), i, model.getListaObjekata().size()-1); 
 					i=model.getListaObjekata().size();
+					frame.getTextArea().append("Bring to front: " + model.getListaObjekata().get(i) +"\n");
 
 
 				}
@@ -1392,6 +1367,7 @@ public class Controller {
 				if(i>0) {
 
 					Collections.swap(model.getListaObjekata(), i, i-1); 
+					frame.getTextArea().append("Move to back: " + model.getListaObjekata().get(i) +"\n");
 
 				}
 
@@ -1417,6 +1393,7 @@ public class Controller {
 
 					Collections.swap(model.getListaObjekata(), i, 0); 
 					i=0;
+					frame.getTextArea().append("Bring to back: " + model.getListaObjekata().get(i) +"\n");
 
 
 				}
