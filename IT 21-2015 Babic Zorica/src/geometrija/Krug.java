@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Krug extends PovrsinskiOblik implements Pomerljiv{
+	
+	
 	private Tacka centar;
 	private int r;
 	
@@ -70,6 +72,7 @@ public class Krug extends PovrsinskiOblik implements Pomerljiv{
 			return false;
 	}
 	public boolean sadrzi(int x, int y){
+		
 		Tacka mestoKlika = new Tacka(x, y);
 		if(mestoKlika.udaljenost(centar)<=r)
 			return true;
@@ -77,6 +80,7 @@ public class Krug extends PovrsinskiOblik implements Pomerljiv{
 			return false;
 		
 	}
+	
 	public void selektovan(Graphics g) {
 		
 		g.setColor(Color.BLUE);

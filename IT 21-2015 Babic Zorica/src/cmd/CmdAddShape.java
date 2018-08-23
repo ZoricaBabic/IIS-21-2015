@@ -22,9 +22,6 @@ public class CmdAddShape implements Command {
 		model.add(o);
 		
 		
-	
-		
-		
 	}
 
 	@Override
@@ -37,7 +34,7 @@ public class CmdAddShape implements Command {
 	
 	}
 
-
+	//ovo ne treba
 	public void setShape(Oblik o) {
 		
 		this.o = o;

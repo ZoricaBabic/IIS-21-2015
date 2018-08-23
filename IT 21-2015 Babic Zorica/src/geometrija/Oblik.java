@@ -40,7 +40,9 @@ public abstract class Oblik implements Cloneable  {
 	public boolean isSelektovan() {
 		return selektovan;
 	}
+	
 	public void setSelektovan(boolean selektovan) {
+		
 		this.selektovan = selektovan;
 
 	}

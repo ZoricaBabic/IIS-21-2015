@@ -19,22 +19,7 @@ import hexagon.Hexagon;
 
 public class ProstorZaCrtanje extends JPanel  {
 
-	/*private static final long serialVersionUID = 1L;
-	private int x;
-	private int y;
-	private int novoX;
-	private int novoY;
-	private int xSelekcija;
-	private int ySelekcija; 
-	private  Color bojaIvice; 
-	private  Color bojaUnutrasnjosti;
-	private String odabranOblik;
-	private int duzinaStranice;
-	private boolean dvaKlika = false; 
-	private int r; 
-	private int duzina;
-	private int sirina;
-	private boolean selektovan;*/
+
 
 
 	//dodato
@@ -285,15 +270,24 @@ public class ProstorZaCrtanje extends JPanel  {
 		
 		for(Oblik o: model.getListaObjekata()){
 			
-		
-			if(o.isSelektovan() == true) {
+			if(o instanceof HexagonAdapter) {
 				
-				o.selektovan(g);
+				//System.out.println("selektovan " + o.isSelektovan());
 				
 			} else {
 				
-				o.setSelektovan(false);
+				if(o.isSelektovan() == true) {
+					
+					o.selektovan(g);
+					
+				} else {
+					
+					o.setSelektovan(false);
+				}
 			}
+			
+		
+			
 		}
 		
 		

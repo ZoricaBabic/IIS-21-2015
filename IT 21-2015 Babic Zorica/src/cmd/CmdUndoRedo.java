@@ -14,6 +14,9 @@ public class CmdUndoRedo implements Command {
 	private CmdAddShape cmdAddShape;
 	private CmdUpdateShape cmdUpdateShape;
 	private CmdRemoveShape cmdRemoveShape;
+	
+	
+	
 	private int redo = 0;
 
 

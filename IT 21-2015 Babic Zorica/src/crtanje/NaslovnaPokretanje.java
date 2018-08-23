@@ -255,7 +255,8 @@ public class NaslovnaPokretanje extends JFrame {
 					@Override
 					public void mouseClicked(MouseEvent e) {
 						
-						controller.mouseClickedBojaUnutrasnjosti();
+						Color c = controller.mouseClickedBojaUnutrasnjosti();
+						pnlBojaUnutrasnjosti.setBackground(c);
 						
 					
 						
@@ -624,7 +625,12 @@ public class NaslovnaPokretanje extends JFrame {
 				
 				btnRedo.setEnabled(true);
 				
-				controller.undo();
+				if(btnUndo.isEnabled()) {
+					
+					controller.undo();
+				}
+				
+				
 				
 			}
 		});
@@ -637,7 +643,12 @@ public class NaslovnaPokretanje extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				
-				controller.redo();
+				if(btnRedo.isEnabled()) {
+					
+					controller.redo();
+				}
+				
+				
 			}
 		});
 		
