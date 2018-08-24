@@ -73,7 +73,7 @@ public class NaslovnaPokretanje extends JFrame {
 	public static JButton btnModifikuj;
 	public static JButton btnObrisi;
 	
-	private JButton btnSelektuj;
+	public static JButton btnSelektuj;
 	
 	private ProstorZaCrtanje pnlZaCrtanje = new ProstorZaCrtanje(); //view
 	

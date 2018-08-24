@@ -22,6 +22,7 @@ public class CmdAddShape implements Command {
 
 		model.add(o);
 		NaslovnaPokretanje.getTextArea().append("Added: " + o.toString() +"\n");
+		NaslovnaPokretanje.btnSelektuj.setEnabled(true);
 
 	}
 
@@ -31,6 +32,11 @@ public class CmdAddShape implements Command {
 
 		model.remove(o);
 		NaslovnaPokretanje.getTextArea().append("Removed: " + o.toString() +"\n");
+		
+		if(model.getListaObjekata().isEmpty()) {
+			
+			NaslovnaPokretanje.btnSelektuj.setEnabled(false);
+		}
 		
 	
 		

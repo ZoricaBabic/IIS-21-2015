@@ -3,6 +3,7 @@ package crtanje;
 
 import java.awt.Button;
 
+
 import java.awt.Color;
 
 
@@ -10,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Observer;
 import java.util.Stack;
 
 import javax.swing.JColorChooser;
@@ -42,7 +42,7 @@ import geometrija.PovrsinskiOblik;
 import geometrija.Pravougaonik;
 import geometrija.Tacka;
 import hexagon.Hexagon;
-import observer.Product;
+import observer.Subject;
 
 
 
@@ -63,8 +63,9 @@ public class Controller {
 	private boolean n = false;
 	//private CmdUndoRedo cmdUndoRedo;
 	private ArrayList<Oblik> selectedShapes = new ArrayList<Oblik>();
-	private observer.Button btnObserver;
-	private Product product;
+	
+
+	private Subject subject;
 	
 
 	
@@ -90,13 +91,10 @@ public class Controller {
 		//cmdUndoRedo = new CmdUndoRedo(model);
 		cmdUndoRedo1 = new CmdUndoRedo1();
 		
-		btnObserver = new observer.Button(false);
-		product = new Product(false);
-		
-		product.registerObserver((Observer) btnObserver);
-		
-		
-		
+		subject = new Subject();
+		subject.attach(NaslovnaPokretanje.btnObrisi);
+		subject.attach(NaslovnaPokretanje.btnModifikuj);
+		checkIfSelectedShapeExists();
 
 
 	} 
@@ -192,6 +190,9 @@ public class Controller {
 			}
 
 		}
+		
+		
+		checkIfSelectedShapeExists();
 	}
 
 
@@ -205,9 +206,7 @@ public class Controller {
 			//if(o instanceof HexagonAdapter) {
 
 				/*HexagonAdapter h = new HexagonAdapter( ((HexagonAdapter) o).getHexagon());
-
 				if(h.getHexagon().isSelected() == true) {
-
 					count++;
 				}*/
 
@@ -235,71 +234,11 @@ public class Controller {
 
 			for(Oblik o: model.getListaObjekata()) {
 
-				/*if(o instanceof HexagonAdapter) {
-
-
-					HexagonAdapter h = new HexagonAdapter( ((HexagonAdapter) o).getHexagon());
-
-					if(h.getHexagon().isSelected() == true) {
-
-
-						DlgOsobineKruga osobine = new DlgOsobineKruga();
-						osobine.setX(((HexagonAdapter) o).getHexagon().getX());
-						osobine.setY(((HexagonAdapter) o).getHexagon().getY());
-						osobine.setPoluprecnik(((HexagonAdapter) o).getHexagon().getR());
-						osobine.setBojaIvice(((HexagonAdapter) o).getHexagon().getBorderColor());
-						osobine.setBojaUnutrasnjosti(((HexagonAdapter) o).getHexagon().getAreaColor());
-
-						osobine.getTxtXKoordinata().setText(Integer.toString(osobine.getX()));
-						osobine.getTxtYKoordinata().setText(Integer.toString(osobine.getY()));
-						osobine.getTxtPoluprecnik().setText(Integer.toString(osobine.getPoluprecnik()));
-						osobine.getEdpBojaIvice().setBackground(osobine.getBojaIvice());
-						osobine.getEdpBojaUnutrasnjosti().setBackground(osobine.getBojaUnutrasnjosti());
-						osobine.setVisible(true);
-
-						if(osobine.isVisible() == false) {
-
-
-							Hexagon hexagon = new Hexagon(h.getHexagon().getX(),h.getHexagon().getY(),h.getHexagon().getR());
-							hexagon.setAreaColor(h.getHexagon().getAreaColor());
-							hexagon.setBorderColor(h.getHexagon().getBorderColor());
-							HexagonAdapter q = new HexagonAdapter(hexagon);
-							q.setSelektovan(h.getHexagon().isSelected());
-
-							Hexagon hexagonNew = new Hexagon(osobine.getX(),osobine.getY(),osobine.getPoluprecnik());
-							hexagonNew.setAreaColor(osobine.getBojaIvice());
-							hexagonNew.setBorderColor(osobine.getBojaUnutrasnjosti());
-							HexagonAdapter s = new HexagonAdapter(hexagonNew);
-							s.setSelektovan(true);
-
-
-
-							CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
-							cmdUpdate.execute();
-
-							cmdUndoRedo1.addToCommandList(cmdUpdate);
-
-							//frame.getTextArea().append(s + "\n");
-
-
-
-							//lastAction = "Modify";
-
-
-
-							//model.setOblik(l);
-
-						}
-
-					
-
-
-					}*/
-				
 				if(o.isSelektovan() == true) {
-
-
-					if(o instanceof Pravougaonik){
+					
+						if(o instanceof Pravougaonik){
+						
+						System.out.println("Pravougaonik!!!!!");
 
 						DlgOsobinePravougaonika osobine = new DlgOsobinePravougaonika();
 
@@ -347,154 +286,11 @@ public class Controller {
 						}
 
 
-					} else if(o instanceof Tacka){
+					} else if(o instanceof Kvadrat){
+						
+						System.out.println("Kvadrat!!!!!");
 
-						DlgOsobineTacke osobine = new DlgOsobineTacke();
-
-						osobine.setX(((Tacka) o).getX());
-						osobine.setY(((Tacka) o).getY());
-						osobine.setBojaIvice(o.getBojaIvice());
-
-
-						osobine.getTxtXKoordinata().setText(Integer.toString(osobine.getX()));
-						osobine.getTxtYKoordinata().setText(Integer.toString(osobine.getY()));
-						osobine.getEdpBoja().setBackground(osobine.getBojaIvice());
-
-
-						osobine.setVisible(true);
-						Tacka t = osobine.getT();
-						//view.repaint();
-
-						t.setSelektovan(true);
-
-						Oblik s = CopyShape(t);
-
-						//model.addToStackUndo(s);
-
-						CmdUpdateShape cmdUpdate = new CmdUpdateShape(o,t);
-
-						cmdUpdate.execute();
-
-						cmdUndoRedo1.addToCommandList(cmdUpdate);
-
-						//frame.getTextArea().append(t + "\n");
-
-						/*model.remove(model.stackPeek());
-
-						CmdAddShape cmd = new CmdAddShape(model,t);
-						cmd.execute();
-
-						model.removeAll();*/
-
-
-
-
-					} else if(o instanceof Linija){
-
-
-
-						DlgOsobineLinije osobine = new DlgOsobineLinije();
-
-
-						osobine.setxPocetna(((Linija) o).gettPocetna().getX());
-						osobine.setyPocetna(((Linija) o).gettPocetna().getY());
-						osobine.setxKrajnja(((Linija) o).gettKrajnja().getX());
-						osobine.setyKrajnja(((Linija) o).gettKrajnja().getY());
-						osobine.setBojaIvice(o.getBojaIvice());
-
-
-
-						osobine.getTxtXKoordinataPocetneTacke().setText(Integer.toString(osobine.getxPocetna()));
-						osobine.getTxtYKoordinataPocetneTacke().setText(Integer.toString(osobine.getyPocetna()));
-						osobine.getTxtXKoordinataKrajnjeTacke().setText(Integer.toString(osobine.getxKrajnja()));
-						osobine.getTxtYKoordinataKrajnjeTacke().setText(Integer.toString(osobine.getyKrajnja()));
-
-						osobine.getEdpBoja().setBackground(osobine.getBojaIvice());
-
-
-						osobine.setVisible(true);
-
-
-
-						if(osobine.isVisible() == false) {
-
-							Linija novi = new Linija(new Tacka(osobine.getxPocetna(),osobine.getyPocetna()), new Tacka (osobine.getxKrajnja(),osobine.getyKrajnja()),osobine.getBojaIvice());
-							novi.setSelektovan(true);
-
-							Oblik s = CopyShape(novi);
-
-							//model.addToStackUndo(s);
-
-							CmdUpdateShape cmdUpdate = new CmdUpdateShape(o,novi);
-							cmdUndoRedo1.addToCommandList(cmdUpdate);
-
-							cmdUpdate.execute();
-
-							//frame.getTextArea().append(novi + "\n");
-
-
-							//model.setOblik(l);
-
-						}
-
-
-					}else if(o instanceof HexagonAdapter) { 
-
-
-
-						DlgOsobineKruga osobineh = new DlgOsobineKruga();
-						osobineh.setX(((HexagonAdapter) o).getHexagon().getX());
-						osobineh.setY(((HexagonAdapter) o).getHexagon().getY());
-						osobineh.setPoluprecnik(((HexagonAdapter) o).getHexagon().getR());
-						osobineh.setBojaIvice(((HexagonAdapter) o).getHexagon().getBorderColor());
-						osobineh.setBojaUnutrasnjosti(((HexagonAdapter) o).getHexagon().getAreaColor());
-
-						osobineh.getTxtXKoordinata().setText(Integer.toString(osobineh.getX()));
-						osobineh.getTxtYKoordinata().setText(Integer.toString(osobineh.getY()));
-						osobineh.getTxtPoluprecnik().setText(Integer.toString(osobineh.getPoluprecnik()));
-						osobineh.getEdpBojaIvice().setBackground(osobineh.getBojaIvice());
-						osobineh.getEdpBojaUnutrasnjosti().setBackground(osobineh.getBojaUnutrasnjosti());
-						osobineh.setVisible(true);
-
-						if(osobineh.isVisible() == false) {
-							
-							Hexagon hexagon = new Hexagon(osobineh.getX(),osobineh.getY(),osobineh.getPoluprecnik());
-							hexagon.setAreaColor(osobineh.getBojaUnutrasnjosti());
-							hexagon.setBorderColor(osobineh.getBojaIvice());
-							hexagon.setSelected(true);
-							
-							HexagonAdapter hexagonAdapter = new HexagonAdapter(hexagon);
-							CmdUpdateShape cmdUpdate = new CmdUpdateShape(o,hexagonAdapter);
-							cmdUpdate.execute();
-
-							cmdUndoRedo1.addToCommandList(cmdUpdate);
-							
-							
-
-
-							/*Hexagon hexagon = new Hexagon(h.getHexagon().getX(),h.getHexagon().getY(),h.getHexagon().getR());
-							hexagon.setAreaColor(h.getHexagon().getAreaColor());
-							hexagon.setBorderColor(h.getHexagon().getBorderColor());
-							HexagonAdapter q = new HexagonAdapter(hexagon);
-							q.setSelektovan(h.getHexagon().isSelected());
-
-							Hexagon hexagonNew = new Hexagon(osobine.getX(),osobine.getY(),osobine.getPoluprecnik());
-							hexagonNew.setAreaColor(osobine.getBojaIvice());
-							hexagonNew.setBorderColor(osobine.getBojaUnutrasnjosti());
-							HexagonAdapter s = new HexagonAdapter(hexagonNew);
-							s.setSelektovan(true);*/
-
-
-
-							/*CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
-							cmdUpdate.execute();
-
-							cmdUndoRedo1.addToCommandList(cmdUpdate);*/
-
-
-
-					} else  if(o instanceof Kvadrat){
-
+						
 						DlgOsobineKvadrata osobine = new DlgOsobineKvadrata();
 						osobine.setX(((Kvadrat) o).gettGoreLevo().getX());
 						osobine.setY(((Kvadrat) o).gettGoreLevo().getY());
@@ -536,6 +332,8 @@ public class Controller {
 
 
 					} else if (o instanceof Krug) {
+						
+						
 
 						DlgOsobineKruga osobine = new DlgOsobineKruga();
 						osobine.setX(((Krug) o).getCentar().getX());
@@ -591,14 +389,141 @@ public class Controller {
 						}
 
 						/*model.remove(model.stackPeek());
-
 						CmdAddShape cmd = new CmdAddShape(model,kr);
 						cmd.execute();
-
 						model.removeAll();*/
 						//view.repaint();
 
-					}
+					} 
+
+
+				 else if(o instanceof Tacka){
+						
+						System.out.println("Taacka!!!!!");
+
+						DlgOsobineTacke osobine = new DlgOsobineTacke();
+
+						osobine.setX(((Tacka) o).getX());
+						osobine.setY(((Tacka) o).getY());
+						osobine.setBojaIvice(o.getBojaIvice());
+
+
+						osobine.getTxtXKoordinata().setText(Integer.toString(osobine.getX()));
+						osobine.getTxtYKoordinata().setText(Integer.toString(osobine.getY()));
+						osobine.getEdpBoja().setBackground(osobine.getBojaIvice());
+
+
+						osobine.setVisible(true);
+						Tacka t = osobine.getT();
+						//view.repaint();
+
+						t.setSelektovan(true);
+
+						Oblik s = CopyShape(t);
+
+						//model.addToStackUndo(s);
+
+						CmdUpdateShape cmdUpdate = new CmdUpdateShape(o,t);
+
+						cmdUpdate.execute();
+
+						cmdUndoRedo1.addToCommandList(cmdUpdate);
+
+						//frame.getTextArea().append(t + "\n");
+
+						/*model.remove(model.stackPeek());
+						CmdAddShape cmd = new CmdAddShape(model,t);
+						cmd.execute();
+						model.removeAll();*/
+
+
+
+
+					} else if(o instanceof Linija){
+
+						System.out.println("Linija!!!!!");
+
+						DlgOsobineLinije osobine = new DlgOsobineLinije();
+
+
+						osobine.setxPocetna(((Linija) o).gettPocetna().getX());
+						osobine.setyPocetna(((Linija) o).gettPocetna().getY());
+						osobine.setxKrajnja(((Linija) o).gettKrajnja().getX());
+						osobine.setyKrajnja(((Linija) o).gettKrajnja().getY());
+						osobine.setBojaIvice(o.getBojaIvice());
+
+
+
+						osobine.getTxtXKoordinataPocetneTacke().setText(Integer.toString(osobine.getxPocetna()));
+						osobine.getTxtYKoordinataPocetneTacke().setText(Integer.toString(osobine.getyPocetna()));
+						osobine.getTxtXKoordinataKrajnjeTacke().setText(Integer.toString(osobine.getxKrajnja()));
+						osobine.getTxtYKoordinataKrajnjeTacke().setText(Integer.toString(osobine.getyKrajnja()));
+
+						osobine.getEdpBoja().setBackground(osobine.getBojaIvice());
+
+
+						osobine.setVisible(true);
+
+
+
+						if(osobine.isVisible() == false) {
+
+							Linija novi = new Linija(new Tacka(osobine.getxPocetna(),osobine.getyPocetna()), new Tacka (osobine.getxKrajnja(),osobine.getyKrajnja()),osobine.getBojaIvice());
+							novi.setSelektovan(true);
+
+							Oblik s = CopyShape(novi);
+
+							//model.addToStackUndo(s);
+
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(o,novi);
+							cmdUndoRedo1.addToCommandList(cmdUpdate);
+
+							cmdUpdate.execute();
+
+							//frame.getTextArea().append(novi + "\n");
+
+
+							//model.setOblik(l);
+
+						}
+
+
+					}else if(o instanceof HexagonAdapter) { 
+
+
+						System.out.println("HexagonAdapter!!!!!");
+						DlgOsobineKruga osobineh = new DlgOsobineKruga();
+						osobineh.setX(((HexagonAdapter) o).getHexagon().getX());
+						osobineh.setY(((HexagonAdapter) o).getHexagon().getY());
+						osobineh.setPoluprecnik(((HexagonAdapter) o).getHexagon().getR());
+						osobineh.setBojaIvice(((HexagonAdapter) o).getHexagon().getBorderColor());
+						osobineh.setBojaUnutrasnjosti(((HexagonAdapter) o).getHexagon().getAreaColor());
+
+						osobineh.getTxtXKoordinata().setText(Integer.toString(osobineh.getX()));
+						osobineh.getTxtYKoordinata().setText(Integer.toString(osobineh.getY()));
+						osobineh.getTxtPoluprecnik().setText(Integer.toString(osobineh.getPoluprecnik()));
+						osobineh.getEdpBojaIvice().setBackground(osobineh.getBojaIvice());
+						osobineh.getEdpBojaUnutrasnjosti().setBackground(osobineh.getBojaUnutrasnjosti());
+						osobineh.setVisible(true);
+
+						if(osobineh.isVisible() == false) {
+							
+							Hexagon hexagon = new Hexagon(osobineh.getX(),osobineh.getY(),osobineh.getPoluprecnik());
+							hexagon.setAreaColor(osobineh.getBojaUnutrasnjosti());
+							hexagon.setBorderColor(osobineh.getBojaIvice());
+							hexagon.setSelected(true);
+							
+							HexagonAdapter hexagonAdapter = new HexagonAdapter(hexagon);
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(o,hexagonAdapter);
+							cmdUpdate.execute();
+
+							cmdUndoRedo1.addToCommandList(cmdUpdate);
+							
+					
+
+
+
+					} 
 
 
 
@@ -618,6 +543,8 @@ public class Controller {
 
 
 		}
+		
+		checkIfSelectedShapeExists();
 
 	}
 
@@ -643,16 +570,10 @@ public class Controller {
 	public void mouseClickedPnl(int x, int y) {
 
 		/*model.getUnselectedShapes().removeAll(model.getUnselectedShapes());
-
 		for(int i =0; i<model.getListaObjekata().size(); i++) {
-
 			if(model.getListaObjekata().get(i).isSelektovan() == true) {
-
-
 				model.getUnselectedShapes().add(model.getListaObjekata().get(i));
 				countForRedo++;
-
-
 			}
 		}*/
 
@@ -690,19 +611,16 @@ public class Controller {
 					//if(stackOblik.peek() instanceof HexagonAdapter) {
 
 						/*System.out.println("HEXAGON ADAPTER!!!!!!!!!!!!");
-
 						Hexagon hexagon = new Hexagon(((HexagonAdapter) stackOblik.peek()).getHexagon().getX(),((HexagonAdapter) stackOblik.peek()).getHexagon().getY(),((HexagonAdapter) stackOblik.peek()).getHexagon().getR());
 						hexagon.setAreaColor(((HexagonAdapter) stackOblik.peek()).getHexagon().getAreaColor());
 						hexagon.setBorderColor(((HexagonAdapter) stackOblik.peek()).getHexagon().getBorderColor());
 						HexagonAdapter q = new HexagonAdapter(hexagon);
 						q.setSelektovan(stackOblik.peek().isSelektovan());
-
 						Hexagon hexagon2 = new Hexagon(((HexagonAdapter) stackOblik.peek()).getHexagon().getX(),((HexagonAdapter) stackOblik.peek()).getHexagon().getY(),((HexagonAdapter) stackOblik.peek()).getHexagon().getR());
 						hexagon2.setAreaColor(((HexagonAdapter) stackOblik.peek()).getHexagon().getAreaColor());
 						hexagon2.setBorderColor(((HexagonAdapter) stackOblik.peek()).getHexagon().getBorderColor());
 						HexagonAdapter s = new HexagonAdapter(hexagon2);
 						s.setSelektovan(true);
-
 						CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
 						cmdUpdate.execute(); 
 						cmdUndoRedo1.addToCommandList(cmdUpdate);*/
@@ -718,17 +636,13 @@ public class Controller {
 
 
 						/*Oblik q = CopyShape(stackOblik.peek());
-
-
 						Oblik s = CopyShape(stackOblik.peek());
 						s.setSelektovan(true);
-
 						CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
 						cmdUpdate.execute(); 
 						cmdUndoRedo1.addToCommandList(cmdUpdate);
 						//model.getCommands().add(s);
 						frame.getTextArea().append("Selected: " + s.toString() +"\n");
-
 						selectedShapes.add(s);*/
 
 
@@ -765,24 +679,18 @@ public class Controller {
 							//if(model.getListaObjekata().get(i) instanceof HexagonAdapter) {
 
 								/*System.out.println("HEXAGON ADAPTER!!!!!!!!!!!!");
-
 								Hexagon hexagon = new Hexagon(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getX(),((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getY(),((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getR());
 								hexagon.setAreaColor(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getAreaColor());
 								hexagon.setBorderColor(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getBorderColor());
 								HexagonAdapter q = new HexagonAdapter(hexagon);
 								q.setSelektovan(model.getListaObjekata().get(i).isSelektovan());
-
 								Hexagon hexagon2 = new Hexagon(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getX(),((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getY(),((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getR());
 								hexagon2.setAreaColor(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getAreaColor());
 								hexagon2.setBorderColor(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getBorderColor());
 								HexagonAdapter s = new HexagonAdapter(hexagon2);
 								s.setSelektovan(true);
-
 								System.out.println("NESELEKTOVAN>>>>>>>>>>> " + 	q.toString());
 								System.out.println("SELEKTOVAN>>>>>>>>>>> " + 	s.toString());
-
-
-
 								//model.addToStackUndo(s);
 								CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
 								cmdUpdate.execute(); 
@@ -799,22 +707,17 @@ public class Controller {
 
 
 								/*Oblik q = CopyShape(model.getListaObjekata().get(i));
-
 								System.out.println(q);
-
 								Oblik s = CopyShape(model.getListaObjekata().get(i));
 								s.setSelektovan(true);
-
 								System.out.println(q.toString());
 								System.out.println(s.toString());
-
 								//model.addToStackUndo(s);
 								CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
 								cmdUpdate.execute(); 
 								cmdUndoRedo1.addToCommandList(cmdUpdate);
 								//model.getCommands().add(s);
 								frame.getTextArea().append("Selected: " + s.toString() +"\n");
-
 								selectedShapes.add(s);*/
 
 
@@ -841,123 +744,65 @@ public class Controller {
 
 
 			/*for(int i=0; i<model.getListaObjekata().size(); i++) {
-
-
 				//selektovanje oblika na koji je kliknut
 				if(model.getListaObjekata().get(i).sadrzi(x, y)){
-
 					if(model.getListaObjekata().get(i).isSelektovan() == false) {
-
 						//model.getUnselectedShapes().removeAll(model.getUnselectedShapes());
-
 						if(model.getListaObjekata().get(i) instanceof HexagonAdapter) {
-
 							System.out.println("HEXAGON ADAPTER!!!!!!!!!!!!");
-
 							Hexagon hexagon = new Hexagon(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getX(),((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getY(),((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getR());
 							hexagon.setAreaColor(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getAreaColor());
 							hexagon.setBorderColor(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getBorderColor());
 							HexagonAdapter q = new HexagonAdapter(hexagon);
 							q.setSelektovan(model.getListaObjekata().get(i).isSelektovan());
-
 							Hexagon hexagon2 = new Hexagon(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getX(),((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getY(),((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getR());
 							hexagon2.setAreaColor(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getAreaColor());
 							hexagon2.setBorderColor(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getBorderColor());
 							HexagonAdapter s = new HexagonAdapter(hexagon2);
 							s.setSelektovan(true);
-
 							System.out.println("NESELEKTOVAN>>>>>>>>>>> " + 	q.toString());
 							System.out.println("SELEKTOVAN>>>>>>>>>>> " + 	s.toString());
-
-
-
-
-
-
-
-
 							m++;
-
-
-
-
-
-
 							//model.addToStackUndo(s);
 							CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
 							cmdUpdate.execute(); 
 							cmdUndoRedo1.addToCommandList(cmdUpdate);
 							//model.getCommands().add(s);
 							frame.getTextArea().append("Selected: " + s.toString() +"\n");
-
 						} else {
-
 							if(m==1) {
-
 								System.out.println("Već neki sadrži");
 							} else {
-
 								Oblik q = CopyShape(model.getListaObjekata().get(i));
 								m++;
 								System.out.println(q);
-
 								Oblik s = CopyShape(model.getListaObjekata().get(i));
 								s.setSelektovan(true);
-
 								System.out.println(q.toString());
 								System.out.println(s.toString());
-
 								//model.addToStackUndo(s);
 								CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
 								cmdUpdate.execute(); 
 								cmdUndoRedo1.addToCommandList(cmdUpdate);
 								//model.getCommands().add(s);
 								frame.getTextArea().append("Selected: " + s.toString() +"\n");
-
 								selectedShapes.add(s);
 							}
-
-
-
-
 						}
-
-
-
 						position++;
 						button.setStatus(true);
 						frame.getBtnRedo().setEnabled(false);
-
-
 						/*if(m>1) { // sleketovanje poslednje nacrtanog
-
 							System.out.println("Selektovano je vise oblika!");
-
-
 							for(int k=0; k<model.getListaObjekata().size(); k++) {
-
 								if(!model.getListaObjekata().get(k).equals(cmdUndoRedo1.getUndo().peek())) {
-
 									model.getListaObjekata().get(k).setSelektovan(false);
 									frame.getTextArea().append(model.getListaObjekata().get(k) +"\n"); //KAD SE ODSELEKTUJEE!
-
 								}
 							}
 						} 
-
-
-
-
-
 					}
-
-
-
-
-
 				} 
-
-
 			}*/
 
 
@@ -984,14 +829,9 @@ public class Controller {
 						m++;
 						Oblik s = CopyShape(o);
 						s.setSelektovan(false);
-
-
 						CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
 						cmdUpdate.execute(); 
 						cmdUndoRedo1.addToCommandList(cmdUpdate);
-
-
-
 						frame.getTextArea().append("Deselected " + s.toString() +"\n");
 						button.setStatus(false);*/
 					}
@@ -1010,17 +850,11 @@ public class Controller {
 				} else if (k==1) {
 
 					/*Oblik q = CopyShape(ss.get(0));
-
 					Oblik s = CopyShape(ss.get(0));
 					s.setSelektovan(false);
-
-
 					CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
 					cmdUpdate.execute(); 
 					cmdUndoRedo1.addToCommandList(cmdUpdate);
-
-
-
 					frame.getTextArea().append("Deselected: " + s.toString() +"\n");*/
 					
 					CmdDeselectShape cmdDeselectShape = new CmdDeselectShape(model,ss.get(0));
@@ -1062,14 +896,9 @@ public class Controller {
 						m++;
 						Oblik s = CopyShape(o);
 						s.setSelektovan(false);
-
-
 						CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
 						cmdUpdate.execute(); 
 						cmdUndoRedo1.addToCommandList(cmdUpdate);
-
-
-
 						frame.getTextArea().append("Deselected " + s.toString() +"\n");
 						button.setStatus(false);*/
 					}
@@ -1086,7 +915,6 @@ public class Controller {
 					cmdUndoRedo1.addToCommandList(cmdUpdate);
 
 					/*for(int i=0; i<ss.size(); i++) {
-
 						frame.getTextArea().append("Deselected multiple shapes: " + ss.get(i).toString() +"\n");
 					}*/
 
@@ -1095,17 +923,11 @@ public class Controller {
 				} else if (k==1) {
 
 					/*Oblik q = CopyShape(ss.get(0));
-
 					Oblik s = CopyShape(ss.get(0));
 					s.setSelektovan(false);
-
-
 					CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
 					cmdUpdate.execute(); 
 					cmdUndoRedo1.addToCommandList(cmdUpdate);
-
-
-
 					frame.getTextArea().append("Deselected: " + s.toString() +"\n");*/
 					
 					CmdDeselectShape cmdDeselectShape = new CmdDeselectShape(model,ss.get(0));
@@ -1119,42 +941,28 @@ public class Controller {
 				
 
 				/*if(model.getListaObjekata().get(i) instanceof HexagonAdapter) {
-
-
 					System.out.println("HEXAGON ADAPTER!!!!!!!!!!!!");
-
 					Hexagon hexagon = new Hexagon(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getX(),((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getY(),((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getR());
 					hexagon.setAreaColor(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getAreaColor());
 					hexagon.setBorderColor(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getBorderColor());
 					HexagonAdapter q = new HexagonAdapter(hexagon);
 					q.setSelektovan(true);
-
-
-
 					Hexagon hexagon2 = new Hexagon(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getX(),((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getY(),((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getR());
 					hexagon2.setAreaColor(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getAreaColor());
 					hexagon2.setBorderColor(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getBorderColor());
 					HexagonAdapter s = new HexagonAdapter(hexagon2);
 					s.setSelektovan(false);
-
 					System.out.println("NESELEKTOVAN>>>>>>>>>>> " + 	q.toString());
 					System.out.println("SELEKTOVAN>>>>>>>>>>> " + 	s.toString());
-
-
 					CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
 					cmdUpdate.execute(); 
 					cmdUndoRedo1.addToCommandList(cmdUpdate);
 					frame.getTextArea().append("Deselected " + s.toString() +"\n");
-
 				} else {
-
 					if(model.getListaObjekata().get(i).isSelektovan() == true) {
-
 						Oblik q = CopyShape(model.getListaObjekata().get(i));
-
 						Oblik s = CopyShape(model.getListaObjekata().get(i));
 						s.setSelektovan(false);
-
 						CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
 						cmdUpdate.execute(); 
 						cmdUndoRedo1.addToCommandList(cmdUpdate);
@@ -1192,7 +1000,6 @@ public class Controller {
 
 
 			/*Oblik l = CopyShape(t);
-
 			model.addToStackUndo(l);*/
 
 			cmdUndoRedo1.addToCommandList(cmdAddShape);
@@ -1290,8 +1097,6 @@ public class Controller {
 				cmdUndoRedo1.addToCommandList(cmdAddShape);
 
 				/*Oblik k = CopyShape(l);
-
-
 				model.addToStackUndo(k);*/
 
 
@@ -1345,8 +1150,6 @@ public class Controller {
 
 
 							/*Oblik l = CopyShape(p);
-
-
 							model.addToStackUndo(l);*/
 
 
@@ -1473,9 +1276,6 @@ public class Controller {
 
 
 					/*Oblik l = CopyShape(kr);
-
-
-
 					model.addToStackUndo(l);*/
 
 
@@ -1513,6 +1313,8 @@ public class Controller {
 
 
 		}
+		
+		checkIfSelectedShapeExists();
 	}
 
 
@@ -1591,6 +1393,8 @@ public class Controller {
 				frame.getBtnUndo().setEnabled(true);
 			}
 		} 
+		
+		checkIfSelectedShapeExists();
 
 
 
@@ -1612,6 +1416,8 @@ public class Controller {
 				frame.getBtnRedo().setEnabled(true);
 			}
 		}
+		
+		checkIfSelectedShapeExists();
 
 
 
@@ -1653,6 +1459,8 @@ public class Controller {
 			}
 
 		}
+		
+		checkIfSelectedShapeExists();
 		
 		/*if(o!=null) {
 			
@@ -1696,6 +1504,8 @@ public class Controller {
 
 		}
 		
+		checkIfSelectedShapeExists();
+		
 		/*if(o!=null) {
 			
 			frame.getTextArea().append("Bring to front: " + o +"\n");
@@ -1731,6 +1541,7 @@ public class Controller {
 
 		}
 		
+		checkIfSelectedShapeExists();
 		/*if(o!=null) {
 			
 			frame.getTextArea().append("Move to back: " + o +"\n");
@@ -1774,6 +1585,8 @@ public class Controller {
 
 		}
 		
+		checkIfSelectedShapeExists();
+		
 		/*if(o!=null) {
 			
 			frame.getTextArea().append("Bring to back: " + o +"\n");
@@ -1805,24 +1618,28 @@ public class Controller {
 
 		}
 		
+		if(n==1) {
+			
+			subject.setState(true);
+		} else if (n==0) {
+			
+			subject.setState(false);
+		} else if (n>1) {
+			
+			NaslovnaPokretanje.btnModifikuj.setEnabled(false);
+		}
+		
 		return n;
 
 		/*if(n==1) {
-
 			button.setStatus(true);
 			return n;
-
-
 		} else if (n>1) {
-
 			//button.setStatus(false);
 			return n;
 		} else {
-
 			//button.setStatus(false);
 			return n;
-
-
 		}*/
 
 

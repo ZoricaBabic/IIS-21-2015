@@ -1,23 +1,18 @@
-package observer;
+/*package observer;
 
-public class Button implements Observer {
+public class Button extends JButton{
 	
-	private boolean state;
 	
-	public Button(boolean state) {
-		
-		this.state = state;
-	}
-	
+	 public Button(Subject subject, javax.swing.JButton btnObrisi){
+	      this.subject = subject;
+	      this.subject.attach(btnObrisi);
+	   }
 
 	@Override
-	public void update(boolean state) {
+	public void update() {
 		
-		
-		System.out.println("Menaj se dugme na: " + state);
+		System.out.println("Treba da se updateuje");
 		
 	}
-	
-	
 
-}
+}*/
