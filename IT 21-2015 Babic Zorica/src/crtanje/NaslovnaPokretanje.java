@@ -1,6 +1,8 @@
 package crtanje;
 
 import javax.swing.JFrame;  
+import java.io.*;
+
 import java.awt.Toolkit;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -16,15 +18,18 @@ import geometrija.Linija;
 import geometrija.PovrsinskiOblik;
 import geometrija.Pravougaonik;
 import geometrija.Tacka;
-
+import strategy.Context;
+import strategy.LogOperation;
 
 import java.awt.Color;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.ButtonGroup;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -44,8 +49,9 @@ import javax.swing.JScrollBar;
 import java.awt.TextArea;
 import java.awt.ScrollPane;
 import javax.swing.JScrollPane;
+import javax.swing.JLabel;
 
-public class NaslovnaPokretanje extends JFrame {
+public class NaslovnaPokretanje extends JFrame  {
 
 	private static final long serialVersionUID = 1L;
 	protected static final Graphics Graphics = null;
@@ -80,6 +86,7 @@ public class NaslovnaPokretanje extends JFrame {
 	private Controller controller;
 	private JPanel panel;
 	private boolean isShiftDown = false;
+	private Context context;
 	
 	//tofront, toback observer
 	
@@ -218,37 +225,21 @@ public class NaslovnaPokretanje extends JFrame {
 		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addComponent(pnlLog, GroupLayout.DEFAULT_SIZE, 898, Short.MAX_VALUE)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(1)
 					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 897, Short.MAX_VALUE))
-				.addComponent(pnlLog, GroupLayout.DEFAULT_SIZE, 898, Short.MAX_VALUE)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addComponent(pnlZaCrtanje, GroupLayout.DEFAULT_SIZE, 897, Short.MAX_VALUE)
-					.addGap(1))
+				.addComponent(pnlZaCrtanje, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 898, Short.MAX_VALUE)
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 103, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(pnlZaCrtanje, GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(pnlZaCrtanje, GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(pnlLog, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE))
 		);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-				JButton btnBojaUnutrasnjosti = new JButton("Boja unutrašnjosti");
-				btnBojaUnutrasnjosti.setFont(new Font("Arial", Font.BOLD, 14));
-				btnBojaUnutrasnjosti.setForeground(new Color(0, 0, 139));
-				btnBojaUnutrasnjosti.setBackground(new Color(224, 255, 255));
 				
 				
 				pnlBojaUnutrasnjosti = new JPanel();
@@ -277,32 +268,6 @@ public class NaslovnaPokretanje extends JFrame {
 
 					}
 				});
-				
-				//pnlZaCrtanje.setBojaUnutrasnjosti(pnlBojaUnutrasnjosti.getBackground());
-				
-						/*btnBojaUnutrasnjosti.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-				
-								Color currentBojaUnutrasnjosti = pnlBojaUnutrasnjosti.getBackground();
-								
-								Color bojaUnutrasnjosti = JColorChooser.showDialog(null, "Izaberi boju", Color.BLACK);
-								
-								if(bojaUnutrasnjosti  == null) {
-									
-									pnlBojaUnutrasnjosti.setBackground(currentBojaUnutrasnjosti);
-								} else {
-									
-									pnlBojaUnutrasnjosti.setBackground(bojaUnutrasnjosti);
-									pnlZaCrtanje.setBojaUnutrasnjosti(bojaUnutrasnjosti);
-								}
-
-							}
-						});*/
-		
-				JButton btnBojaIvice = new JButton("Boja ivice");
-				btnBojaIvice.setFont(new Font("Arial", Font.BOLD, 14));
-				btnBojaIvice.setForeground(new Color(0, 0, 139));
-				btnBojaIvice.setBackground(new Color(224, 255, 255));
 				
 
 				pnlBojaIvice = new JPanel();
@@ -360,7 +325,7 @@ public class NaslovnaPokretanje extends JFrame {
 				
 				
 		
-				btnObrisi = new JButton("Obriši");
+				btnObrisi = new JButton("Delete");
 				
 				btnObrisi.setFont(new Font("Arial", Font.BOLD, 14));
 				btnObrisi.setForeground(new Color(139, 0, 139));
@@ -427,7 +392,7 @@ public class NaslovnaPokretanje extends JFrame {
 							}
 						});
 		
-				btnModifikuj = new JButton("Modifikuj");
+				btnModifikuj = new JButton("Mofify");
 			
 			
 				btnModifikuj.setFont(new Font("Arial", Font.BOLD, 14));
@@ -590,7 +555,7 @@ public class NaslovnaPokretanje extends JFrame {
 				
 		
 		
-				btnSelektuj = new JButton("Selektuj");
+				btnSelektuj = new JButton("Select");
 				
 				btnSelektuj.setFont(new Font("Arial", Font.BOLD, 14));
 				btnSelektuj.setEnabled(false);
@@ -619,6 +584,8 @@ public class NaslovnaPokretanje extends JFrame {
 								});
 		
 		btnUndo = new JButton("Undo");
+		btnUndo.setFont(new Font("Arial", Font.BOLD, 14));
+		btnUndo.setForeground(new Color(139, 0, 139));
 		btnUndo.setEnabled(false);
 		
 		btnUndo.addActionListener(new ActionListener() {
@@ -638,6 +605,8 @@ public class NaslovnaPokretanje extends JFrame {
 		});
 		
 		btnRedo = new JButton("Redo");
+		btnRedo.setForeground(new Color(139, 0, 139));
+		btnRedo.setFont(new Font("Arial", Font.BOLD, 14));
 		btnRedo.setEnabled(false);
 	
 		
@@ -655,6 +624,8 @@ public class NaslovnaPokretanje extends JFrame {
 		});
 		
 		JButton btnToFront = new JButton("To front");
+		btnToFront.setForeground(new Color(139, 0, 139));
+		btnToFront.setFont(new Font("Arial", Font.BOLD, 14));
 		btnToFront.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -663,6 +634,8 @@ public class NaslovnaPokretanje extends JFrame {
 		});
 		
 		JButton btnBringToFront = new JButton("Bring to front");
+		btnBringToFront.setForeground(new Color(139, 0, 139));
+		btnBringToFront.setFont(new Font("Arial", Font.BOLD, 14));
 		btnBringToFront.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -671,6 +644,8 @@ public class NaslovnaPokretanje extends JFrame {
 		});
 		
 		JButton btnToBack = new JButton("To back");
+		btnToBack.setForeground(new Color(139, 0, 139));
+		btnToBack.setFont(new Font("Arial", Font.BOLD, 14));
 		btnToBack.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -680,6 +655,8 @@ public class NaslovnaPokretanje extends JFrame {
 		});
 		
 		JButton btnBringToBack = new JButton("Bring to back");
+		btnBringToBack.setForeground(new Color(139, 0, 139));
+		btnBringToBack.setFont(new Font("Arial", Font.BOLD, 14));
 		btnBringToBack.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -687,63 +664,175 @@ public class NaslovnaPokretanje extends JFrame {
 				controller.bringToBack();
 			}
 		});
+		
+		JLabel lblBojaIvice = new JLabel("Border color:");
+		lblBojaIvice.setForeground(new Color(139, 0, 139));
+		lblBojaIvice.setFont(new Font("Arial", Font.BOLD, 14));
+		
+		JLabel lblAreaColor = new JLabel("Area color:");
+		lblAreaColor.setForeground(new Color(139, 0, 139));
+		lblAreaColor.setFont(new Font("Arial", Font.BOLD, 14));
+		
+		JButton btnSave = new JButton("Save");
+		btnSave.setActionCommand("");
+		btnSave.setForeground(new Color(139, 0, 139));
+		btnSave.setFont(new Font("Arial", Font.BOLD, 14));
+		btnSave.setBackground(new Color(255, 240, 245));
+		
+		btnSave.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				
+				
+			
+				JFileChooser fs = new JFileChooser(new File("c:\\"));
+				fs.setDialogTitle("Save a file");
+				//fs.setFileFilter(new FileTypeFilter(".txt","Text File"));
+				int result = fs.showSaveDialog(null);
+				
+				if (result == JFileChooser.APPROVE_OPTION) {
+					
+					String content = textArea.getText();
+					File fi = fs.getSelectedFile();
+					
+					context = new Context(new LogOperation());
+					context.executeStrategy(content, fi);
+					
+				}
+				
+			}
+		});
+		
+		
+		
+		JButton btnOpen = new JButton("Open");
+		btnOpen.setForeground(new Color(139, 0, 139));
+		btnOpen.setFont(new Font("Arial", Font.BOLD, 14));
+		btnOpen.setBackground(new Color(255, 240, 245));
+		
+		btnOpen.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				JFileChooser fs = new JFileChooser(new File("c:\\"));
+				fs.setDialogTitle("Open a file");
+				//fs.setFileFilter(new FileTypeFilter(".txt","Text File"));
+				int result = fs.showOpenDialog(null);
+				
+				if(result == JFileChooser.APPROVE_OPTION) {
+					
+					try {
+						File fi = fs.getSelectedFile();
+						
+						BufferedReader br = new BufferedReader(new FileReader(fi.getPath()));
+						String line = "\n";
+						String s = "";
+						while((line = br.readLine()) != null) {
+							
+							s = line+s;
+							
+						}
+						
+						textArea.setText(s);
+						
+						if(br != null) {
+							
+							br.close();
+						}
+						
+					}catch(Exception ee){
+						
+						JOptionPane.showMessageDialog(null, ee.getMessage());
+					}
+					
+				}
+				
+				
+			}
+			
+			
+		});
+		
+		JButton btnCmdbycmd = new JButton("cmdBycmd");
+		btnCmdbycmd.setForeground(new Color(139, 0, 139));
+		btnCmdbycmd.setFont(new Font("Arial", Font.BOLD, 14));
+		btnCmdbycmd.setBackground(new Color(255, 240, 245));
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
+			gl_panel.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_panel.createSequentialGroup()
-					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING, false)
-						.addComponent(btnBojaIvice, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(btnBojaUnutrasnjosti, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addContainerGap()
+					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblBojaIvice, GroupLayout.PREFERRED_SIZE, 101, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblAreaColor, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE))
+					.addGap(18)
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING, false)
-						.addComponent(pnlBojaIvice, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(pnlBojaUnutrasnjosti, GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE))
-					.addGap(31)
-					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-						.addGroup(gl_panel.createSequentialGroup()
-							.addComponent(btnUndo)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnRedo)
-							.addGap(39))
-						.addGroup(gl_panel.createSequentialGroup()
-							.addComponent(btnModifikuj, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnSelektuj, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnObrisi, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)
+						.addComponent(pnlBojaUnutrasnjosti, GroupLayout.PREFERRED_SIZE, 131, GroupLayout.PREFERRED_SIZE)
+						.addComponent(pnlBojaIvice, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 131, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
-					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING, false)
-						.addComponent(btnToFront, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnToBack, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE))
-					.addGap(18)
-					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING, false)
-						.addComponent(btnBringToBack, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(btnBringToFront, GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
+					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING, false)
+						.addComponent(btnObrisi, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnSelektuj, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnModifikuj, GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
+					.addGap(29)
+					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel.createSequentialGroup()
+							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnSave, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE)
+								.addComponent(btnOpen, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE))
+							.addGap(34)
+							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING, false)
+								.addComponent(btnRedo, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(btnUndo, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
+							.addGap(18)
+							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnBringToFront)
+								.addComponent(btnBringToBack))
+							.addGap(18)
+							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnToBack, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE)
+								.addComponent(btnToFront, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE)))
+						.addComponent(btnCmdbycmd, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap())
 		);
 		gl_panel.setVerticalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-						.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-							.addComponent(btnUndo)
-							.addComponent(btnRedo)
-							.addComponent(btnToFront)
-							.addComponent(btnBringToFront))
-						.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-							.addComponent(btnBojaUnutrasnjosti)
-							.addComponent(pnlBojaUnutrasnjosti, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnBojaIvice)
-						.addComponent(pnlBojaIvice, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-						.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-							.addComponent(btnModifikuj)
-							.addComponent(btnBringToBack)
-							.addComponent(btnSelektuj, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-							.addComponent(btnObrisi)
-							.addComponent(btnToBack)))
+						.addGroup(gl_panel.createSequentialGroup()
+							.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+								.addComponent(btnUndo)
+								.addComponent(btnToFront)
+								.addComponent(btnBringToFront)
+								.addComponent(btnModifikuj)
+								.addComponent(btnSave, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+								.addGroup(gl_panel.createSequentialGroup()
+									.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+										.addComponent(btnRedo)
+										.addComponent(btnSelektuj, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+										.addComponent(btnOpen, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+									.addGap(6))
+								.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+									.addComponent(btnToBack)
+									.addComponent(btnBringToBack)))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+								.addComponent(btnObrisi)
+								.addComponent(btnCmdbycmd, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)))
+						.addGroup(gl_panel.createSequentialGroup()
+							.addContainerGap()
+							.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING, false)
+								.addComponent(lblBojaIvice, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(pnlBojaIvice, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+								.addComponent(lblAreaColor, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+								.addComponent(pnlBojaUnutrasnjosti, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))))
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		panel.setLayout(gl_panel);
