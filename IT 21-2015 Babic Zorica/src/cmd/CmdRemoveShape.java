@@ -3,6 +3,7 @@ package cmd;
 import java.util.ArrayList;
 
 import crtanje.Model;
+import crtanje.NaslovnaPokretanje;
 import geometrija.HexagonAdapter;
 import geometrija.Kvadrat;
 import geometrija.Oblik;
@@ -39,14 +40,18 @@ public class CmdRemoveShape implements Command {
 
 		if(!removedShapes.isEmpty()  && removedShapes.size() > 1) {
 
+			NaslovnaPokretanje.getTextArea().append("Multiple shapes removed: \n");
 			for(int i =0; i<removedShapes.size(); i++) {
 
 				model.remove(removedShapes.get(i));
+				NaslovnaPokretanje.getTextArea().append("             " + removedShapes.get(i).toString() +"\n");
 			}
+			
 
 		} else {
 
 			model.remove(o);
+			NaslovnaPokretanje.getTextArea().append("Removed: " + o +"\n");
 		}
 
 
@@ -62,13 +67,16 @@ public class CmdRemoveShape implements Command {
 
 		if(!removedShapes.isEmpty() && removedShapes.size() > 1) {
 
+			NaslovnaPokretanje.getTextArea().append("Multiple shapes added: \n");
 			for(int i =0; i<removedShapes.size(); i++) {
 
 				model.add(removedShapes.get(i));
+				NaslovnaPokretanje.getTextArea().append("             " + removedShapes.get(i).toString() +"\n");
 			}
 		} else {
 
 			model.add(o);
+			NaslovnaPokretanje.getTextArea().append("Added: " + o +"\n");
 		}
 
 

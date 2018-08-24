@@ -6,6 +6,7 @@ import java.awt.Color;
 
 import crtanje.Controller;
 import crtanje.Model;
+import crtanje.NaslovnaPokretanje;
 import geometrija.HexagonAdapter;
 import geometrija.Krug;
 import geometrija.Kvadrat;
@@ -169,6 +170,8 @@ public class CmdUpdateShape implements Command {
 			
 
 		}
+		
+		NaslovnaPokretanje.getTextArea().append("Modified: " + original + "\n");
 
 	}
 
@@ -258,7 +261,8 @@ public class CmdUpdateShape implements Command {
 			
 		}
 		
-
+		NaslovnaPokretanje.getTextArea().append("Modified: " + original + "\n");
+		
 
 	}
 

@@ -198,6 +198,12 @@ public class HexagonAdapter extends PovrsinskiOblik {
 		this.hexagon = hexagon;
 
 	}
+	
+	public boolean isSelektovan() {
+		
+	
+		return hexagon.isSelected();
+	}
 
 
 	

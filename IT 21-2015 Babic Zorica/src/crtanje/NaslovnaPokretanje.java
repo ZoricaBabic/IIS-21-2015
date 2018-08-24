@@ -63,7 +63,7 @@ public class NaslovnaPokretanje extends JFrame {
 	private String s;
 	private JPanel pnlBojaUnutrasnjosti;
 	private JPanel pnlBojaIvice;
-	private JTextArea textArea;
+	public static JTextArea textArea;
 
 	
 	
@@ -1073,7 +1073,7 @@ public class NaslovnaPokretanje extends JFrame {
 		this.btnSelektuj = btnSelektuj;
 	}
 
-	public JTextArea getTextArea() {
+	public static JTextArea getTextArea() {
 		return textArea;
 	}
 

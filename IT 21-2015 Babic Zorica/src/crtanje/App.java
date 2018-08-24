@@ -2,6 +2,7 @@ package crtanje;
 
 import java.awt.Color;
 
+
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -21,8 +22,6 @@ import cmd.CmdUpdateShape;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-import observer.Button;
-import observer.ButtonObserver;
 
 
 import javax.swing.ButtonGroup;

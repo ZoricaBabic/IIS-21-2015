@@ -3,12 +3,15 @@ package cmd;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import crtanje.NaslovnaPokretanje;
+
 public class CmdUndoRedo1 implements Command{
 	
 	private ArrayList<Command> commandList = new ArrayList<Command>();
+
 	
-	private Stack<Command> undo = new Stack();
-	private Stack<Command> redo = new Stack();
+	private Stack<Command> undo = new Stack<Command>();
+	private Stack<Command> redo = new Stack<Command>();
 	private int currentPosition = -1;
 	
 
@@ -20,37 +23,8 @@ public class CmdUndoRedo1 implements Command{
 	public void addToCommandList(Command command) {
 		
 		redo.removeAllElements();
-		
-		System.out.println("Duzina redo: " + redo.size());
-		
-		
 		undo.push(command);
-		
-		System.out.println("Duzzina undo: " + undo.size());
-	
 
-		
-		/*if(currentPosition != commandList.size()-1) {
-			
-			while(currentPosition+1 < commandList.size()) {
-				
-				commandList.remove(currentPosition);
-				currentPosition++;
-				System.out.println("Brise se!");
-			}
-			
-		}
-		
-		commandList.add(command);
-		currentPosition = commandList.size()-1;*/
-		
-		
-		
-	
-		
-
-		
-	
 		
 	}
 	
@@ -60,18 +34,14 @@ public class CmdUndoRedo1 implements Command{
 	public void execute() {
 		
 	
+		//undo
 		
 		undo.peek().unexecute();
+		
+		
 		redo.push(undo.peek());
 		undo.pop();
-		
-		//undo
-		/*if(currentPosition != -1) {
-			
-			commandList.get(currentPosition).unexecute();
-			currentPosition--;
-		}*/
-		
+
 		
 
 	
@@ -84,18 +54,10 @@ public class CmdUndoRedo1 implements Command{
 		
 		//redo
 		redo.peek().execute();
+		
 		undo.push(redo.peek());
 		redo.pop();
-		
-		/*if(currentPosition != commandList.size()-1) {
-			
-			currentPosition++;
-			commandList.get(currentPosition).execute();
-		} else {
-			
-			commandList.get(currentPosition).execute();
-		}*/
-		
+
 		
 	
 	
@@ -140,6 +102,7 @@ public class CmdUndoRedo1 implements Command{
 	public void setRedo(Stack<Command> redo) {
 		this.redo = redo;
 	}
+
 
 	
 }

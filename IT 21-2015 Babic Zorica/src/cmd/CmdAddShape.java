@@ -1,6 +1,7 @@
 package cmd;
 
 import crtanje.Model;
+import crtanje.NaslovnaPokretanje;
 import geometrija.Oblik;
 
 
@@ -20,8 +21,8 @@ public class CmdAddShape implements Command {
 		
 
 		model.add(o);
-		
-		
+		NaslovnaPokretanje.getTextArea().append("Added: " + o.toString() +"\n");
+
 	}
 
 	@Override
@@ -29,6 +30,8 @@ public class CmdAddShape implements Command {
 		
 
 		model.remove(o);
+		NaslovnaPokretanje.getTextArea().append("Removed: " + o.toString() +"\n");
+		
 	
 		
 	
