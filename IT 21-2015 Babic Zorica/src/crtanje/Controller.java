@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Observer;
 import java.util.Stack;
 
 import javax.swing.JColorChooser;
@@ -41,6 +42,7 @@ import geometrija.PovrsinskiOblik;
 import geometrija.Pravougaonik;
 import geometrija.Tacka;
 import hexagon.Hexagon;
+import observer.Product;
 
 
 
@@ -61,6 +63,8 @@ public class Controller {
 	private boolean n = false;
 	//private CmdUndoRedo cmdUndoRedo;
 	private ArrayList<Oblik> selectedShapes = new ArrayList<Oblik>();
+	private observer.Button btnObserver;
+	private Product product;
 	
 
 	
@@ -85,6 +89,11 @@ public class Controller {
 		//button = new Button(frame);
 		//cmdUndoRedo = new CmdUndoRedo(model);
 		cmdUndoRedo1 = new CmdUndoRedo1();
+		
+		btnObserver = new observer.Button(false);
+		product = new Product(false);
+		
+		product.registerObserver((Observer) btnObserver);
 		
 		
 		
