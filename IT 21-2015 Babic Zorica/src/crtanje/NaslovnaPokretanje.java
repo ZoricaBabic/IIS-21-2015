@@ -772,61 +772,17 @@ public class NaslovnaPokretanje extends JFrame  {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				
-				
 				String line = null;
-				boolean k = false;
 				
 				for(String l : textArea.getText().split("\\n")) {
 					
-						for(int i =0; i<lines.size(); i++) {
-							
-
-							if(!lines.get(i).equals(l)) {
-							
-								line=l;
-								lines.add(l);
-								k=true;
-
-							}
-							
-							if(k==true) {
-								
-								k=false;
-								break;
-							}
-							
-							
-						}
-						
-				
-						if(lines.isEmpty()) {
-							
-							line=l;
-							lines.add(l);
-							k=true;
-						}
-						
-						
-						
-						if(k==true) {
-							
-							k=false;
-							break;
-						}
-						
-			
-					
-				}
-				
-				
-			
-				/*for (String line : textArea.getText().split("\\n")) {
-					
 					if(lines.isEmpty()) {
 						
-						System.out.println("Niz je prazan!");
+						line = l;
+						lines.add(l);
 						
-					  	int pos2 = textArea.getText().indexOf(line);
+						
+						int pos2 = textArea.getText().indexOf(line);
 					    int y;
 					    Rectangle startIndex;
 						try {
@@ -849,7 +805,7 @@ public class NaslovnaPokretanje extends JFrame  {
 							        pos2 + line.length(),
 							        new DefaultHighlighter.DefaultHighlightPainter(new Color(255, 255, 153)));
 							
-							lines.add(line);
+							//lines.add(line);
 							controller.runCommandByCommand(line);
 							
 
@@ -857,82 +813,63 @@ public class NaslovnaPokretanje extends JFrame  {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						} 
-					   
-					   break;
-					   
-					   
+						
+						
+						break;
+						
 					} else {
 						
-						boolean n=true;
-						
-						System.out.println("Niz nije prazan");
+						int n=0;
 						for(int i=0; i<lines.size(); i++) {
 							
-							if(!lines.get(i).equals(line)) {
+							if(lines.get(i).equals(l)) {
 								
-								System.out.println("Naisao je na onaj koji je razlicit!!!!");
-							  	int pos2 = textArea.getText().indexOf(line);
-							    int y;
-							    Rectangle startIndex;
-								try {
-									
-									startIndex = textArea.modelToView(pos2);
-									y = startIndex.y + (scrollPane.getHeight() - 10);
-									
-								    textArea.setCaretPosition(textArea.viewToModel(new Point(startIndex.x, y)));
-								    scrollPane.scrollRectToVisible(new Rectangle(startIndex.x, y));
-								    
-								 
-								    
-								} catch (BadLocationException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-							
-								
-								
-								
-							   try {
-
-									textArea.getHighlighter().addHighlight(pos2,
-									        pos2 + line.length(),
-									        new DefaultHighlighter.DefaultHighlightPainter(new Color(255, 255, 153)));
-									
-									   lines.add(line);
-									   controller.runCommandByCommand(line);
-
-								} catch (BadLocationException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								} 
-							   
-							   n=false;
-							   
-							   
-								
-							} 
-							
-							if(n == false) {
-								
-								n=true;
-								break;
-								
+								n++;
 							}
-							
-							
 						}
 						
+						if(n==0) {
+								
+							line=l;
+							lines.add(l);
+							
+							int pos2 = textArea.getText().indexOf(line);
+						    int y;
+						    Rectangle startIndex;
+							try {
+								
+								startIndex = textArea.modelToView(pos2);
+								y = startIndex.y + (scrollPane.getHeight() - 10);
+								
+							    textArea.setCaretPosition(textArea.viewToModel(new Point(startIndex.x, y)));
+							    scrollPane.scrollRectToVisible(new Rectangle(startIndex.x, y));
+							    
+							} catch (BadLocationException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						
+							
+						   try {
+
+								textArea.getHighlighter().addHighlight(pos2,
+								        pos2 + line.length(),
+								        new DefaultHighlighter.DefaultHighlightPainter(new Color(255, 255, 153)));
+								
+								//lines.add(line);
+								controller.runCommandByCommand(line);
+								
+
+							} catch (BadLocationException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							} 
+							
+							break;
+						}
 						
 					}
-					
-					
-					
-					break;
-					
-				}*/
-				
-				
-				
+				}
 
 			}
 		
