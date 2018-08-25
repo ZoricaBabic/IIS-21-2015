@@ -28,10 +28,10 @@ public class OpenOperation implements Strategy {
 	         DataInputStream in = new DataInputStream(ft);
 	         BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	         String strline;
-
+	        
 	         while((strline = br.readLine()) != null){
 	         	
-	             System.out.println(strline);
+	             
 	             np.getTextArea().append(strline + "\n");
 	         }
 	         in.close();

@@ -9,20 +9,25 @@ public class CmdAddShape implements Command {
 	
 	private Model model = new Model();
 	private Oblik o;
-	
+	private boolean print = true;
 	public CmdAddShape(Model model, Oblik o) {
 		this.model = model;
 		this.o = o;
 	}
-
 
 	@Override
 	public void execute() {
 		
 
 		model.add(o);
-		NaslovnaPokretanje.getTextArea().append("Added: " + o.toString() +"\n");
+		if(print == true) {
+			
+			NaslovnaPokretanje.getTextArea().append("Added: " + o.toString() +"\n");
+			
+		} 
+		
 		NaslovnaPokretanje.btnSelektuj.setEnabled(true);
+		print=true;
 
 	}
 
@@ -56,6 +61,14 @@ public class CmdAddShape implements Command {
 		
 		return o;
 		
+	}
+
+	public boolean isPrint() {
+		return print;
+	}
+
+	public void setPrint(boolean print) {
+		this.print = print;
 	}
 
 }

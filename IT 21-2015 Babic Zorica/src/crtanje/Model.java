@@ -28,7 +28,6 @@ public class Model {
 	private ArrayList<Oblik> commands = new ArrayList<Oblik> ();
 	
 	
-
 	ArrayList<Oblik> undoRedo = new ArrayList<Oblik>();
 
 	private int x;
@@ -42,7 +41,7 @@ public class Model {
 	private String odabranOblik = "";
 	private int duzinaStranice;
 	private boolean dvaKlika = false; 
-	private int r; 
+	private int r = -1;
 	private int rHexagon;
 	private int duzina;
 	private int sirina;

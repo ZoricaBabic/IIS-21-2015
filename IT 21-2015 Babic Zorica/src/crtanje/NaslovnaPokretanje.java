@@ -12,6 +12,9 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
 
 import geometrija.Krug;
 import geometrija.Kvadrat;
@@ -27,10 +30,12 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -44,6 +49,9 @@ import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+
 import javax.swing.JTextPane;
 import javax.swing.JTextArea;
 import javax.swing.JScrollBar;
@@ -71,6 +79,8 @@ public class NaslovnaPokretanje extends JFrame  {
 	private JPanel pnlBojaUnutrasnjosti;
 	private JPanel pnlBojaIvice;
 	public static JTextArea textArea;
+	
+	private ArrayList<String> lines = new ArrayList<String>();
 
 
 
@@ -88,6 +98,8 @@ public class NaslovnaPokretanje extends JFrame  {
 	private JPanel panel;
 	private boolean isShiftDown = false;
 	private Context context;
+	
+
 
 	//tofront, toback observer
 
@@ -708,38 +720,38 @@ public class NaslovnaPokretanje extends JFrame  {
 				if(dialogResult == JOptionPane.YES_OPTION){
 
 					saveTxt();
-					
+
 				}
 
-				
-					JFileChooser fs = new JFileChooser(new File("c:\\"));
-					fs.setDialogTitle("Open a file");
-					//fs.setFileFilter(new FileTypeFilter(".txt","Text File"));
-					FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("Text file","txt");
-					fs.setFileFilter(fileNameExtensionFilter);
 
-					int result = fs.showOpenDialog(null);
+				JFileChooser fs = new JFileChooser(new File("c:\\"));
+				fs.setDialogTitle("Open a file");
+				//fs.setFileFilter(new FileTypeFilter(".txt","Text File"));
+				FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("Text file","txt");
+				fs.setFileFilter(fileNameExtensionFilter);
 
-					if(result == JFileChooser.APPROVE_OPTION) {
+				int result = fs.showOpenDialog(null);
 
-						try{
+				if(result == JFileChooser.APPROVE_OPTION) {
 
-
-							File file = new File(fs.getSelectedFile().getAbsolutePath());
-							controller.openTxt(file);
+					try{
 
 
+						File file = new File(fs.getSelectedFile().getAbsolutePath());
+						controller.openTxt(file);
 
-						}catch(Exception ek){
-							System.err.println("Error: " + ek.getMessage());
-						}
 
+
+					}catch(Exception ek){
+						System.err.println("Error: " + ek.getMessage());
 					}
 
+				}
 
 
 
-				
+
+				lines.removeAll(lines);
 
 
 			}
@@ -751,6 +763,183 @@ public class NaslovnaPokretanje extends JFrame  {
 		btnCmdbycmd.setForeground(new Color(139, 0, 139));
 		btnCmdbycmd.setFont(new Font("Arial", Font.BOLD, 14));
 		btnCmdbycmd.setBackground(new Color(255, 240, 245));
+		
+		
+
+
+		btnCmdbycmd.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				
+				String line = null;
+				boolean k = false;
+				
+				for(String l : textArea.getText().split("\\n")) {
+					
+						for(int i =0; i<lines.size(); i++) {
+							
+
+							if(!lines.get(i).equals(l)) {
+							
+								line=l;
+								lines.add(l);
+								k=true;
+
+							}
+							
+							if(k==true) {
+								
+								k=false;
+								break;
+							}
+							
+							
+						}
+						
+				
+						if(lines.isEmpty()) {
+							
+							line=l;
+							lines.add(l);
+							k=true;
+						}
+						
+						
+						
+						if(k==true) {
+							
+							k=false;
+							break;
+						}
+						
+			
+					
+				}
+				
+				
+			
+				/*for (String line : textArea.getText().split("\\n")) {
+					
+					if(lines.isEmpty()) {
+						
+						System.out.println("Niz je prazan!");
+						
+					  	int pos2 = textArea.getText().indexOf(line);
+					    int y;
+					    Rectangle startIndex;
+						try {
+							
+							startIndex = textArea.modelToView(pos2);
+							y = startIndex.y + (scrollPane.getHeight() - 10);
+							
+						    textArea.setCaretPosition(textArea.viewToModel(new Point(startIndex.x, y)));
+						    scrollPane.scrollRectToVisible(new Rectangle(startIndex.x, y));
+						    
+						} catch (BadLocationException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					
+						
+					   try {
+
+							textArea.getHighlighter().addHighlight(pos2,
+							        pos2 + line.length(),
+							        new DefaultHighlighter.DefaultHighlightPainter(new Color(255, 255, 153)));
+							
+							lines.add(line);
+							controller.runCommandByCommand(line);
+							
+
+						} catch (BadLocationException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} 
+					   
+					   break;
+					   
+					   
+					} else {
+						
+						boolean n=true;
+						
+						System.out.println("Niz nije prazan");
+						for(int i=0; i<lines.size(); i++) {
+							
+							if(!lines.get(i).equals(line)) {
+								
+								System.out.println("Naisao je na onaj koji je razlicit!!!!");
+							  	int pos2 = textArea.getText().indexOf(line);
+							    int y;
+							    Rectangle startIndex;
+								try {
+									
+									startIndex = textArea.modelToView(pos2);
+									y = startIndex.y + (scrollPane.getHeight() - 10);
+									
+								    textArea.setCaretPosition(textArea.viewToModel(new Point(startIndex.x, y)));
+								    scrollPane.scrollRectToVisible(new Rectangle(startIndex.x, y));
+								    
+								 
+								    
+								} catch (BadLocationException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+							
+								
+								
+								
+							   try {
+
+									textArea.getHighlighter().addHighlight(pos2,
+									        pos2 + line.length(),
+									        new DefaultHighlighter.DefaultHighlightPainter(new Color(255, 255, 153)));
+									
+									   lines.add(line);
+									   controller.runCommandByCommand(line);
+
+								} catch (BadLocationException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								} 
+							   
+							   n=false;
+							   
+							   
+								
+							} 
+							
+							if(n == false) {
+								
+								n=true;
+								break;
+								
+							}
+							
+							
+						}
+						
+						
+					}
+					
+					
+					
+					break;
+					
+				}*/
+				
+				
+				
+
+			}
+		
+
+
+		});
+
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
 				gl_panel.createParallelGroup(Alignment.TRAILING)
@@ -1058,21 +1247,38 @@ public class NaslovnaPokretanje extends JFrame  {
 			try {
 
 				String path = jFileChooser.getSelectedFile().getAbsolutePath();
-				
+
 				System.out.println(path);
 				File file;
+				File filePainting;
+				////////////////BufferedImage im = new BufferedImage(pnlZaCrtanje.getWidth(), pnlZaCrtanje.getHeight(), BufferedImage.TYPE_INT_ARGB);
+				//c.paint(im.getGraphics());
+
+
 				if(path.contains(".txt")) {
-					
+
 					file = new File(path);
+
+					int length = path.length();
+					String s = path.substring(0, length - 4) + ".png";
+
+					filePainting = new File(s);
+
+
+					//ImageIO.write(im, "PNG", new File(s));
 				} else {
-					
+
 					file = new File(path + ".txt");
+					filePainting = new File(path + ".png");
+
+					////////////ImageIO.write(im, "PNG", new File(path + ".png"));
 				}
-				
-				
+
+
 				//File file = new File(jFileChooser.getSelectedFile().getCanonicalPath());
 
 				controller.saveTxt(file);
+				controller.savePainting(filePainting);
 
 
 

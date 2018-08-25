@@ -31,7 +31,7 @@ public class LogOperation implements Strategy{
  				ee.printStackTrace();
  			}
  		  
-			
+
 			
 		}catch(Exception ee) {
 			

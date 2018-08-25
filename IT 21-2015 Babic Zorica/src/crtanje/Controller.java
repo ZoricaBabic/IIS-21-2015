@@ -5,17 +5,18 @@ import java.awt.Button;
 
 
 import java.awt.Color;
-
-
+import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
 
 import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
 import cmd.CmdAddShape;
 import cmd.CmdBringToBack;
@@ -47,6 +48,7 @@ import observer.Subject;
 import strategy.Context;
 import strategy.LogOperation;
 import strategy.OpenOperation;
+import strategy.SavePaintingOperation;
 
 
 
@@ -101,7 +103,6 @@ public class Controller {
 		subject.attach(NaslovnaPokretanje.btnModifikuj);
 		checkIfSelectedShapeExists();
 
-
 	} 
 
 	public Controller() {
@@ -136,7 +137,93 @@ public class Controller {
 		context.executeStrategy(frame, f);
 			
 			
+
+	}
+	
+	public void runCommandByCommand(String line) {
 		
+		
+		/*      Added: Line: startPoint (272,100), endPoint (208,91), outline: #000000, Selected? false
+				Added: Rectangle: (455, 79), width: 50, height: 60, outline: #000000, fill: #ffffff, Selected? false
+				Added: Circle: (661,77), radius: 50, outline: #000000, fill: #ffffff, Selected? false
+				Added: Square: (335, 260), width: 50, outline: #000000, fill: #ffffff, Selected? false
+				Added: Point: (681,232), outline: #000000, Selected? false
+				Added: Hexagon: (130,144), radius: 50, outline: #000000, fill: #ffffff, Selected? false        */
+		
+		
+		
+		if(line.contains("Added:")) {
+			
+			if(line.contains("Circle")) {
+				
+				setOdabranOblik("Krug");
+				String outline = between(line, "outline: ", ", fill:");
+				String inline = between(line, "fill: ",", Selected");
+				String s = between(line, "Circle: (",")");
+				String[] myString = s.split(",");
+				String x = myString[0];
+				String y = myString[1];
+				String radius = between(line, "radius: ",", outline");
+				
+				
+				model.setBojaUnutrasnjosti(stringToColor(inline));
+				model.setBojaIvice(stringToColor(outline));
+				model.setR(Integer.parseInt(radius));
+				
+				mouseClickedPnl(Integer.parseInt(x),Integer.parseInt(y));
+				
+				
+			}
+		}
+		
+		
+		
+	}
+	
+	static String between(String value, String a, String b) {
+        // Return a substring between the two strings.
+        int posA = value.indexOf(a);
+        if (posA == -1) {
+            return "";
+        }
+        int posB = value.lastIndexOf(b);
+        if (posB == -1) {
+            return "";
+        }
+        int adjustedPosA = posA + a.length();
+        if (adjustedPosA >= posB) {
+            return "";
+        }
+        return value.substring(adjustedPosA, posB);
+    }
+	
+	
+	public static Color stringToColor(final String value) {
+	    if (value == null) {
+	      return Color.black;
+	    }
+	    try {
+	      // get color by hex or octal value
+	      return Color.decode(value);
+	    } catch (NumberFormatException nfe) {
+	      // if we can't decode lets try to get it by name
+	      try {
+	        // try to get a color by name using reflection
+	        final Field f = Color.class.getField(value);
+
+	        return (Color) f.get(null);
+	        
+	      } catch (Exception ce) {
+	        // if we can't get any color return black
+	        return Color.black;
+	      }
+	    }
+	  }
+	
+	public void savePainting(File f) {
+		
+		context = new Context(new SavePaintingOperation());
+		context.executeStrategy(frame, f);
 	}
 
 	//BRISANJE
@@ -1273,68 +1360,141 @@ public class Controller {
 
 
 			s=true; //proveriti šta ovo znači
-
-			String s=JOptionPane.showInputDialog("Unesi duzinu poluprecnika kruga");
-
-			try{
-
-				int r = Integer.parseInt(s);
-				if(r > 0){
-
-					model.setR(r);
-					model.setX(x);
-					model.setY(y);
-					//view.repaint();
-
-					Krug kr = new Krug(new Tacka(model.getX(),model.getY()),model.getR());
-					kr.setBojaIvice(model.getBojaIvice());
-					kr.setBojaUnutrasnjosti(model.getBojaUnutrasnjosti());
-
-					CmdAddShape cmdAddShape = new CmdAddShape(model,kr); 
-					cmdAddShape.execute();
-
-					position++;
-
-					cmdUndoRedo1.addToCommandList(cmdAddShape);
+			String s = "";
+			int r;
+			
+			if(model.getR() == -1) {
+				
+				s=JOptionPane.showInputDialog("Unesi duzinu poluprecnika kruga");
+				r = Integer.parseInt(s);
 
 
+				try{
 
-					/*Oblik l = CopyShape(kr);
-					model.addToStackUndo(l);*/
+					
+					if(r > 0){
 
+						model.setR(r);
+						model.setX(x);
+						model.setY(y);
+						//view.repaint();
 
+						Krug kr = new Krug(new Tacka(model.getX(),model.getY()),model.getR());
+						kr.setBojaIvice(model.getBojaIvice());
+						kr.setBojaUnutrasnjosti(model.getBojaUnutrasnjosti());
 
+						CmdAddShape cmdAddShape = new CmdAddShape(model,kr); 
+						cmdAddShape.execute();
+
+						position++;
+
+						cmdUndoRedo1.addToCommandList(cmdAddShape);
 
 
 
-					frame.getBtnUndo().setEnabled(true);
-					frame.getBtnRedo().setEnabled(false);
-					//frame.getBtnSelektuj().setEnabled(true);
-
-					//frame.getTextArea().append("Drawing: " + kr.toString() +"\n");
+						/*Oblik l = CopyShape(kr);
+						model.addToStackUndo(l);*/
 
 
 
 
 
 
+						frame.getBtnUndo().setEnabled(true);
+						frame.getBtnRedo().setEnabled(false);
+						//frame.getBtnSelektuj().setEnabled(true);
 
-				} else {
+						//frame.getTextArea().append("Drawing: " + kr.toString() +"\n");
+
+
+
+
+
+
+
+					} else {
+
+						JOptionPane.showMessageDialog(null, "Niste dobro uneli polupre�?nik kruga!");
+					}
+
+				} catch (NumberFormatException k){
 
 					JOptionPane.showMessageDialog(null, "Niste dobro uneli polupre�?nik kruga!");
+
+
+				} catch(NullPointerException k){
+
+					JOptionPane.showConfirmDialog(null, "Niste uneli polupre�?nik kruga!");
 				}
+				
+			} else {
+				
+				r = model.getR();
+				
+				try{
 
-			} catch (NumberFormatException k){
+					
+					if(r > 0){
 
-				JOptionPane.showMessageDialog(null, "Niste dobro uneli polupre�?nik kruga!");
+						model.setR(r);
+						model.setX(x);
+						model.setY(y);
+						//view.repaint();
+
+						Krug kr = new Krug(new Tacka(model.getX(),model.getY()),model.getR());
+						kr.setBojaIvice(model.getBojaIvice());
+						kr.setBojaUnutrasnjosti(model.getBojaUnutrasnjosti());
+
+						CmdAddShape cmdAddShape = new CmdAddShape(model,kr);
+						cmdAddShape.setPrint(false);
+						cmdAddShape.execute();
+
+						position++;
+
+						//cmdUndoRedo1.addToCommandList(cmdAddShape);
 
 
-			} catch(NullPointerException k){
 
-				JOptionPane.showConfirmDialog(null, "Niste uneli polupre�?nik kruga!");
+						/*Oblik l = CopyShape(kr);
+						model.addToStackUndo(l);*/
+
+
+
+
+
+
+						frame.getBtnUndo().setEnabled(true);
+						frame.getBtnRedo().setEnabled(false);
+						//frame.getBtnSelektuj().setEnabled(true);
+
+						//frame.getTextArea().append("Drawing: " + kr.toString() +"\n");
+
+
+
+
+
+
+
+					} else {
+
+						JOptionPane.showMessageDialog(null, "Niste dobro uneli polupre�?nik kruga!");
+					}
+
+				} catch (NumberFormatException k){
+
+					JOptionPane.showMessageDialog(null, "Niste dobro uneli polupre�?nik kruga!");
+
+
+				} catch(NullPointerException k){
+
+					JOptionPane.showConfirmDialog(null, "Niste uneli polupre�?nik kruga!");
+				}
+				
 			}
 
+			
 
+			model.setR(-1);
 
 		}
 		
@@ -1390,8 +1550,6 @@ public class Controller {
 
 	//SETOVANJE ODABRANOG OBLIKA
 	public void setOdabranOblik(String s) {
-
-
 
 		model.setOdabranOblik(s);
 
