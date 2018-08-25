@@ -9,6 +9,7 @@ import java.awt.Color;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
@@ -43,6 +44,9 @@ import geometrija.Pravougaonik;
 import geometrija.Tacka;
 import hexagon.Hexagon;
 import observer.Subject;
+import strategy.Context;
+import strategy.LogOperation;
+import strategy.OpenOperation;
 
 
 
@@ -63,6 +67,7 @@ public class Controller {
 	private boolean n = false;
 	//private CmdUndoRedo cmdUndoRedo;
 	private ArrayList<Oblik> selectedShapes = new ArrayList<Oblik>();
+	private Context context;
 	
 
 	private Subject subject;
@@ -113,6 +118,25 @@ public class Controller {
 	public void setBojaUnutrasnjosti(Color c) {
 
 		model.setBojaIvice(c);
+	}
+	
+	//cuvanje txt fajlsa
+	
+	public void saveTxt(File f) {
+		
+		context = new Context(new LogOperation());
+		context.executeStrategy(frame, f); 
+	
+		
+	}
+	
+	public void openTxt(File f) {
+		
+		context = new Context(new OpenOperation());
+		context.executeStrategy(frame, f);
+			
+			
+		
 	}
 
 	//BRISANJE
@@ -1699,6 +1723,14 @@ public class Controller {
 
 
 
+	}
+
+	public Model getModel() {
+		return model;
+	}
+
+	public void setModel(Model model) {
+		this.model = model;
 	}
 
 

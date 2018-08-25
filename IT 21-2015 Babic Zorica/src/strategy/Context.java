@@ -12,7 +12,7 @@ public class Context {
 
 	   public int executeStrategy(Object o, File f){
 		   
-	      return strategy.doOperation(o, f);
+	     return strategy.doOperation(o, f);
 	   }
 
 }
