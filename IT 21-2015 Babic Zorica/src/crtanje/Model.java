@@ -39,12 +39,12 @@ public class Model {
 	private  Color bojaIvice = Color.black;
 	private  Color bojaUnutrasnjosti =  Color.WHITE;
 	private String odabranOblik = "";
-	private int duzinaStranice;
+	private int duzinaStranice = -1;
 	private boolean dvaKlika = false; 
 	private int r = -1;
 	private int rHexagon;
-	private int duzina;
-	private int sirina;
+	private int duzina = -1;
+	private int sirina = -1;
 	private boolean selektovan;
 	private int positionNumber;
 	private Oblik oblik;

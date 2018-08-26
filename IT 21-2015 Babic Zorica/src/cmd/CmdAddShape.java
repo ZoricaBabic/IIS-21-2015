@@ -20,6 +20,7 @@ public class CmdAddShape implements Command {
 		
 
 		model.add(o);
+		System.out.println("Dodaje oblik");
 		if(print == true) {
 			
 			NaslovnaPokretanje.getTextArea().append("Added: " + o.toString() +"\n");
@@ -36,6 +37,8 @@ public class CmdAddShape implements Command {
 		
 
 		model.remove(o);
+		System.out.println("Brise se oblik!");
+		
 		NaslovnaPokretanje.getTextArea().append("Removed: " + o.toString() +"\n");
 		
 		if(model.getListaObjekata().isEmpty()) {

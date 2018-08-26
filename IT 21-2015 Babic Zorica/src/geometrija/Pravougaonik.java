@@ -64,7 +64,7 @@ public class Pravougaonik extends Kvadrat {
 
 		//return "Tacka gore levo je: " + tGoreLevo + "duzina: " + duzinaStranice + ", sirina: "+sirina + "Selektovan? " + isSelektovan() + ".";
 		
-		return "Rectangle: (" + tGoreLevo.getX() + ", "+tGoreLevo.getY()+"), width: " + duzinaStranice + ", height: " + sirina + ", outline: " + getHex(getBojaIvice())+ ", fill: " + getHex(getBojaUnutrasnjosti()) + ", Selected? " + isSelektovan(); 
+		return "Rectangle: (" + tGoreLevo.getX() + ","+tGoreLevo.getY()+"), width: " + duzinaStranice + ", height: " + sirina + ", outline: " + getHex(getBojaIvice())+ ", fill: " + getHex(getBojaUnutrasnjosti()) + ", Selected? " + isSelektovan(); 
 	}
 
 	public boolean equals(Object o){

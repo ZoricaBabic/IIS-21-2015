@@ -70,22 +70,20 @@ public class Controller {
 	//private CmdUndoRedo cmdUndoRedo;
 	private ArrayList<Oblik> selectedShapes = new ArrayList<Oblik>();
 	private Context context;
-	
+
 
 	private Subject subject;
 	
+	private boolean justRead = false;
 
-	
-	
+
+
+
 	//private CmdUndo undoRedo;
 
 	private int firstClick = 0;
 
 	private CmdUndoRedo1 cmdUndoRedo1;
-
-	
-
-
 
 
 
@@ -97,7 +95,7 @@ public class Controller {
 		//button = new Button(frame);
 		//cmdUndoRedo = new CmdUndoRedo(model);
 		cmdUndoRedo1 = new CmdUndoRedo1();
-		
+
 		subject = new Subject();
 		subject.attach(NaslovnaPokretanje.btnObrisi);
 		subject.attach(NaslovnaPokretanje.btnModifikuj);
@@ -120,42 +118,37 @@ public class Controller {
 
 		model.setBojaIvice(c);
 	}
-	
+
 	//cuvanje txt fajlsa
-	
+
 	public void saveTxt(File f) {
-		
+
 		context = new Context(new LogOperation());
 		context.executeStrategy(frame, f); 
-	
-		
-	}
-	
-	public void openTxt(File f) {
-		
-		context = new Context(new OpenOperation());
-		context.executeStrategy(frame, f);
-			
-			
+
 
 	}
-	
+
+	public void openTxt(File f) {
+
+		context = new Context(new OpenOperation());
+		context.executeStrategy(frame, f);
+
+
+
+	}
+
 	public void runCommandByCommand(String line) {
-		
-		
-		/*      Added: Line: startPoint (272,100), endPoint (208,91), outline: #000000, Selected? false
-				Added: Rectangle: (455, 79), width: 50, height: 60, outline: #000000, fill: #ffffff, Selected? false
-				Added: Circle: (661,77), radius: 50, outline: #000000, fill: #ffffff, Selected? false
-				Added: Square: (335, 260), width: 50, outline: #000000, fill: #ffffff, Selected? false
-				Added: Point: (681,232), outline: #000000, Selected? false
-				Added: Hexagon: (130,144), radius: 50, outline: #000000, fill: #ffffff, Selected? false        */
-		
-		
-		
+
+
+
+
+
+
 		if(line.contains("Added:")) {
-			
+
 			if(line.contains("Circle")) {
-				
+
 				setOdabranOblik("Krug");
 				String outline = between(line, "outline: ", ", fill:");
 				String inline = between(line, "fill: ",", Selected");
@@ -164,64 +157,188 @@ public class Controller {
 				String x = myString[0];
 				String y = myString[1];
 				String radius = between(line, "radius: ",", outline");
-				
-				
+
+
 				model.setBojaUnutrasnjosti(stringToColor(inline));
 				model.setBojaIvice(stringToColor(outline));
 				model.setR(Integer.parseInt(radius));
+				model.setX(Integer.parseInt(x));
+				model.setY(Integer.parseInt(y));
+
+				mouseClickedPnl(Integer.parseInt(x),Integer.parseInt(y));
+
+
+			} else if (line.contains("Square")) {
+
+
+
+				setOdabranOblik("Kvadrat");
+				String outline = between(line, "outline: ", ", fill:");
+				String inline = between(line, "fill: ",", Selected");
+				String s = between(line, "Square: (",")");
+				String[] myString = s.split(",");
+				String x = myString[0].trim();
+				String y = myString[1].trim();
+				String width = between(line, "width: ",", outline");
+
+
+				model.setBojaUnutrasnjosti(stringToColor(inline));
+				model.setBojaIvice(stringToColor(outline));
+				model.setDuzinaStranice(Integer.parseInt(width));
+				model.setX(Integer.parseInt(x));
+				model.setY(Integer.parseInt(y));
+				mouseClickedPnl(Integer.parseInt(x),Integer.parseInt(y));
+
+
+			} else if(line.contains("Rectangle")){
+
+
+				setOdabranOblik("Pravougaonik");
+				String outline = between(line, "outline: ", ", fill:");
+				String inline = between(line, "fill: ",", Selected");
+				String s = between(line, "Rectangle: (",")");
+				String[] myString = s.split(",");
+				String x = myString[0].trim();
+				String y = myString[1].trim();
+				String width = between(line, "width: ",", height");
+				String height = between(line,"height: ",", outline");
+
+
+				model.setBojaUnutrasnjosti(stringToColor(inline));
+				model.setBojaIvice(stringToColor(outline));
+				model.setDuzina(Integer.parseInt(width));
+				model.setSirina(Integer.parseInt(height));
+				model.setX(Integer.parseInt(x));
+				model.setY(Integer.parseInt(y));
+				mouseClickedPnl(Integer.parseInt(x),Integer.parseInt(y));
+
+
+			} else if(line.contains("Line")) {
+
+				//Added: Line: startPoint (272,100), endPoint (208,91), outline: #000000, Selected? false
+				setOdabranOblik("Linija");
+				String outline = between(line, "outline: ", ", Selected");
+				//startpoint
+				String s = between(line, "startPoint (", "), endPoint");
+				String[] myString = s.split(",");
+				String x = myString[0].trim();
+				String y = myString[1].trim();
+
+				//endPoint
+
+				String sa = between(line, "endPoint (", "), outline:");
+				String[] myStrings = sa.split(",");
+				String newX = myStrings[0].trim();
+				String newY = myStrings[1].trim();
+
+				model.setBojaIvice(stringToColor(outline));
 				
+				model.setX(Integer.parseInt(x));
+				model.setY(Integer.parseInt(y));
+				model.setNovoX(Integer.parseInt(newX));
+				model.setNovoY(Integer.parseInt(newY));
+				
+				System.out.println(x);
+				System.out.println(newX);
+
+				model.setDvaKlika(true);
+				justRead=true;
+				mouseClickedPnl(Integer.parseInt(x),Integer.parseInt(y));
+
+
+			} else if (line.contains("Hexagon")) {
+				
+				//Added: Hexagon: (130,144), radius: 50, outline: #000000, fill: #ffffff, Selected? false  
+				
+				setOdabranOblik("Hexagon");
+				String outline = between(line, "outline: ", ", fill:");
+				String inline = between(line, "fill: ",", Selected");
+				String s = between(line, "Hexagon: (",")");
+				String[] myString = s.split(",");
+				String x = myString[0];
+				String y = myString[1];
+				String radius = between(line, "radius: ",", outline");
+
+
+				model.setBojaUnutrasnjosti(stringToColor(inline));
+				model.setBojaIvice(stringToColor(outline));
+				model.setX(Integer.parseInt(x));
+				model.setY(Integer.parseInt(y));
+				model.setR(Integer.parseInt(radius));
+
 				mouseClickedPnl(Integer.parseInt(x),Integer.parseInt(y));
 				
+			} else if (line.contains("Point")) {
 				
+				//Added: Point: (681,232), outline: #000000, Selected? false
+				
+				setOdabranOblik("Tacka");
+				String outline = between(line, "outline: ", ", Selected?");
+			
+				String s = between(line, "Point: (",")");
+				String[] myString = s.split(",");
+				String x = myString[0];
+				String y = myString[1];
+				
+
+
+				
+				model.setBojaIvice(stringToColor(outline));
+				model.setX(Integer.parseInt(x));
+				model.setY(Integer.parseInt(y));
+			
+
+				justRead=true;
+				mouseClickedPnl(Integer.parseInt(x),Integer.parseInt(y));
 			}
 		}
-		
-		
-		
-	}
-	
-	static String between(String value, String a, String b) {
-        // Return a substring between the two strings.
-        int posA = value.indexOf(a);
-        if (posA == -1) {
-            return "";
-        }
-        int posB = value.lastIndexOf(b);
-        if (posB == -1) {
-            return "";
-        }
-        int adjustedPosA = posA + a.length();
-        if (adjustedPosA >= posB) {
-            return "";
-        }
-        return value.substring(adjustedPosA, posB);
-    }
-	
-	
-	public static Color stringToColor(final String value) {
-	    if (value == null) {
-	      return Color.black;
-	    }
-	    try {
-	      // get color by hex or octal value
-	      return Color.decode(value);
-	    } catch (NumberFormatException nfe) {
-	      // if we can't decode lets try to get it by name
-	      try {
-	        // try to get a color by name using reflection
-	        final Field f = Color.class.getField(value);
 
-	        return (Color) f.get(null);
-	        
-	      } catch (Exception ce) {
-	        // if we can't get any color return black
-	        return Color.black;
-	      }
-	    }
-	  }
-	
+
+
+	}
+
+	static String between(String value, String a, String b) {
+		// Return a substring between the two strings.
+		int posA = value.indexOf(a);
+		if (posA == -1) {
+			return "";
+		}
+		int posB = value.lastIndexOf(b);
+		if (posB == -1) {
+			return "";
+		}
+		int adjustedPosA = posA + a.length();
+		if (adjustedPosA >= posB) {
+			return "";
+		}
+		return value.substring(adjustedPosA, posB);
+	}
+
+
+	public static Color stringToColor(final String value) {
+		if (value == null) {
+			return Color.black;
+		}
+		try {
+			// get color by hex or octal value
+			return Color.decode(value);
+		} catch (NumberFormatException nfe) {
+			// if we can't decode lets try to get it by name
+			try {
+				// try to get a color by name using reflection
+				final Field f = Color.class.getField(value);
+
+				return (Color) f.get(null);
+
+			} catch (Exception ce) {
+				// if we can't get any color return black
+				return Color.black;
+			}
+		}
+	}
+
 	public void savePainting(File f) {
-		
+
 		context = new Context(new SavePaintingOperation());
 		context.executeStrategy(frame, f);
 	}
@@ -275,23 +392,23 @@ public class Controller {
 				}	
 
 				int countDeleted = oblici.size();
-				
+
 				if(oblici.size() == 1) {
-					
+
 					//obirsan je jedan oblik
 					CmdRemoveShape cmdRemove = new CmdRemoveShape(model,oblici.get(0));
 					cmdRemove.execute();
 					cmdUndoRedo1.addToCommandList(cmdRemove);
-					
 
-					
+
+
 				} else {
 					//obrisano je više oblika
 					CmdRemoveShape cmdRemove = new CmdRemoveShape(model,oblici);
 					cmdRemove.execute();
 					cmdUndoRedo1.addToCommandList(cmdRemove);
 
-					
+
 				}
 
 
@@ -301,8 +418,8 @@ public class Controller {
 			}
 
 		}
-		
-		
+
+
 		checkIfSelectedShapeExists();
 	}
 
@@ -316,19 +433,19 @@ public class Controller {
 
 			//if(o instanceof HexagonAdapter) {
 
-				/*HexagonAdapter h = new HexagonAdapter( ((HexagonAdapter) o).getHexagon());
+			/*HexagonAdapter h = new HexagonAdapter( ((HexagonAdapter) o).getHexagon());
 				if(h.getHexagon().isSelected() == true) {
 					count++;
 				}*/
 
 			//} else {
 
-				if(o.isSelektovan() == true) {
+			if(o.isSelektovan() == true) {
 
-					count++;
-			
+				count++;
 
-				}
+
+			}
 			//}
 
 		}
@@ -346,9 +463,9 @@ public class Controller {
 			for(Oblik o: model.getListaObjekata()) {
 
 				if(o.isSelektovan() == true) {
-					
-						if(o instanceof Pravougaonik){
-						
+
+					if(o instanceof Pravougaonik){
+
 						System.out.println("Pravougaonik!!!!!");
 
 						DlgOsobinePravougaonika osobine = new DlgOsobinePravougaonika();
@@ -398,10 +515,10 @@ public class Controller {
 
 
 					} else if(o instanceof Kvadrat){
-						
+
 						System.out.println("Kvadrat!!!!!");
 
-						
+
 						DlgOsobineKvadrata osobine = new DlgOsobineKvadrata();
 						osobine.setX(((Kvadrat) o).gettGoreLevo().getX());
 						osobine.setY(((Kvadrat) o).gettGoreLevo().getY());
@@ -443,8 +560,8 @@ public class Controller {
 
 
 					} else if (o instanceof Krug) {
-						
-						
+
+
 
 						DlgOsobineKruga osobine = new DlgOsobineKruga();
 						osobine.setX(((Krug) o).getCentar().getX());
@@ -508,8 +625,8 @@ public class Controller {
 					} 
 
 
-				 else if(o instanceof Tacka){
-						
+					else if(o instanceof Tacka){
+
 						System.out.println("Taacka!!!!!");
 
 						DlgOsobineTacke osobine = new DlgOsobineTacke();
@@ -618,34 +735,34 @@ public class Controller {
 						osobineh.setVisible(true);
 
 						if(osobineh.isVisible() == false) {
-							
+
 							Hexagon hexagon = new Hexagon(osobineh.getX(),osobineh.getY(),osobineh.getPoluprecnik());
 							hexagon.setAreaColor(osobineh.getBojaUnutrasnjosti());
 							hexagon.setBorderColor(osobineh.getBojaIvice());
 							hexagon.setSelected(true);
-							
+
 							HexagonAdapter hexagonAdapter = new HexagonAdapter(hexagon);
 							CmdUpdateShape cmdUpdate = new CmdUpdateShape(o,hexagonAdapter);
 							cmdUpdate.execute();
 
 							cmdUndoRedo1.addToCommandList(cmdUpdate);
-							
-					
 
 
 
-					} 
 
+
+						} 
+
+
+
+					}
 
 
 				}
-
-
 			}
-				}
 
-				
-				
+
+
 
 
 
@@ -654,7 +771,7 @@ public class Controller {
 
 
 		}
-		
+
 		checkIfSelectedShapeExists();
 
 	}
@@ -721,7 +838,7 @@ public class Controller {
 
 					//if(stackOblik.peek() instanceof HexagonAdapter) {
 
-						/*System.out.println("HEXAGON ADAPTER!!!!!!!!!!!!");
+					/*System.out.println("HEXAGON ADAPTER!!!!!!!!!!!!");
 						Hexagon hexagon = new Hexagon(((HexagonAdapter) stackOblik.peek()).getHexagon().getX(),((HexagonAdapter) stackOblik.peek()).getHexagon().getY(),((HexagonAdapter) stackOblik.peek()).getHexagon().getR());
 						hexagon.setAreaColor(((HexagonAdapter) stackOblik.peek()).getHexagon().getAreaColor());
 						hexagon.setBorderColor(((HexagonAdapter) stackOblik.peek()).getHexagon().getBorderColor());
@@ -735,18 +852,18 @@ public class Controller {
 						CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
 						cmdUpdate.execute(); 
 						cmdUndoRedo1.addToCommandList(cmdUpdate);*/
-						
-						CmdSelectShape cmdSelectShape = new CmdSelectShape(model,stackOblik.peek());
-						cmdSelectShape.execute();
-						cmdUndoRedo1.addToCommandList(cmdSelectShape);
-						
-						
-						//frame.getTextArea().append("Selected: " + s.toString() +"\n");
+
+					CmdSelectShape cmdSelectShape = new CmdSelectShape(model,stackOblik.peek());
+					cmdSelectShape.execute();
+					cmdUndoRedo1.addToCommandList(cmdSelectShape);
+
+
+					//frame.getTextArea().append("Selected: " + s.toString() +"\n");
 
 					//} else {
 
 
-						/*Oblik q = CopyShape(stackOblik.peek());
+					/*Oblik q = CopyShape(stackOblik.peek());
 						Oblik s = CopyShape(stackOblik.peek());
 						s.setSelektovan(true);
 						CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
@@ -767,7 +884,7 @@ public class Controller {
 					position++;
 					/*button.setStatus(true);
 					frame.getBtnRedo().setEnabled(false);*/
-					
+
 
 				}
 
@@ -789,7 +906,7 @@ public class Controller {
 
 							//if(model.getListaObjekata().get(i) instanceof HexagonAdapter) {
 
-								/*System.out.println("HEXAGON ADAPTER!!!!!!!!!!!!");
+							/*System.out.println("HEXAGON ADAPTER!!!!!!!!!!!!");
 								Hexagon hexagon = new Hexagon(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getX(),((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getY(),((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getR());
 								hexagon.setAreaColor(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getAreaColor());
 								hexagon.setBorderColor(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getBorderColor());
@@ -808,16 +925,16 @@ public class Controller {
 								cmdUndoRedo1.addToCommandList(cmdUpdate);
 								//model.getCommands().add(s);
 								frame.getTextArea().append("Selected: " + s.toString() +"\n");*/
-								
-								CmdSelectShape cmdSelectShape = new CmdSelectShape(model,model.getListaObjekata().get(i));
-								cmdSelectShape.execute();
-								cmdUndoRedo1.addToCommandList(cmdSelectShape);
+
+							CmdSelectShape cmdSelectShape = new CmdSelectShape(model,model.getListaObjekata().get(i));
+							cmdSelectShape.execute();
+							cmdUndoRedo1.addToCommandList(cmdSelectShape);
 
 							//} else {
 
 
 
-								/*Oblik q = CopyShape(model.getListaObjekata().get(i));
+							/*Oblik q = CopyShape(model.getListaObjekata().get(i));
 								System.out.println(q);
 								Oblik s = CopyShape(model.getListaObjekata().get(i));
 								s.setSelektovan(true);
@@ -921,9 +1038,9 @@ public class Controller {
 
 
 			//klikom na panel deselktuju se svi oblici
-			
+
 			if(m==0) {
-				
+
 				ArrayList<Oblik> ss = new ArrayList<Oblik>();
 				int k=0;
 				System.out.println("Ne sadrzi nijedan oblik!");
@@ -967,7 +1084,7 @@ public class Controller {
 					cmdUpdate.execute(); 
 					cmdUndoRedo1.addToCommandList(cmdUpdate);
 					frame.getTextArea().append("Deselected: " + s.toString() +"\n");*/
-					
+
 					CmdDeselectShape cmdDeselectShape = new CmdDeselectShape(model,ss.get(0));
 					cmdDeselectShape.execute();
 					cmdUndoRedo1.addToCommandList(cmdDeselectShape);
@@ -990,20 +1107,20 @@ public class Controller {
 		} else {
 
 			//for(int i =0; i<model.getListaObjekata().size(); i++) {
-				
-				ArrayList<Oblik> ss = new ArrayList<Oblik>();
-				int k=0;
-				//System.out.println("Ne sadrzi nijedan oblik!");
-				n=true;
 
-				for(Oblik o: model.getListaObjekata()) {
+			ArrayList<Oblik> ss = new ArrayList<Oblik>();
+			int k=0;
+			//System.out.println("Ne sadrzi nijedan oblik!");
+			n=true;
 
-					if(o.isSelektovan() == true) {
+			for(Oblik o: model.getListaObjekata()) {
 
-						ss.add(o);
-						k++;
+				if(o.isSelektovan() == true) {
 
-						/*Oblik q = CopyShape(o);
+					ss.add(o);
+					k++;
+
+					/*Oblik q = CopyShape(o);
 						m++;
 						Oblik s = CopyShape(o);
 						s.setSelektovan(false);
@@ -1012,46 +1129,46 @@ public class Controller {
 						cmdUndoRedo1.addToCommandList(cmdUpdate);
 						frame.getTextArea().append("Deselected " + s.toString() +"\n");
 						button.setStatus(false);*/
-					}
-
-
-
 				}
 
-				if(k>1) {
 
 
-					CmdUpdateSelectedShapes cmdUpdate = new CmdUpdateSelectedShapes(model,ss);
-					cmdUpdate.execute();
-					cmdUndoRedo1.addToCommandList(cmdUpdate);
+			}
 
-					/*for(int i=0; i<ss.size(); i++) {
+			if(k>1) {
+
+
+				CmdUpdateSelectedShapes cmdUpdate = new CmdUpdateSelectedShapes(model,ss);
+				cmdUpdate.execute();
+				cmdUndoRedo1.addToCommandList(cmdUpdate);
+
+				/*for(int i=0; i<ss.size(); i++) {
 						frame.getTextArea().append("Deselected multiple shapes: " + ss.get(i).toString() +"\n");
 					}*/
 
-					
 
-				} else if (k==1) {
 
-					/*Oblik q = CopyShape(ss.get(0));
+			} else if (k==1) {
+
+				/*Oblik q = CopyShape(ss.get(0));
 					Oblik s = CopyShape(ss.get(0));
 					s.setSelektovan(false);
 					CmdUpdateShape cmdUpdate = new CmdUpdateShape(q,s);
 					cmdUpdate.execute(); 
 					cmdUndoRedo1.addToCommandList(cmdUpdate);
 					frame.getTextArea().append("Deselected: " + s.toString() +"\n");*/
-					
-					CmdDeselectShape cmdDeselectShape = new CmdDeselectShape(model,ss.get(0));
-					cmdDeselectShape.execute();
-					cmdUndoRedo1.addToCommandList(cmdDeselectShape);
-				
-					//button.setStatus(false);
-				}
-				
-				
-				
 
-				/*if(model.getListaObjekata().get(i) instanceof HexagonAdapter) {
+				CmdDeselectShape cmdDeselectShape = new CmdDeselectShape(model,ss.get(0));
+				cmdDeselectShape.execute();
+				cmdUndoRedo1.addToCommandList(cmdDeselectShape);
+
+				//button.setStatus(false);
+			}
+
+
+
+
+			/*if(model.getListaObjekata().get(i) instanceof HexagonAdapter) {
 					System.out.println("HEXAGON ADAPTER!!!!!!!!!!!!");
 					Hexagon hexagon = new Hexagon(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getX(),((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getY(),((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getR());
 					hexagon.setAreaColor(((HexagonAdapter) model.getListaObjekata().get(i)).getHexagon().getAreaColor());
@@ -1097,30 +1214,62 @@ public class Controller {
 		//CRTANJE
 		if(model.getOdabranOblik() == "Tacka" || model.getOdabranOblik() == null)
 		{
+			
+			if(justRead==false) {
+				
+				model.setX(x);
+				model.setY(y);
+				//view.repaint();
 
-			model.setX(x);
-			model.setY(y);
-			//view.repaint();
-
-			Tacka t = new Tacka(model.getX(),model.getY());
-			t.setBojaIvice(model.getBojaIvice());
-
-
-			cmdAddShape = new CmdAddShape(model,t);
-			cmdAddShape.execute();
+				Tacka t = new Tacka(model.getX(),model.getY());
+				t.setBojaIvice(model.getBojaIvice());
 
 
-			/*Oblik l = CopyShape(t);
-			model.addToStackUndo(l);*/
+				CmdAddShape cmdAddShape = new CmdAddShape(model,t);
+				
+				cmdAddShape.execute();
 
-			cmdUndoRedo1.addToCommandList(cmdAddShape);
 
-			frame.getBtnRedo().setEnabled(false);
-			frame.getBtnUndo().setEnabled(true);
-			frame.getBtnSelektuj().setEnabled(true);
+				/*Oblik l = CopyShape(t);
+				model.addToStackUndo(l);*/
 
-			//frame.getTextArea().append("Drawing: " + t.toString() +"\n");
-			//view.repaint();
+				cmdUndoRedo1.addToCommandList(cmdAddShape);
+
+				frame.getBtnRedo().setEnabled(false);
+				frame.getBtnUndo().setEnabled(true);
+				frame.getBtnSelektuj().setEnabled(true);
+
+				//frame.getTextArea().append("Drawing: " + t.toString() +"\n");
+				//view.repaint();
+			} else {
+				
+		
+				Tacka t = new Tacka(model.getX(),model.getY());
+				t.setBojaIvice(model.getBojaIvice());
+
+
+				CmdAddShape cmdAddShape = new CmdAddShape(model,t);
+				cmdAddShape.setPrint(false);
+				
+				cmdAddShape.execute();
+
+
+				/*Oblik l = CopyShape(t);
+				model.addToStackUndo(l);*/
+
+				cmdUndoRedo1.addToCommandList(cmdAddShape);
+
+				frame.getBtnRedo().setEnabled(false);
+				frame.getBtnUndo().setEnabled(true);
+				frame.getBtnSelektuj().setEnabled(true);
+
+				//frame.getTextArea().append("Drawing: " + t.toString() +"\n");
+				//view.repaint();
+				
+				justRead=false;
+			}
+
+		
 
 
 		}
@@ -1129,61 +1278,122 @@ public class Controller {
 
 			s=true;
 
-			String s=JOptionPane.showInputDialog("Unesi duzinu poluprecnika hexagona");
+			String s=null;
+			
+			if(model.getR() == -1) {
+				
+				s=JOptionPane.showInputDialog("Unesi duzinu poluprecnika hexagona");
+				
+				try{
 
-			try{
+					int r = Integer.parseInt(s);
+					if(r > 0){
 
-				int r = Integer.parseInt(s);
-				if(r > 0){
+						model.setR(r);
+						model.setX(x);
+						model.setY(y);
+						//view.repaint();
 
-					model.setR(r);
-					model.setX(x);
-					model.setY(y);
-					//view.repaint();
+						Hexagon hexagon = new Hexagon(model.getX(),model.getY(),model.getR());
+						hexagon.setAreaColor(model.getBojaUnutrasnjosti());
+						hexagon.setBorderColor(model.getBojaIvice());
 
-					Hexagon hexagon = new Hexagon(model.getX(),model.getY(),model.getR());
-					hexagon.setAreaColor(model.getBojaUnutrasnjosti());
-					hexagon.setBorderColor(model.getBojaIvice());
-
-					HexagonAdapter h = new HexagonAdapter(hexagon);
-					h.setSelektovan(false);
-
-
-
-					//HexagonAdapter h = new HexagonAdapter(new Tacka(model.getX(),model.getY()),model.getR(),model.getBojaIvice(),model.getBojaUnutrasnjosti());
-
-					CmdAddShape cmdAddShape = new CmdAddShape(model,h);
-					cmdAddShape.execute();
-
-					cmdUndoRedo1.addToCommandList(cmdAddShape);
-
-					/*Oblik l = CopyShape(h);
-					model.addToStackUndo(l);*/
-
-
-					frame.getBtnRedo().setEnabled(false);
-					frame.getBtnUndo().setEnabled(true);
-					//frame.getBtnSelektuj().setEnabled(true);
-
-					//frame.getTextArea().append("Drawing: " + h.toString() +"\n");
+						HexagonAdapter h = new HexagonAdapter(hexagon);
+						h.setSelektovan(false);
 
 
 
+						//HexagonAdapter h = new HexagonAdapter(new Tacka(model.getX(),model.getY()),model.getR(),model.getBojaIvice(),model.getBojaUnutrasnjosti());
 
-				} else {
+						CmdAddShape cmdAddShape = new CmdAddShape(model,h);
+						cmdAddShape.execute();
+
+						cmdUndoRedo1.addToCommandList(cmdAddShape);
+
+						/*Oblik l = CopyShape(h);
+						model.addToStackUndo(l);*/
+
+
+						frame.getBtnRedo().setEnabled(false);
+						frame.getBtnUndo().setEnabled(true);
+						//frame.getBtnSelektuj().setEnabled(true);
+
+						//frame.getTextArea().append("Drawing: " + h.toString() +"\n");
+
+
+
+
+					} else {
+
+						JOptionPane.showMessageDialog(null, "Niste dobro uneli polupre�?nik kruga!");
+					}
+
+				} catch (NumberFormatException k){
 
 					JOptionPane.showMessageDialog(null, "Niste dobro uneli polupre�?nik kruga!");
+
+
+				} catch(NullPointerException k){
+
+					JOptionPane.showConfirmDialog(null, "Niste uneli polupre�?nik kruga!");
 				}
+				
+				
+			} else {
+				
+				try{
 
-			} catch (NumberFormatException k){
+					int r = model.getR();
+					if(r > 0){
 
-				JOptionPane.showMessageDialog(null, "Niste dobro uneli polupre�?nik kruga!");
+					
+
+						Hexagon hexagon = new Hexagon(model.getX(),model.getY(),model.getR());
+						hexagon.setAreaColor(model.getBojaUnutrasnjosti());
+						hexagon.setBorderColor(model.getBojaIvice());
+						HexagonAdapter h = new HexagonAdapter(hexagon);
+						h.setSelektovan(false);
 
 
-			} catch(NullPointerException k){
 
-				JOptionPane.showConfirmDialog(null, "Niste uneli polupre�?nik kruga!");
+						//HexagonAdapter h = new HexagonAdapter(new Tacka(model.getX(),model.getY()),model.getR(),model.getBojaIvice(),model.getBojaUnutrasnjosti());
+
+						CmdAddShape cmdAddShape = new CmdAddShape(model,h);
+						cmdAddShape.setPrint(false);
+						cmdAddShape.execute();
+						cmdUndoRedo1.addToCommandList(cmdAddShape);
+
+						/*Oblik l = CopyShape(h);
+						model.addToStackUndo(l);*/
+
+
+						frame.getBtnRedo().setEnabled(false);
+						frame.getBtnUndo().setEnabled(true);
+						//frame.getBtnSelektuj().setEnabled(true);
+
+						//frame.getTextArea().append("Drawing: " + h.toString() +"\n");
+
+
+
+
+					} else {
+
+						JOptionPane.showMessageDialog(null, "Niste dobro uneli polupre�?nik kruga!");
+					}
+
+				} catch (NumberFormatException k){
+
+					JOptionPane.showMessageDialog(null, "Niste dobro uneli polupre�?nik kruga!");
+
+
+				} catch(NullPointerException k){
+
+					JOptionPane.showConfirmDialog(null, "Niste uneli polupre�?nik kruga!");
+				}
 			}
+			
+
+			model.setR(-1);
 
 		}
 
@@ -1195,15 +1405,32 @@ public class Controller {
 				model.setX(x);
 				model.setY(y);
 				model.setDvaKlika(true);
-			} else {
+				
 
-				model.setNovoX(x);
-				model.setNovoY(y);
+			} else {
+				
+				if(justRead == false) {
+					
+					model.setNovoX(x);
+					model.setNovoY(y);
+				
+				} 
+			
+			
 				//view.repaint();
 				Linija l = new Linija(new Tacka(model.getX(),model.getY()), new Tacka(model.getNovoX(),model.getNovoY()));
 				l.setBojaIvice(model.getBojaIvice());
+				
 				CmdAddShape cmdAddShape = new CmdAddShape(model,l);
+
+				if(justRead==true) {
+					
+					cmdAddShape.setPrint(false);
+				}
+				
 				cmdAddShape.execute();
+				
+				
 
 				cmdUndoRedo1.addToCommandList(cmdAddShape);
 
@@ -1219,140 +1446,276 @@ public class Controller {
 				//frame.getTextArea().append("Drawing: " + l.toString() +"\n");
 
 				model.setDvaKlika(false);
+				justRead=false;
 			}
 
 		}
 
 		if(model.getOdabranOblik() == "Pravougaonik"){
 
-			model.setX(x);
-			model.setY(y);
+
+			if(model.getDuzina() == -1) {
+
+				String d=JOptionPane.showInputDialog("Unesi duzinu pravougaonika");
+
+				try{
+
+					model.setX(x);
+					model.setY(y);
+					int duzina = Integer.parseInt(d);
+					if(duzina>0){
+
+						model.setDuzina(duzina);
+						String s = JOptionPane.showInputDialog("Unesi sirinu pravougoonika");
 
 
-			String d=JOptionPane.showInputDialog("Unesi duzinu pravougaonika");
+						try{
 
-			try{
+							int sirina = Integer.parseInt(s);
+							if(sirina>0){
 
-				int duzina = Integer.parseInt(d);
-				if(duzina>0){
+								model.setSirina(sirina);
 
-					model.setDuzina(duzina);
-					String s = JOptionPane.showInputDialog("Unesi sirinu pravougoonika");
+								model.setDuzina(duzina);
+								//view.repaint();
+								Pravougaonik p = new Pravougaonik(new Tacka(model.getX(),model.getY()), model.getDuzina(),model.getSirina());
 
+								p.setBojaIvice(model.getBojaIvice());
+								p.setBojaUnutrasnjosti(model.getBojaUnutrasnjosti());
 
-					try{
+								CmdAddShape cmdAddShape = new CmdAddShape(model,p);
+								cmdAddShape.execute();
 
-						int sirina = Integer.parseInt(s);
-						if(sirina>0){
-
-							model.setSirina(sirina);
-
-							model.setDuzina(duzina);
-							//view.repaint();
-							Pravougaonik p = new Pravougaonik(new Tacka(model.getX(),model.getY()), model.getDuzina(),model.getSirina());
-
-							p.setBojaIvice(model.getBojaIvice());
-							p.setBojaUnutrasnjosti(model.getBojaUnutrasnjosti());
-
-							CmdAddShape cmdAddShape = new CmdAddShape(model,p);
-							cmdAddShape.execute();
-
-							cmdUndoRedo1.addToCommandList(cmdAddShape);
+								cmdUndoRedo1.addToCommandList(cmdAddShape);
 
 
-							/*Oblik l = CopyShape(p);
-							model.addToStackUndo(l);*/
+								/*Oblik l = CopyShape(p);
+								model.addToStackUndo(l);*/
 
 
-							frame.getBtnRedo().setEnabled(false);
-							frame.getBtnUndo().setEnabled(true);
-							//frame.getBtnSelektuj().setEnabled(true);
+								frame.getBtnRedo().setEnabled(false);
+								frame.getBtnUndo().setEnabled(true);
+								//frame.getBtnSelektuj().setEnabled(true);
 
-							//frame.getTextArea().append("Drawing: " + p.toString() +"\n");
+								//frame.getTextArea().append("Drawing: " + p.toString() +"\n");
 
 
 
 
-						}
-						else{
+							}
+							else{
+								JOptionPane.showMessageDialog(null, "Niste dobro uneli sirinu pravougaonika!");
+							}
+						} catch(NumberFormatException a){
+
 							JOptionPane.showMessageDialog(null, "Niste dobro uneli sirinu pravougaonika!");
+
+						} catch(NullPointerException k){
+
+							JOptionPane.showMessageDialog(null, "Niste uneli sirinu pravougaonika");
 						}
-					} catch(NumberFormatException a){
 
-						JOptionPane.showMessageDialog(null, "Niste dobro uneli sirinu pravougaonika!");
+					} else {
 
-					} catch(NullPointerException k){
-
-						JOptionPane.showMessageDialog(null, "Niste uneli sirinu pravougaonika");
+						JOptionPane.showMessageDialog(null, "Niste dobro uneli dužinu pravougaonika!");
 					}
-
-				} else {
+				} catch(NumberFormatException a){
 
 					JOptionPane.showMessageDialog(null, "Niste dobro uneli dužinu pravougaonika!");
+
+				} catch(NullPointerException k){
+
+					JOptionPane.showMessageDialog(null, "Niste uneli dužinu pravougaonika!");
 				}
-			} catch(NumberFormatException a){
+			} else {
 
-				JOptionPane.showMessageDialog(null, "Niste dobro uneli dužinu pravougaonika!");
 
-			} catch(NullPointerException k){
+				try{
 
-				JOptionPane.showMessageDialog(null, "Niste uneli dužinu pravougaonika!");
+					model.setX(x);
+					model.setY(y);
+					int duzina = model.getDuzina();
+					if(duzina>0){
+
+						model.setDuzina(duzina);
+
+
+
+						try{
+
+							int sirina = model.getSirina();
+
+							if(sirina>0){
+
+								model.setSirina(sirina);
+
+								model.setDuzina(duzina);
+								//view.repaint();
+								Pravougaonik p = new Pravougaonik(new Tacka(model.getX(),model.getY()), model.getDuzina(),model.getSirina());
+
+								p.setBojaIvice(model.getBojaIvice());
+								p.setBojaUnutrasnjosti(model.getBojaUnutrasnjosti());
+
+								CmdAddShape cmdAddShape = new CmdAddShape(model,p);
+								cmdAddShape.setPrint(false);
+								cmdAddShape.execute();
+
+								cmdUndoRedo1.addToCommandList(cmdAddShape);
+
+
+								/*Oblik l = CopyShape(p);
+								model.addToStackUndo(l);*/
+
+
+								frame.getBtnRedo().setEnabled(false);
+								frame.getBtnUndo().setEnabled(true);
+								//frame.getBtnSelektuj().setEnabled(true);
+
+								//frame.getTextArea().append("Drawing: " + p.toString() +"\n");
+
+
+
+
+							}
+							else{
+								JOptionPane.showMessageDialog(null, "Niste dobro uneli sirinu pravougaonika!");
+							}
+						} catch(NumberFormatException a){
+
+							JOptionPane.showMessageDialog(null, "Niste dobro uneli sirinu pravougaonika!");
+
+						} catch(NullPointerException k){
+
+							JOptionPane.showMessageDialog(null, "Niste uneli sirinu pravougaonika");
+						}
+
+					} else {
+
+						JOptionPane.showMessageDialog(null, "Niste dobro uneli dužinu pravougaonika!");
+					}
+				} catch(NumberFormatException a){
+
+					JOptionPane.showMessageDialog(null, "Niste dobro uneli dužinu pravougaonika!");
+
+				} catch(NullPointerException k){
+
+					JOptionPane.showMessageDialog(null, "Niste uneli dužinu pravougaonika!");
+				}
 			}
 
 
+
+
+			model.setDuzina(-1);
+			model.setSirina(-1);
 
 		}
 
 		if(model.getOdabranOblik() == "Kvadrat"){
 
 
+			String s = null;
 
-			String s=JOptionPane.showInputDialog("Unesi duzinu stranice kvadrata");
+			if(model.getDuzinaStranice() == -1) {
 
-			try{
+				System.out.println("Nema duzine stranice");
+				s=JOptionPane.showInputDialog("Unesi duzinu stranice kvadrata");
+				try{
 
-				int duzinaStranice = Integer.parseInt(s);
-				if(duzinaStranice>0){
+					int duzinaStranice = Integer.parseInt(s);
+					if(duzinaStranice>0){
 
-					model.setDuzinaStranice(duzinaStranice);
-					model.setX(x);
-					model.setY(y);
-					//view.repaint();
-					Kvadrat kv = new Kvadrat(new Tacka(model.getX(),model.getY()), model.getDuzinaStranice());
-					kv.setBojaIvice(model.getBojaIvice());
-					kv.setBojaUnutrasnjosti(model.getBojaUnutrasnjosti());
-					CmdAddShape cmdAddShape = new CmdAddShape(model,kv);
-					cmdAddShape.execute();
-
-					cmdUndoRedo1.addToCommandList(cmdAddShape);
-
-
-
-					/*Oblik l = CopyShape(kv);
-					model.addToStackUndo(l);*/
+						model.setDuzinaStranice(duzinaStranice);
+						model.setX(x);
+						model.setY(y);
+						//view.repaint();
+						Kvadrat kv = new Kvadrat(new Tacka(model.getX(),model.getY()), model.getDuzinaStranice());
+						kv.setBojaIvice(model.getBojaIvice());
+						kv.setBojaUnutrasnjosti(model.getBojaUnutrasnjosti());
+						CmdAddShape cmdAddShape = new CmdAddShape(model,kv);
+						cmdAddShape.execute();
+						cmdAddShape.setPrint(true);
+						cmdUndoRedo1.addToCommandList(cmdAddShape);
 
 
-					frame.getBtnUndo().setEnabled(true);
-					frame.getBtnRedo().setEnabled(false);
-					//frame.getBtnSelektuj().setEnabled(true);
 
-					//frame.getTextArea().append("Drawing: " + kv.toString() +"\n");
+						/*Oblik l = CopyShape(kv);
+						model.addToStackUndo(l);*/
 
-				} else {
-					JOptionPane.showMessageDialog(null, "Niste  dobro uneli dužinu stranice kvadrata!");
+
+						frame.getBtnUndo().setEnabled(true);
+						frame.getBtnRedo().setEnabled(false);
+						//frame.getBtnSelektuj().setEnabled(true);
+
+						//frame.getTextArea().append("Drawing: " + kv.toString() +"\n");
+
+					} else {
+						JOptionPane.showMessageDialog(null, "Niste  dobro uneli dužinu stranice kvadrata!");
+					}
+
+				} catch(NumberFormatException a){
+
+					JOptionPane.showMessageDialog(null, "Niste dobro uneli dužinu stranice kvadrata!");
+
+				} catch(NullPointerException k){
+
+					JOptionPane.showMessageDialog(null, "Niste uneli dužinu stanice kvadrata!");
 				}
 
-			} catch(NumberFormatException a){
+			} else {
 
-				JOptionPane.showMessageDialog(null, "Niste dobro uneli dužinu stranice kvadrata!");
+				System.out.println("Postoji duzina stranice");
 
-			} catch(NullPointerException k){
+				try{
 
-				JOptionPane.showMessageDialog(null, "Niste uneli dužinu stanice kvadrata!");
+					int duzinaStranice = model.getDuzinaStranice();
+
+					if(duzinaStranice>0){
+
+						model.setDuzinaStranice(duzinaStranice);
+						model.setX(x);
+						model.setY(y);
+						//view.repaint();
+						Kvadrat kv = new Kvadrat(new Tacka(model.getX(),model.getY()), model.getDuzinaStranice());
+						kv.setBojaIvice(model.getBojaIvice());
+						kv.setBojaUnutrasnjosti(model.getBojaUnutrasnjosti());
+						CmdAddShape cmdAddShape = new CmdAddShape(model,kv);
+						cmdAddShape.setPrint(false);
+						cmdAddShape.execute();
+
+						cmdUndoRedo1.addToCommandList(cmdAddShape);
+
+
+
+						/*Oblik l = CopyShape(kv);
+						model.addToStackUndo(l);*/
+
+
+						frame.getBtnUndo().setEnabled(true);
+						frame.getBtnRedo().setEnabled(false);
+						//frame.getBtnSelektuj().setEnabled(true);
+
+						//frame.getTextArea().append("Drawing: " + kv.toString() +"\n");
+
+					} else {
+						JOptionPane.showMessageDialog(null, "Niste  dobro uneli dužinu stranice kvadrata!");
+					}
+
+				} catch(NumberFormatException a){
+
+					JOptionPane.showMessageDialog(null, "Niste dobro uneli dužinu stranice kvadrata!");
+
+				} catch(NullPointerException k){
+
+					JOptionPane.showMessageDialog(null, "Niste uneli dužinu stanice kvadrata!");
+				}
+
+
 			}
 
 
 
+			model.setDuzinaStranice(-1);
 
 		}
 
@@ -1360,18 +1723,18 @@ public class Controller {
 
 
 			s=true; //proveriti šta ovo znači
-			String s = "";
+			String a = "";
 			int r;
-			
+
 			if(model.getR() == -1) {
-				
-				s=JOptionPane.showInputDialog("Unesi duzinu poluprecnika kruga");
-				r = Integer.parseInt(s);
+
+				a=JOptionPane.showInputDialog("Unesi duzinu poluprecnika kruga");
+				r = Integer.parseInt(a);
 
 
 				try{
 
-					
+
 					if(r > 0){
 
 						model.setR(r);
@@ -1426,20 +1789,17 @@ public class Controller {
 
 					JOptionPane.showConfirmDialog(null, "Niste uneli polupre�?nik kruga!");
 				}
-				
+
 			} else {
+
 				
-				r = model.getR();
-				
+
 				try{
 
-					
-					if(r > 0){
 
-						model.setR(r);
-						model.setX(x);
-						model.setY(y);
-						//view.repaint();
+					if(model.getR() > -1){
+
+				
 
 						Krug kr = new Krug(new Tacka(model.getX(),model.getY()),model.getR());
 						kr.setBojaIvice(model.getBojaIvice());
@@ -1489,15 +1849,15 @@ public class Controller {
 
 					JOptionPane.showConfirmDialog(null, "Niste uneli polupre�?nik kruga!");
 				}
-				
+
 			}
 
-			
+
 
 			model.setR(-1);
 
 		}
-		
+
 		checkIfSelectedShapeExists();
 	}
 
@@ -1575,7 +1935,7 @@ public class Controller {
 				frame.getBtnUndo().setEnabled(true);
 			}
 		} 
-		
+
 		checkIfSelectedShapeExists();
 
 
@@ -1598,7 +1958,7 @@ public class Controller {
 				frame.getBtnRedo().setEnabled(true);
 			}
 		}
-		
+
 		checkIfSelectedShapeExists();
 
 
@@ -1621,18 +1981,18 @@ public class Controller {
 		for(int i=0; i<model.getListaObjekata().size(); i++) {
 
 			if(model.getListaObjekata().get(i).isSelektovan() == true) {
-				
-				
+
+
 
 				if((i+1)<model.getListaObjekata().size()) {
-					 o = model.getListaObjekata().get(i);
-					 
-					 CmdToFront cmdToFront = new CmdToFront(model,model.getListaObjekata().get(i));
-					 cmdToFront.execute();
-					 cmdUndoRedo1.addToCommandList(cmdToFront);
-					 //Collections.swap(model.getListaObjekata(), i, i+1); 
-					 i=model.getListaObjekata().size()-1;
-					
+					o = model.getListaObjekata().get(i);
+
+					CmdToFront cmdToFront = new CmdToFront(model,model.getListaObjekata().get(i));
+					cmdToFront.execute();
+					cmdUndoRedo1.addToCommandList(cmdToFront);
+					//Collections.swap(model.getListaObjekata(), i, i+1); 
+					i=model.getListaObjekata().size()-1;
+
 
 
 				}
@@ -1641,15 +2001,15 @@ public class Controller {
 			}
 
 		}
-		
+
 		checkIfSelectedShapeExists();
-		
+
 		/*if(o!=null) {
-			
+
 			frame.getTextArea().append("Move to front: " + o +"\n");
 		}*/
-		
-		
+
+
 
 
 
@@ -1668,15 +2028,15 @@ public class Controller {
 			if(model.getListaObjekata().get(i).isSelektovan() == true) {
 
 				if((i+1)<model.getListaObjekata().size()) {
-					
+
 					o=model.getListaObjekata().get(i);
-							
+
 					CmdBringToFront cmdBringToFront = new CmdBringToFront(model,model.getListaObjekata().get(i));
 					cmdBringToFront.execute();
 					cmdUndoRedo1.addToCommandList(cmdBringToFront);
 					//Collections.swap(model.getListaObjekata(), i, model.getListaObjekata().size()-1); 
 					//i=model.getListaObjekata().size()-1;
-					
+
 
 
 				}
@@ -1685,11 +2045,11 @@ public class Controller {
 			}
 
 		}
-		
+
 		checkIfSelectedShapeExists();
-		
+
 		/*if(o!=null) {
-			
+
 			frame.getTextArea().append("Bring to front: " + o +"\n");
 		}*/
 
@@ -1706,15 +2066,15 @@ public class Controller {
 
 			if(model.getListaObjekata().get(i).isSelektovan() == true) {
 
-				
+
 				if(i>0) {
-					
+
 					o=model.getListaObjekata().get(i);
 					CmdToBack cmdToBack = new CmdToBack(model,model.getListaObjekata().get(i));
 					cmdToBack.execute();
 					cmdUndoRedo1.addToCommandList(cmdToBack);
 					//Collections.swap(model.getListaObjekata(), i, i-1); 
-					
+
 
 				}
 
@@ -1722,14 +2082,14 @@ public class Controller {
 			}
 
 		}
-		
+
 		checkIfSelectedShapeExists();
 		/*if(o!=null) {
-			
+
 			frame.getTextArea().append("Move to back: " + o +"\n");
 		}*/
-		
-		
+
+
 
 
 
@@ -1744,11 +2104,11 @@ public class Controller {
 		for(int i=0; i<model.getListaObjekata().size(); i++) {
 
 			if(model.getListaObjekata().get(i).isSelektovan() == true) {
-				
-				
-			
+
+
+
 				if(i>0) {
-					
+
 					o = model.getListaObjekata().get(i);
 					CmdBringToBack cmdBringToBack = new CmdBringToBack(model,model.getListaObjekata().get(i));
 					cmdBringToBack.execute();
@@ -1757,7 +2117,7 @@ public class Controller {
 					/*o = model.getListaObjekata().get(i);
 					Collections.swap(model.getListaObjekata(), i, 0); 
 					i=0;*/
-					
+
 
 
 				}
@@ -1766,11 +2126,11 @@ public class Controller {
 			}
 
 		}
-		
+
 		checkIfSelectedShapeExists();
-		
+
 		/*if(o!=null) {
-			
+
 			frame.getTextArea().append("Bring to back: " + o +"\n");
 		}*/
 
@@ -1799,18 +2159,18 @@ public class Controller {
 
 
 		}
-		
+
 		if(n==1) {
-			
+
 			subject.setState(true);
 		} else if (n==0) {
-			
+
 			subject.setState(false);
 		} else if (n>1) {
-			
+
 			NaslovnaPokretanje.btnModifikuj.setEnabled(false);
 		}
-		
+
 		return n;
 
 		/*if(n==1) {

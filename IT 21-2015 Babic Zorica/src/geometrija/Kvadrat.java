@@ -15,7 +15,7 @@ public class Kvadrat extends PovrsinskiOblik implements Pomerljiv{
 		this.tGoreLevo = tGoreLevo;
 		this.duzinaStranice = duzinaStranice;
 	}
-	  
+	
 	public Kvadrat(Tacka tGoreLevo, int duzinaStranice,Color bojaIvice,Color bojaUnutrasnjosti){
 		this(tGoreLevo,duzinaStranice);
 		setBojaIvice(bojaIvice);
@@ -43,8 +43,8 @@ public class Kvadrat extends PovrsinskiOblik implements Pomerljiv{
 	
 	public String toString(){
 		//return "Tacka gore levo="+tGoreLevo+", duzina stranice="+duzinaStranice + "Selektovan? " + isSelektovan() + ".";
-		
-		return "Square: (" + tGoreLevo.getX() + ", "+tGoreLevo.getY()+"), width: " + duzinaStranice + ", outline: " + getHex(getBojaIvice())+ ", fill: " + getHex(getBojaUnutrasnjosti()) + ", Selected? " + isSelektovan(); 
+		System.out.println("Poziva se string");
+		return "Square: ("+ tGoreLevo.getX() + ","+tGoreLevo.getY()+"), width: " + duzinaStranice + ", outline: " + getHex(getBojaIvice())+ ", fill: " + getHex(getBojaUnutrasnjosti()) + ", Selected? " + isSelektovan(); 
 	
 				
 	}
