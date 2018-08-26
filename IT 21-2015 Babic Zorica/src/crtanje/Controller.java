@@ -142,6 +142,19 @@ public class Controller {
 	public void runCommandByCommand(String line,String lineBefore) {
 		
 		
+		CmdAddShape.print = false;
+		CmdBringToBack.print = false;
+		CmdBringToFront.print = false;
+		
+		CmdDeselectShape.print = false;
+		CmdRemoveShape.print = false;
+		CmdSelectShape.print = false;
+		CmdToBack.print = false;
+		CmdToFront.print = false;
+		CmdUpdateSelectedShapes.print = false;
+		CmdUpdateShape.print = false;
+		
+		
 		if (line.contains("UNDO >>> Selected: ")) {
 			
 			CmdDeselectShape.print=false;
@@ -180,7 +193,8 @@ public class Controller {
 			
 		}  else if(line.contains("UNDO >>> Multiple shapes added: ")) {
 			
-			System.out.println("MULTIPLE SHAPES ADDED");
+			
+			
 			CmdRemoveShape.print = false;
 			undo();
 			
@@ -294,8 +308,7 @@ public class Controller {
 				model.setNovoX(Integer.parseInt(newX));
 				model.setNovoY(Integer.parseInt(newY));
 
-				System.out.println(x);
-				System.out.println(newX);
+		;
 
 				model.setDvaKlika(true);
 				justRead=true;
@@ -441,7 +454,7 @@ public class Controller {
 
 				String s = between(line, "Point: (",")");
 				String[] myString = s.split(",");
-				System.out.println(myString);
+			
 				String x = myString[0];
 				String y = myString[1];
 				
@@ -626,7 +639,7 @@ public class Controller {
 
 				String s = between(line, "Point: (",")");
 				String[] myString = s.split(",");
-				System.out.println(myString);
+			
 				String x = myString[0];
 				String y = myString[1];
 				
@@ -895,7 +908,7 @@ public class Controller {
 					String outline = between(line, "outline: ", ", Selected?");
 					String s = between(line, "Point: (",")");
 					String[] myString = s.split(",");
-					System.out.println(myString);
+				
 					String x = myString[0];
 					String y = myString[1];
 					
@@ -1086,7 +1099,7 @@ public class Controller {
 
 				if(model.getListaObjekata().get(i).isSelektovan() == true) {
 
-					System.out.println("Selektovan!!!!!!!!!!!!!!!!!!!!");
+				
 					oblici.add(model.getListaObjekata().get(i));
 
 				}
@@ -1097,7 +1110,7 @@ public class Controller {
 
 		if(oblici.size() == 1) {
 			
-			System.out.println("IMA SAMO JEDAN OBLIK!!!!!!");
+			
 
 			//obirsan je jedan oblik
 			CmdRemoveShape cmdRemove = new CmdRemoveShape(model,oblici.get(0));
@@ -1108,7 +1121,7 @@ public class Controller {
 
 		} else {
 			
-			System.out.println("IMA VISE OBLIKA!");
+			
 			//obrisano je više oblika
 			CmdRemoveShape cmdRemove = new CmdRemoveShape(model,oblici);
 			cmdRemove.execute();
@@ -1160,7 +1173,7 @@ public class Controller {
 
 					if(o instanceof Pravougaonik){
 
-						System.out.println("Pravougaonik!!!!!");
+					
 
 						DlgOsobinePravougaonika osobine = new DlgOsobinePravougaonika();
 
@@ -1210,7 +1223,7 @@ public class Controller {
 
 					} else if(o instanceof Kvadrat){
 
-						System.out.println("Kvadrat!!!!!");
+					
 
 
 						DlgOsobineKvadrata osobine = new DlgOsobineKvadrata();
@@ -1321,7 +1334,7 @@ public class Controller {
 
 					else if(o instanceof Tacka){
 
-						System.out.println("Taacka!!!!!");
+						
 
 						DlgOsobineTacke osobine = new DlgOsobineTacke();
 
@@ -1363,7 +1376,7 @@ public class Controller {
 
 					} else if(o instanceof Linija){
 
-						System.out.println("Linija!!!!!");
+					
 
 						DlgOsobineLinije osobine = new DlgOsobineLinije();
 
@@ -1413,7 +1426,7 @@ public class Controller {
 					}else if(o instanceof HexagonAdapter) { 
 
 
-						System.out.println("HexagonAdapter!!!!!");
+					
 						DlgOsobineKruga osobineh = new DlgOsobineKruga();
 						osobineh.setX(((HexagonAdapter) o).getHexagon().getX());
 						osobineh.setY(((HexagonAdapter) o).getHexagon().getY());
@@ -1737,7 +1750,9 @@ public class Controller {
 
 				ArrayList<Oblik> ss = new ArrayList<Oblik>();
 				int k=0;
-				System.out.println("Ne sadrzi nijedan oblik!");
+				
+				
+				
 				n=true;
 
 				for(Oblik o: model.getListaObjekata()) {
@@ -2312,7 +2327,7 @@ public class Controller {
 
 			if(model.getDuzinaStranice() == -1) {
 
-				System.out.println("Nema duzine stranice");
+			
 				s=JOptionPane.showInputDialog("Unesi duzinu stranice kvadrata");
 				try{
 
@@ -2358,7 +2373,7 @@ public class Controller {
 
 			} else {
 
-				System.out.println("Postoji duzina stranice");
+				
 
 				try{
 
@@ -2422,7 +2437,7 @@ public class Controller {
 
 			if(model.getR() == -1) {
 
-				System.out.println("Nije citanje!");
+				
 
 				a=JOptionPane.showInputDialog("Unesi duzinu poluprecnika kruga");
 				r = Integer.parseInt(a);
@@ -2489,7 +2504,7 @@ public class Controller {
 			} else {
 
 
-				System.out.println("Citanje je!");
+				
 				try{
 
 

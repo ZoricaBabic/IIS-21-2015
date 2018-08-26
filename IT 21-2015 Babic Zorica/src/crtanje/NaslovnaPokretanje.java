@@ -3,7 +3,9 @@ package crtanje;
 import javax.swing.JFrame;  
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Set;
 import java.awt.Toolkit;
 import java.awt.Font;
@@ -101,6 +103,8 @@ public class NaslovnaPokretanje extends JFrame  {
 	private boolean isShiftDown = false;
 	private Context context;
 	
+	private int lineNumber =0; 
+	
 	
 	
 	
@@ -108,8 +112,17 @@ public class NaslovnaPokretanje extends JFrame  {
 	private ArrayList indexi = new ArrayList();
 	
 	private ArrayList firstArray = new ArrayList();
+	//private LinkedHashMap<Integer,Integer> firstArray = new LinkedHashMap<Integer,Integer>();
+	
+	
+	
+	
 	private ArrayList<String> strings = new ArrayList();
 	private Set secondSet = new HashSet();
+	
+	private DefaultHighlighter.DefaultHighlightPainter df = new DefaultHighlighter.DefaultHighlightPainter(new Color(255, 255, 153));
+	
+	
 	
 
 
@@ -791,10 +804,17 @@ public class NaslovnaPokretanje extends JFrame  {
 				int index = -1;
 				int k = -1; */
 				
+				//firstArray.removeAll(firstArray);
+				
+			
+				
 				firstArray.removeAll(firstArray);
+				
 				strings.removeAll(strings);
 				
 				for(String line : textArea.getText().split("\\n")) {
+					
+					//firstArray.add(textArea.getText().indexOf(line));
 					
 					firstArray.add(textArea.getText().indexOf(line));
 					strings.add(line);
@@ -804,15 +824,42 @@ public class NaslovnaPokretanje extends JFrame  {
 				
 				if(index < firstArray.size()) {
 					
+					
 					int pos2 = (int) firstArray.get(index);
+					
+					
+							
+							/*int start = firstArray.get( (firstArray.keySet().toArray())[index]);
+							int end = start + strings.get(index).length()-1;*/
+							
+							/*System.out.println("start: " + start);
+							System.out.println("end: " + end);*/
+							
+							int start = -1;
+							int end = -1;
+							try {
+								
+								start = textArea.getLineStartOffset(lineNumber);
+								end = textArea.getLineEndOffset(lineNumber);
+								
+								
+							} catch (BadLocationException e2) {
+								// TODO Auto-generated catch block
+								e2.printStackTrace();
+							}
+							
+							System.out.println("start: " + start);
+							System.out.println("end: " + end);
+	                        
+							
 					
 			
 				
-				    int y;
+				   /* int y;
 				    Rectangle startIndex;
 					try {
 						
-						startIndex = textArea.modelToView(pos2);
+						startIndex = textArea.modelToView(start);
 						y = startIndex.y + (scrollPane.getHeight() - 10);
 						
 					    textArea.setCaretPosition(textArea.viewToModel(new Point(startIndex.x, y)));
@@ -821,15 +868,26 @@ public class NaslovnaPokretanje extends JFrame  {
 					} catch (BadLocationException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
-					}
+					}*/
 				
 					
 				   try {
-
-						textArea.getHighlighter().addHighlight(pos2,
+					   
+					
+						/*textArea.getHighlighter().addHighlight(pos2,
 						        pos2 + strings.get(index).length(),
 						        new DefaultHighlighter.DefaultHighlightPainter(new Color(255, 255, 153)));
-											//lines.add(line);
+											//lines.add(line);*/
+						
+						if(start != -1 && end!=-1) {
+							
+							textArea.getHighlighter().addHighlight(start,
+							        end,
+							        new DefaultHighlighter.DefaultHighlightPainter(new Color(255, 255, 153)));
+						}
+						
+					
+						
 						
 					
 						if(index == 0) {
@@ -852,6 +910,7 @@ public class NaslovnaPokretanje extends JFrame  {
 			
 				
 				index++;
+				lineNumber++;
 				
 				
 			

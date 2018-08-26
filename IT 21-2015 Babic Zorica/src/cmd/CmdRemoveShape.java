@@ -112,6 +112,7 @@ public class CmdRemoveShape implements Command {
 			model.add(o);
 
 			if(print == true) {
+				
 				NaslovnaPokretanje.getTextArea().append("UNDO >>> Added: " + o +"\n");
 
 			}
