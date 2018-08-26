@@ -15,6 +15,7 @@ public class CmdRemoveShape implements Command {
 	private Oblik o;
 	private int count = 0;
 	private ArrayList<Oblik> removedShapes = new ArrayList<Oblik>();
+	public static boolean print = true;
 
 	public CmdRemoveShape(Model model, Oblik o) {
 
@@ -40,23 +41,42 @@ public class CmdRemoveShape implements Command {
 
 		if(!removedShapes.isEmpty()  && removedShapes.size() > 1) {
 
-			NaslovnaPokretanje.getTextArea().append("Multiple shapes removed: \n");
+			if(print ==true) {
+
+				NaslovnaPokretanje.getTextArea().append("Multiple shapes removed: ");
+			}
+
+
 			for(int i =0; i<removedShapes.size(); i++) {
 
 				model.remove(removedShapes.get(i));
-				NaslovnaPokretanje.getTextArea().append("             " + removedShapes.get(i).toString() +"\n");
+
+				if(print == true) {
+
+					NaslovnaPokretanje.getTextArea().append("        Removed: " + removedShapes.get(i).toString());
+				}
+
 			}
-			
+
+			if(print == true) {
+
+				NaslovnaPokretanje.getTextArea().append("\n");
+			}
+
 
 		} else {
 
 			model.remove(o);
-			NaslovnaPokretanje.getTextArea().append("Removed: " + o +"\n");
+			if(print == true) {
+
+				NaslovnaPokretanje.getTextArea().append("Removed: " + o +"\n");
+			}
+
 		}
 
 
 
-
+		print = true;
 
 
 	}
@@ -67,22 +87,41 @@ public class CmdRemoveShape implements Command {
 
 		if(!removedShapes.isEmpty() && removedShapes.size() > 1) {
 
-			NaslovnaPokretanje.getTextArea().append("Multiple shapes added: \n");
+			if(print == true) {
+
+				NaslovnaPokretanje.getTextArea().append("UNDO >>> Multiple shapes added: ");
+			}
+
+
 			for(int i =0; i<removedShapes.size(); i++) {
 
 				model.add(removedShapes.get(i));
-				NaslovnaPokretanje.getTextArea().append("             " + removedShapes.get(i).toString() +"\n");
+				if(print == true) {
+
+					NaslovnaPokretanje.getTextArea().append("        Added: " + removedShapes.get(i).toString());
+				}
+
+			}
+
+			if(print == true) {
+
+				NaslovnaPokretanje.getTextArea().append("\n");
 			}
 		} else {
 
 			model.add(o);
-			NaslovnaPokretanje.getTextArea().append("Added: " + o +"\n");
+
+			if(print == true) {
+				NaslovnaPokretanje.getTextArea().append("UNDO >>> Added: " + o +"\n");
+
+			}
+
 		}
 
 
 
 
-
+		print = true;
 
 
 

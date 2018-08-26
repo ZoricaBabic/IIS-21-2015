@@ -806,8 +806,7 @@ public class NaslovnaPokretanje extends JFrame  {
 					
 					int pos2 = (int) firstArray.get(index);
 					
-					System.out.println(pos2);
-					System.out.println("index" + index);
+			
 				
 				    int y;
 				    Rectangle startIndex;
@@ -833,7 +832,14 @@ public class NaslovnaPokretanje extends JFrame  {
 											//lines.add(line);
 						
 					
-						controller.runCommandByCommand(strings.get(index));
+						if(index == 0) {
+							
+							controller.runCommandByCommand(strings.get(index),null);
+						} else {
+							
+							controller.runCommandByCommand(strings.get(index),strings.get(index-1));
+						}
+						
 						
 
 					} catch (BadLocationException e1) {

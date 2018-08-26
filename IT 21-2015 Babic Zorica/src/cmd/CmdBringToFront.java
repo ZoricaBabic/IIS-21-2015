@@ -11,6 +11,7 @@ public class CmdBringToFront implements Command {
 	private Model model = new Model();
 	private Oblik o;
 	private int i=0;
+	public static boolean print = true;
 	
 	public CmdBringToFront (Model model, Oblik o) {
 		
@@ -26,7 +27,14 @@ public class CmdBringToFront implements Command {
 		i = model.getListaObjekata().indexOf(o);
 		
 		Collections.swap(model.getListaObjekata(), i, model.getListaObjekata().size()-1); 
-		NaslovnaPokretanje.getTextArea().append("Bring to front: " + o +"\n");
+		
+		if(print==true) {
+			
+			NaslovnaPokretanje.getTextArea().append("Bring to front: " + o +"\n");
+		}
+		
+		print =true;
+		
 		
 	}
 
@@ -35,7 +43,14 @@ public class CmdBringToFront implements Command {
 		// TODO Auto-generated method stub
 		
 		Collections.swap(model.getListaObjekata(), model.getListaObjekata().size()-1, i); 
-		NaslovnaPokretanje.getTextArea().append("Bring to back: " + o +"\n");
+		
+		if(print == true) {
+			
+			NaslovnaPokretanje.getTextArea().append("UNDO >>> Bring to back: " + o +"\n");
+		}
+		
+		print = true;
+	
 		
 	}
 

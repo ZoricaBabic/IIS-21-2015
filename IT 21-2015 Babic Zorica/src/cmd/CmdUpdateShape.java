@@ -164,7 +164,7 @@ public class CmdUpdateShape implements Command {
 			
 			((HexagonAdapter) original).setHexagon(((HexagonAdapter) newState).getHexagon());
 			
-			System.out.println("ORIGINAL JE SAD: " + original.toString());
+		
 			
 			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
 			
@@ -261,7 +261,7 @@ public class CmdUpdateShape implements Command {
 			
 		}
 		
-		NaslovnaPokretanje.getTextArea().append("Modified: " + original + "\n");
+		NaslovnaPokretanje.getTextArea().append("UNDO >>> Modified: " + original + "\n");
 		
 
 	}

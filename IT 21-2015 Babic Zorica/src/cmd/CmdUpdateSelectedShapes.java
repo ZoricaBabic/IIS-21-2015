@@ -15,8 +15,10 @@ import hexagon.Hexagon;
 
 public class CmdUpdateSelectedShapes implements Command {
 	
+	//kad se odsleketuje vise 
 	private Model model = new Model();
 	private ArrayList<Oblik> selectedShapes = new ArrayList<Oblik>();
+	public static boolean print = true;
 	
 	
 	public CmdUpdateSelectedShapes(Model model, ArrayList<Oblik> selectedShapes) {
@@ -32,14 +34,30 @@ public class CmdUpdateSelectedShapes implements Command {
 	public void execute() {
 		
 		if(!selectedShapes.isEmpty()) {
-			NaslovnaPokretanje.getTextArea().append("Multiple shapes deselected: \n");
+			if(print == true) {
+				
+				NaslovnaPokretanje.getTextArea().append("Multiple shapes deselected: ");
+			}
+			
 			for(int i=0; i<selectedShapes.size(); i++) {
 				
 				selectedShapes.get(i).setSelektovan(false);
-				NaslovnaPokretanje.getTextArea().append("             " + selectedShapes.get(i).toString() +"\n");
+				
+				if(print == true) {
+					
+					NaslovnaPokretanje.getTextArea().append("        Deselected: " + selectedShapes.get(i).toString());
+				}
+				
 				
 			}
+			
+			if(print == true) {
+
+				NaslovnaPokretanje.getTextArea().append("\n");
+			}
 		}
+		
+		print = true;
 		
 		
 	}
@@ -49,14 +67,32 @@ public class CmdUpdateSelectedShapes implements Command {
 		
 		if(!selectedShapes.isEmpty()) {
 			
-			NaslovnaPokretanje.getTextArea().append("Multiple shapes selected: \n");
+			if(print == true) {
+				
+				NaslovnaPokretanje.getTextArea().append("UNDO >>> Multiple shapes selected: ");
+			}
+			
+			
 			for(int i=0; i<selectedShapes.size(); i++) {
 				
 				selectedShapes.get(i).setSelektovan(true);
-				NaslovnaPokretanje.getTextArea().append("             " + selectedShapes.get(i).toString() +"\n");
+				
+				if(print == true) {
+					
+					NaslovnaPokretanje.getTextArea().append("        Selected: " + selectedShapes.get(i).toString());
+				}
+				
 				
 			}
+			
+			if(print == true) {
+
+				NaslovnaPokretanje.getTextArea().append("\n");
+			}
+			
 		}
+		
+		print = true;
 		
 	}
 

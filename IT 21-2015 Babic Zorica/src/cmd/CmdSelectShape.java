@@ -23,7 +23,7 @@ public class CmdSelectShape implements Command {
 		o.setSelektovan(false);
 		if(print == true) {
 			
-			NaslovnaPokretanje.getTextArea().append("UNDO >>> Unselected: " + o.toString() +"\n");
+			NaslovnaPokretanje.getTextArea().append("UNDO >>> Deselected: " + o.toString() +"\n");
 		}
 	
 		print = true;
@@ -42,12 +42,6 @@ public class CmdSelectShape implements Command {
 		
 	}
 
-	public static boolean isPrint() {
-		return print;
-	}
-
-	public static void setPrint(boolean print) {
-		CmdSelectShape.print = print;
-	}
+	
 
 }

@@ -11,6 +11,7 @@ public class CmdToFront implements Command {
 	private Model model = new Model();
 	private Oblik o;
 	private int i=0;
+	public static boolean print = true;
 	
 	public CmdToFront(Model model, Oblik o) {
 		
@@ -25,7 +26,14 @@ public class CmdToFront implements Command {
 		i=model.getListaObjekata().indexOf(o);
 
 		Collections.swap(model.getListaObjekata(), i, i+1);  
-		NaslovnaPokretanje.getTextArea().append("Move to front: " + o +"\n");
+		
+		if(print == true) {
+			
+			NaslovnaPokretanje.getTextArea().append("Move to front: " + o +"\n");
+		}
+		
+		print = true;
+		
 		
 	}
 
@@ -33,7 +41,13 @@ public class CmdToFront implements Command {
 	public void unexecute() {
 		// TODO Auto-generated method stub
 		Collections.swap(model.getListaObjekata(), i+1, i); 
-		NaslovnaPokretanje.getTextArea().append("Move to back: " + o +"\n");
+		
+		if(print == true) {
+			
+			NaslovnaPokretanje.getTextArea().append("UNDO >>> Move to back: " + o +"\n");
+		}
+		
+		print = true;
 		
 	}
 

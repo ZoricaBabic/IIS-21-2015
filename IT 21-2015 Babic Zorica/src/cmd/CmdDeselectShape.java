@@ -8,6 +8,7 @@ public class CmdDeselectShape implements Command{
 	
 	private Model model = new Model();
 	private Oblik o;
+	public static boolean print = true;
 	
 	public CmdDeselectShape(Model model,Oblik o) {
 		
@@ -17,17 +18,28 @@ public class CmdDeselectShape implements Command{
 
 	@Override
 	public void execute() {
-		o.setSelektovan(false);
-		NaslovnaPokretanje.getTextArea().append("Deselected: " + o.toString() +"\n");
 		
+		o.setSelektovan(false);
+		
+		if(print == true) {
+			
+			NaslovnaPokretanje.getTextArea().append("Deselected: " + o.toString() +"\n");
+		}
+		
+		print = true;
 	}
 
 	@Override
 	public void unexecute() {
 		o.setSelektovan(true);
-		NaslovnaPokretanje.getTextArea().append("Selected: " + o.toString() +"\n");
 		
+		if(print == true) {
+			
+			NaslovnaPokretanje.getTextArea().append("UNDO >>> Selected: " + o.toString() +"\n");
+		}
+
 		
+		print = true;
 	}
 
 }
