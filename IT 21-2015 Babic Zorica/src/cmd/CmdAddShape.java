@@ -9,7 +9,7 @@ public class CmdAddShape implements Command {
 	
 	private Model model = new Model();
 	private Oblik o;
-	private boolean print = true;
+	public static boolean print = true;
 	public CmdAddShape(Model model, Oblik o) {
 		this.model = model;
 		this.o = o;
@@ -21,6 +21,7 @@ public class CmdAddShape implements Command {
 
 		model.add(o);
 		System.out.println("Dodaje oblik");
+		
 		if(print == true) {
 			
 			NaslovnaPokretanje.getTextArea().append("Added: " + o.toString() +"\n");
@@ -39,15 +40,21 @@ public class CmdAddShape implements Command {
 		model.remove(o);
 		System.out.println("Brise se oblik!");
 		
-		NaslovnaPokretanje.getTextArea().append("Removed: " + o.toString() +"\n");
+		if(print == true) {
+			
+			NaslovnaPokretanje.getTextArea().append("UNDO >>> Removed: " + o.toString() +"\n");
+		}
+		
+		
 		
 		if(model.getListaObjekata().isEmpty()) {
 			
 			NaslovnaPokretanje.btnSelektuj.setEnabled(false);
 		}
 		
-	
+		print=true;
 		
+	
 	
 	}
 
@@ -70,8 +77,9 @@ public class CmdAddShape implements Command {
 		return print;
 	}
 
-	public void setPrint(boolean print) {
-		this.print = print;
+	public static void setPrint(boolean prints) {
+		
+		print = prints;
 	}
 
 }

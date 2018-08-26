@@ -73,7 +73,7 @@ public class Controller {
 
 
 	private Subject subject;
-	
+
 	private boolean justRead = false;
 
 
@@ -136,14 +136,10 @@ public class Controller {
 
 
 
+
 	}
 
 	public void runCommandByCommand(String line) {
-
-
-
-
-
 
 		if(line.contains("Added:")) {
 
@@ -232,12 +228,12 @@ public class Controller {
 				String newY = myStrings[1].trim();
 
 				model.setBojaIvice(stringToColor(outline));
-				
+
 				model.setX(Integer.parseInt(x));
 				model.setY(Integer.parseInt(y));
 				model.setNovoX(Integer.parseInt(newX));
 				model.setNovoY(Integer.parseInt(newY));
-				
+
 				System.out.println(x);
 				System.out.println(newX);
 
@@ -247,9 +243,9 @@ public class Controller {
 
 
 			} else if (line.contains("Hexagon")) {
-				
+
 				//Added: Hexagon: (130,144), radius: 50, outline: #000000, fill: #ffffff, Selected? false  
-				
+
 				setOdabranOblik("Hexagon");
 				String outline = between(line, "outline: ", ", fill:");
 				String inline = between(line, "fill: ",", Selected");
@@ -267,31 +263,216 @@ public class Controller {
 				model.setR(Integer.parseInt(radius));
 
 				mouseClickedPnl(Integer.parseInt(x),Integer.parseInt(y));
-				
+
 			} else if (line.contains("Point")) {
-				
+
 				//Added: Point: (681,232), outline: #000000, Selected? false
-				
+
 				setOdabranOblik("Tacka");
 				String outline = between(line, "outline: ", ", Selected?");
-			
+
 				String s = between(line, "Point: (",")");
 				String[] myString = s.split(",");
 				String x = myString[0];
 				String y = myString[1];
-				
 
 
-				
+
+
 				model.setBojaIvice(stringToColor(outline));
 				model.setX(Integer.parseInt(x));
 				model.setY(Integer.parseInt(y));
-			
+
 
 				justRead=true;
 				mouseClickedPnl(Integer.parseInt(x),Integer.parseInt(y));
 			}
+			
+			
+		} else if(line.contains("UNDO >>> Removed:")) {
+
+			//Removed: Circle: (403,143), radius: 50, outline: #000000, fill: #ffffff, Selected? false
+			CmdAddShape.setPrint(false);
+			undo();
+
+
+		} else if(line.contains("Selected:")) {
+			
+			CmdSelectShape.setPrint(false);
+			//Selected: Circle: (398,139), radius: 50, outline: #000000, fill: #ffffff, Selected? true
+
+			if(line.contains("Circle")) {
+
+				String outline = between(line, "outline: ", ", fill:");
+				String fill = between(line, "fill: ",", Selected");
+				String s = between(line, "Circle: (",")");
+				String[] myString = s.split(",");
+				String x = myString[0];
+				String y = myString[1];
+				String radius = between(line, "radius: ",", outline");
+
+				Krug k = new Krug(new Tacka(Integer.parseInt(x),Integer.parseInt(y)),Integer.parseInt(radius),stringToColor(outline),stringToColor(fill));
+				for(int i=0; i<model.getListaObjekata().size(); i++) {
+
+					if(model.getListaObjekata().get(i).equals(k)) {
+
+						CmdSelectShape cmdSelectShape = new CmdSelectShape(model,model.getListaObjekata().get(i));
+						cmdSelectShape.print=false;
+						cmdSelectShape.execute();
+						cmdUndoRedo1.addToCommandList(cmdSelectShape);
+					}
+				}
+			} else if (line.contains("Hexagon")) {
+
+				String outline = between(line, "outline: ", ", fill:");
+				String fill = between(line, "fill: ",", Selected");
+				String s = between(line, "Hexagon: (",")");
+				String[] myString = s.split(",");
+				String x = myString[0];
+				String y = myString[1];
+				String radius = between(line, "radius: ",", outline");
+
+				Hexagon h = new Hexagon(Integer.parseInt(x),Integer.parseInt(y),Integer.parseInt(radius));
+				h.setAreaColor(stringToColor(fill));
+				h.setBorderColor(stringToColor(outline));
+				HexagonAdapter ha = new HexagonAdapter(h);
+
+				for(int i=0; i<model.getListaObjekata().size(); i++) {
+
+					if(model.getListaObjekata().get(i).equals(ha)) {
+
+						CmdSelectShape cmdSelectShape = new CmdSelectShape(model,model.getListaObjekata().get(i));
+						cmdSelectShape.print=false;
+						cmdSelectShape.execute();
+						cmdUndoRedo1.addToCommandList(cmdSelectShape);
+
+					}
+				}
+
+
+			} else if(line.contains("Line")) {
+				
+				String outline = between(line, "outline: ", ", Selected");
+				//startpoint
+				String s = between(line, "startPoint (", "), endPoint");
+				String[] myString = s.split(",");
+				String x = myString[0].trim();
+				String y = myString[1].trim();
+
+				//endPoint
+
+				String sa = between(line, "endPoint (", "), outline:");
+				String[] myStrings = sa.split(",");
+				String newX = myStrings[0].trim();
+				String newY = myStrings[1].trim();
+				
+				Linija l = new Linija(new Tacka(Integer.parseInt(x),Integer.parseInt(y)),new Tacka(Integer.parseInt(newX),Integer.parseInt(newY)), stringToColor(outline));
+				for(int i=0; i<model.getListaObjekata().size(); i++) {
+
+					if(model.getListaObjekata().get(i).equals(l)) {
+
+						CmdSelectShape cmdSelectShape = new CmdSelectShape(model,model.getListaObjekata().get(i));
+						cmdSelectShape.print=false;
+						cmdSelectShape.execute();
+						cmdUndoRedo1.addToCommandList(cmdSelectShape);
+
+					}
+				}
+			} else if(line.contains("Point")) {
+				
+				//Selected: Line: startPoint (310,66), endPoint (555,67), outline: #000000, Selected? true
+
+
+				setOdabranOblik("Tacka");
+				String outline = between(line, "outline: ", ", Selected?");
+
+				String s = between(line, "Point: (",")");
+				String[] myString = s.split(",");
+				System.out.println(myString);
+				String x = myString[0];
+				String y = myString[1];
+				
+			
+
+				
+				
+
+				Tacka t = new Tacka(Integer.parseInt(x),Integer.parseInt(y),stringToColor(outline));
+				for(int i=0; i<model.getListaObjekata().size(); i++) {
+
+					if(model.getListaObjekata().get(i).equals(t)) {
+
+						CmdSelectShape cmdSelectShape = new CmdSelectShape(model,model.getListaObjekata().get(i));
+						cmdSelectShape.print=false;
+						cmdSelectShape.execute();
+						cmdUndoRedo1.addToCommandList(cmdSelectShape);
+
+					}
+				}
+
+
+			} else if (line.contains("Rectangle")) {
+				
+				String outline = between(line, "outline: ", ", fill:");
+				String fill = between(line, "fill: ",", Selected");
+				String s = between(line, "Rectangle: (",")");
+				String[] myString = s.split(",");
+				String x = myString[0].trim();
+				String y = myString[1].trim();
+				String width = between(line, "width: ",", height");
+				String height = between(line,"height: ",", outline");
+				
+				Pravougaonik p = new Pravougaonik(new Tacka(Integer.parseInt(x),Integer.parseInt(y)),Integer.parseInt(width),Integer.parseInt(height),stringToColor(outline),stringToColor(fill));
+				
+				
+				for(int i=0; i<model.getListaObjekata().size(); i++) {
+
+					if(model.getListaObjekata().get(i).equals(p)) {
+
+						CmdSelectShape cmdSelectShape = new CmdSelectShape(model,model.getListaObjekata().get(i));
+						cmdSelectShape.print=false;
+						cmdSelectShape.execute();
+						cmdUndoRedo1.addToCommandList(cmdSelectShape);
+
+					}
+				}
+			} else if (line.contains("Square")) {
+				
+				String outline = between(line, "outline: ", ", fill:");
+				String fill = between(line, "fill: ",", Selected");
+				String s = between(line, "Square: (",")");
+				String[] myString = s.split(",");
+				String x = myString[0].trim();
+				String y = myString[1].trim();
+				String width = between(line, "width: ",", outline");
+				
+				Kvadrat k = new Kvadrat(new Tacka(Integer.parseInt(x),Integer.parseInt(y)),Integer.parseInt(width),stringToColor(outline),stringToColor(fill));
+				
+				for(int i=0; i<model.getListaObjekata().size(); i++) {
+
+					if(model.getListaObjekata().get(i).equals(k)) {
+
+						CmdSelectShape cmdSelectShape = new CmdSelectShape(model,model.getListaObjekata().get(i));
+						cmdSelectShape.print=false;
+						cmdSelectShape.execute();
+						cmdUndoRedo1.addToCommandList(cmdSelectShape);
+
+					}
+				}
+
+			}
+
+
+
+		} else if(line.contains("UNDO >>> Unselected: ")) {
+			
+			CmdSelectShape.setPrint(false);
+			undo();
+			
+			
 		}
+
+
 
 
 
@@ -381,13 +562,6 @@ public class Controller {
 
 						}
 					}
-
-
-
-
-
-
-
 
 				}	
 
@@ -1214,9 +1388,9 @@ public class Controller {
 		//CRTANJE
 		if(model.getOdabranOblik() == "Tacka" || model.getOdabranOblik() == null)
 		{
-			
+
 			if(justRead==false) {
-				
+
 				model.setX(x);
 				model.setY(y);
 				//view.repaint();
@@ -1226,7 +1400,7 @@ public class Controller {
 
 
 				CmdAddShape cmdAddShape = new CmdAddShape(model,t);
-				
+
 				cmdAddShape.execute();
 
 
@@ -1242,15 +1416,15 @@ public class Controller {
 				//frame.getTextArea().append("Drawing: " + t.toString() +"\n");
 				//view.repaint();
 			} else {
-				
-		
+
+
 				Tacka t = new Tacka(model.getX(),model.getY());
 				t.setBojaIvice(model.getBojaIvice());
 
 
 				CmdAddShape cmdAddShape = new CmdAddShape(model,t);
 				cmdAddShape.setPrint(false);
-				
+
 				cmdAddShape.execute();
 
 
@@ -1265,11 +1439,11 @@ public class Controller {
 
 				//frame.getTextArea().append("Drawing: " + t.toString() +"\n");
 				//view.repaint();
-				
+
 				justRead=false;
 			}
 
-		
+
 
 
 		}
@@ -1279,11 +1453,11 @@ public class Controller {
 			s=true;
 
 			String s=null;
-			
+
 			if(model.getR() == -1) {
-				
+
 				s=JOptionPane.showInputDialog("Unesi duzinu poluprecnika hexagona");
-				
+
 				try{
 
 					int r = Integer.parseInt(s);
@@ -1337,16 +1511,16 @@ public class Controller {
 
 					JOptionPane.showConfirmDialog(null, "Niste uneli polupre�?nik kruga!");
 				}
-				
-				
+
+
 			} else {
-				
+
 				try{
 
 					int r = model.getR();
 					if(r > 0){
 
-					
+
 
 						Hexagon hexagon = new Hexagon(model.getX(),model.getY(),model.getR());
 						hexagon.setAreaColor(model.getBojaUnutrasnjosti());
@@ -1391,7 +1565,7 @@ public class Controller {
 					JOptionPane.showConfirmDialog(null, "Niste uneli polupre�?nik kruga!");
 				}
 			}
-			
+
 
 			model.setR(-1);
 
@@ -1405,32 +1579,32 @@ public class Controller {
 				model.setX(x);
 				model.setY(y);
 				model.setDvaKlika(true);
-				
+
 
 			} else {
-				
+
 				if(justRead == false) {
-					
+
 					model.setNovoX(x);
 					model.setNovoY(y);
-				
+
 				} 
-			
-			
+
+
 				//view.repaint();
 				Linija l = new Linija(new Tacka(model.getX(),model.getY()), new Tacka(model.getNovoX(),model.getNovoY()));
 				l.setBojaIvice(model.getBojaIvice());
-				
+
 				CmdAddShape cmdAddShape = new CmdAddShape(model,l);
 
 				if(justRead==true) {
-					
+
 					cmdAddShape.setPrint(false);
 				}
-				
+
 				cmdAddShape.execute();
-				
-				
+
+
 
 				cmdUndoRedo1.addToCommandList(cmdAddShape);
 
@@ -1728,6 +1902,8 @@ public class Controller {
 
 			if(model.getR() == -1) {
 
+				System.out.println("Nije citanje!");
+
 				a=JOptionPane.showInputDialog("Unesi duzinu poluprecnika kruga");
 				r = Integer.parseInt(a);
 
@@ -1792,14 +1968,14 @@ public class Controller {
 
 			} else {
 
-				
 
+				System.out.println("Citanje je!");
 				try{
 
 
 					if(model.getR() > -1){
 
-				
+
 
 						Krug kr = new Krug(new Tacka(model.getX(),model.getY()),model.getR());
 						kr.setBojaIvice(model.getBojaIvice());
@@ -1811,7 +1987,7 @@ public class Controller {
 
 						position++;
 
-						//cmdUndoRedo1.addToCommandList(cmdAddShape);
+						cmdUndoRedo1.addToCommandList(cmdAddShape);
 
 
 
@@ -2249,6 +2425,14 @@ public class Controller {
 
 	public void setModel(Model model) {
 		this.model = model;
+	}
+
+	public CmdUndoRedo1 getCmdUndoRedo1() {
+		return cmdUndoRedo1;
+	}
+
+	public void setCmdUndoRedo1(CmdUndoRedo1 cmdUndoRedo1) {
+		this.cmdUndoRedo1 = cmdUndoRedo1;
 	}
 
 

@@ -27,6 +27,7 @@ public class Krug extends PovrsinskiOblik implements Pomerljiv{
 		setBojaUnutrasnjosti(bojaUnutrasnjosti);
 	}
 	
+	
 	public void pomeriNa(int x, int y){
 		centar.pomeriNa(x, y);
 	}

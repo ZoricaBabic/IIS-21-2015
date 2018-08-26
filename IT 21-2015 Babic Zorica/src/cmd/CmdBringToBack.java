@@ -11,11 +11,12 @@ public class CmdBringToBack implements Command{
 	private Model model = new Model();
 	private Oblik o; 
 	private int i=0;
+	public static boolean print = true;
 	
 	
 	public CmdBringToBack() {
 		
-		
+	
 	}
 	
 	public CmdBringToBack( Model model,Oblik o) {
@@ -33,8 +34,15 @@ public class CmdBringToBack implements Command{
 		
 		i= model.getListaObjekata().indexOf(o);
 		Collections.swap(model.getListaObjekata(), i, 0); 
-		NaslovnaPokretanje.getTextArea().append("Bring to back: " + o +"\n");
+		
+		if(print == true) {
+			
+			NaslovnaPokretanje.getTextArea().append("Bring to back: " + o +"\n");
 			//i=0;
+		} 
+		
+		print = true;
+		
 			
 		
 		
@@ -46,7 +54,14 @@ public class CmdBringToBack implements Command{
 	public void unexecute() {
 		// TODO Auto-generated method stub
 		Collections.swap(model.getListaObjekata(), 0, i); 
-		NaslovnaPokretanje.getTextArea().append("Bring to front: " + o +"\n");
+		
+		if(print == true) {
+			
+			NaslovnaPokretanje.getTextArea().append("UNDO >>> Bring to front: " + o +"\n");
+		}
+		
+		print=true;
+		
 		
 	}
 

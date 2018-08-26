@@ -3,6 +3,8 @@ package crtanje;
 import javax.swing.JFrame;  
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.awt.Toolkit;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -98,6 +100,16 @@ public class NaslovnaPokretanje extends JFrame  {
 	private JPanel panel;
 	private boolean isShiftDown = false;
 	private Context context;
+	
+	
+	
+	
+	private int index=0;
+	private ArrayList indexi = new ArrayList();
+	
+	private ArrayList firstArray = new ArrayList();
+	private ArrayList<String> strings = new ArrayList();
+	private Set secondSet = new HashSet();
 	
 
 
@@ -752,6 +764,8 @@ public class NaslovnaPokretanje extends JFrame  {
 
 
 				lines.removeAll(lines);
+				
+				index=0;
 
 
 			}
@@ -766,15 +780,187 @@ public class NaslovnaPokretanje extends JFrame  {
 		
 		
 
-
+	
 		btnCmdbycmd.addMouseListener(new MouseAdapter() {
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				
-				String line = null;
+				//String line = null;
+				/*boolean exists = false;
+				int index = -1;
+				int k = -1; */
 				
-				for(String l : textArea.getText().split("\\n")) {
+				firstArray.removeAll(firstArray);
+				strings.removeAll(strings);
+				
+				for(String line : textArea.getText().split("\\n")) {
+					
+					firstArray.add(textArea.getText().indexOf(line));
+					strings.add(line);
+				}
+				
+				
+				
+				if(index < firstArray.size()) {
+					
+					int pos2 = (int) firstArray.get(index);
+					
+					System.out.println(pos2);
+					System.out.println("index" + index);
+				
+				    int y;
+				    Rectangle startIndex;
+					try {
+						
+						startIndex = textArea.modelToView(pos2);
+						y = startIndex.y + (scrollPane.getHeight() - 10);
+						
+					    textArea.setCaretPosition(textArea.viewToModel(new Point(startIndex.x, y)));
+					    scrollPane.scrollRectToVisible(new Rectangle(startIndex.x, y));
+					    
+					} catch (BadLocationException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				
+					
+				   try {
+
+						textArea.getHighlighter().addHighlight(pos2,
+						        pos2 + strings.get(index).length(),
+						        new DefaultHighlighter.DefaultHighlightPainter(new Color(255, 255, 153)));
+											//lines.add(line);
+						
+					
+						controller.runCommandByCommand(strings.get(index));
+						
+
+					} catch (BadLocationException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} 
+				}
+				
+				
+			
+				
+				index++;
+				
+				
+			
+			
+				
+				
+				//System.out.println(index);
+				
+				
+				/*for(String line : textArea.getText().split("\\n")) {
+					
+					int index = textArea.getText().indexOf(line);
+					
+					for(int i =0; i<indexi.size(); i++) {
+						
+						if(!indexi.get(i).equals(index)) {
+							
+							indexi.add(index);
+							
+							System.out.println("Pronadjena je linija >>>>> ");
+							
+						    int y;
+						    Rectangle startIndex;
+							try {
+								
+								startIndex = textArea.modelToView(index);
+								
+								y = startIndex.y + (scrollPane.getHeight() - 10);
+								
+							    textArea.setCaretPosition(textArea.viewToModel(new Point(startIndex.x, y)));
+							    scrollPane.scrollRectToVisible(new Rectangle(startIndex.x, y));
+							    
+							} catch (BadLocationException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						
+							
+						   try {
+
+								textArea.getHighlighter().addHighlight(index,
+										index + line.length(),
+								        new DefaultHighlighter.DefaultHighlightPainter(new Color(255, 255, 153)));
+								
+								//lines.add(line);
+								controller.runCommandByCommand(line);
+								
+
+							} catch (BadLocationException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							} 
+							
+							
+							break;
+						}
+					}
+					
+					if(indexi.isEmpty()) {
+						
+						indexi.add(index);
+						
+						System.out.println("Pronadjena je linija >>>>> ");
+						
+					    int y;
+					    Rectangle startIndex;
+						try {
+							
+							startIndex = textArea.modelToView(index);
+							
+							y = startIndex.y + (scrollPane.getHeight() - 10);
+							
+						    textArea.setCaretPosition(textArea.viewToModel(new Point(startIndex.x, y)));
+						    scrollPane.scrollRectToVisible(new Rectangle(startIndex.x, y));
+						    
+						} catch (BadLocationException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					
+						
+					   try {
+
+							textArea.getHighlighter().addHighlight(index,
+									index + line.length(),
+							        new DefaultHighlighter.DefaultHighlightPainter(new Color(255, 255, 153)));
+							
+							//lines.add(line);
+							controller.runCommandByCommand(line);
+							
+
+						} catch (BadLocationException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} 
+						
+						
+						break;
+						
+						
+					}
+					
+	
+					
+				
+					
+						
+						
+						
+					
+					
+				}*/
+				
+				
+				/*for(String l : textArea.getText().split("\\n")) {
 					
 					if(lines.isEmpty()) {
 						
@@ -869,7 +1055,7 @@ public class NaslovnaPokretanje extends JFrame  {
 						}
 						
 					}
-				}
+				}*/
 
 			}
 		

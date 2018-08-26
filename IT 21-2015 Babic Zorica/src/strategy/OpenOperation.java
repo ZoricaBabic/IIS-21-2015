@@ -35,6 +35,10 @@ public class OpenOperation implements Strategy {
 	             np.getTextArea().append(strline + "\n");
 	         }
 	         in.close();
+	         
+	        np.getController().getCmdUndoRedo1().getUndo().removeAllElements();
+	        np.getController().getCmdUndoRedo1().getRedo().removeAllElements();
+	        
         
            
             
