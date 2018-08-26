@@ -25,7 +25,7 @@ public class CmdUndoRedo1 implements Command{
 		redo.removeAllElements();
 		undo.push(command);
 		
-		System.out.println("Dodale se komanda!");
+
 
 		
 	}
@@ -44,7 +44,7 @@ public class CmdUndoRedo1 implements Command{
 		redo.push(undo.peek());
 		undo.pop();
 		
-		System.out.println("Brise se komanda");
+
 
 		
 

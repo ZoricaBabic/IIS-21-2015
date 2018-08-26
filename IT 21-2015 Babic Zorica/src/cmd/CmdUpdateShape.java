@@ -24,6 +24,7 @@ public class CmdUpdateShape implements Command {
 	private Oblik newState;
 	private Oblik oldState;
 	public static Model model;
+	public static boolean print = true;
 
 	public CmdUpdateShape(Oblik original,Oblik newState) {
 
@@ -56,10 +57,10 @@ public class CmdUpdateShape implements Command {
 			((Tacka) original).setY(((Tacka) newState).getY());
 			original.setBojaIvice(newState.getBojaIvice());
 			original.setSelektovan(newState.isSelektovan());
-			
+
 			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
-			
-			
+
+
 
 
 		} else if(original instanceof Linija) {
@@ -77,7 +78,7 @@ public class CmdUpdateShape implements Command {
 
 			original.setBojaIvice(newState.getBojaIvice());
 			original.setSelektovan(newState.isSelektovan());
-			
+
 			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
 
 
@@ -123,7 +124,7 @@ public class CmdUpdateShape implements Command {
 			((Pravougaonik) original).setBojaIvice(newState.getBojaIvice());
 			((Pravougaonik) original).setBojaUnutrasnjosti(((Pravougaonik) newState).getBojaUnutrasnjosti());
 			original.setSelektovan(newState.isSelektovan());
-			
+
 			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
 
 
@@ -145,33 +146,38 @@ public class CmdUpdateShape implements Command {
 			((Kvadrat) original).setBojaUnutrasnjosti(((Kvadrat) newState).getBojaUnutrasnjosti());
 			original.setSelektovan(newState.isSelektovan());
 			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
-			
-			
+
+
 		} else if (original instanceof HexagonAdapter) {
-			
-		
-			
+
+
+
 			oldState = new HexagonAdapter();
 			((HexagonAdapter) oldState).setHexagon(new Hexagon(((HexagonAdapter) original).getHexagon().getX(),((HexagonAdapter) original).getHexagon().getY(),((HexagonAdapter) original).getHexagon().getR()));
 			((HexagonAdapter) oldState).getHexagon().setAreaColor(((HexagonAdapter) original).getHexagon().getAreaColor());
 			((HexagonAdapter) oldState).getHexagon().setBorderColor(((HexagonAdapter) original).getHexagon().getBorderColor());
 			oldState.setSelektovan(original.isSelektovan());
-			
+
 			System.out.println("OLD STATE: " + oldState);
-			
-			
+
+
 			//menjam original
-			
+
 			((HexagonAdapter) original).setHexagon(((HexagonAdapter) newState).getHexagon());
-			
-		
-			
+
+
+
 			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
-			
+
 
 		}
-		
-		NaslovnaPokretanje.getTextArea().append("Modified: " + original + "\n");
+
+		if(print == true) {
+
+			NaslovnaPokretanje.getTextArea().append("Modified: " + original + "\n");
+		}
+
+
 
 	}
 
@@ -185,7 +191,7 @@ public class CmdUpdateShape implements Command {
 			((Tacka) original).setY(((Tacka) oldState).getY());
 			original.setBojaIvice(oldState.getBojaIvice());
 			original.setSelektovan(oldState.isSelektovan());
-			
+
 			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
 
 
@@ -208,8 +214,8 @@ public class CmdUpdateShape implements Command {
 			((Krug) original).setBojaIvice(oldState.getBojaIvice());
 			((Krug) original).setBojaUnutrasnjosti(((Krug) oldState).getBojaUnutrasnjosti());
 			original.setSelektovan(oldState.isSelektovan());
-			
-			
+
+
 			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
 
 
@@ -226,7 +232,7 @@ public class CmdUpdateShape implements Command {
 			((Pravougaonik) original).setBojaIvice(((Pravougaonik) oldState).getBojaIvice());
 			((Pravougaonik) original).setBojaUnutrasnjosti(((Pravougaonik) oldState).getBojaUnutrasnjosti());
 			original.setSelektovan(oldState.isSelektovan());
-			
+
 			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
 
 
@@ -242,27 +248,32 @@ public class CmdUpdateShape implements Command {
 			((Kvadrat) original).setBojaIvice(((Kvadrat) oldState).getBojaIvice());
 			((Kvadrat) original).setBojaUnutrasnjosti(((Kvadrat) oldState).getBojaUnutrasnjosti());
 			original.setSelektovan(oldState.isSelektovan());
-			
+
 			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
 
 		} else if(original instanceof HexagonAdapter) {
-			
+
 			/*((HexagonAdapter) original).getHexagon().setX(((HexagonAdapter) oldState).getHexagon().getX());
 			((HexagonAdapter) original).getHexagon().setY(((HexagonAdapter) oldState).getHexagon().getY());
 			((HexagonAdapter) original).getHexagon().setR(((HexagonAdapter) oldState).getHexagon().getR());
 			((HexagonAdapter) original).getHexagon().setAreaColor(((HexagonAdapter) oldState).getHexagon().getAreaColor());
 			((HexagonAdapter) original).getHexagon().setBorderColor(((HexagonAdapter) oldState).getHexagon().getBorderColor());
 			((HexagonAdapter) original).getHexagon().setSelected(((HexagonAdapter) oldState).selektovan);*/
-			
+
 			((HexagonAdapter) original).setHexagon(((HexagonAdapter) oldState).getHexagon());
-			
+
 			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
-			
-			
+
+
 		}
+
 		
-		NaslovnaPokretanje.getTextArea().append("UNDO >>> Modified: " + original + "\n");
-		
+
+		if(print == true) {
+
+			NaslovnaPokretanje.getTextArea().append("UNDO >>> Modified: " + original + "\n");
+		}
+
 
 	}
 

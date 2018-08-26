@@ -197,6 +197,10 @@ public class Controller {
 			undo();
 			
 			
+		} else if (line.contains("UNDO >>> Modified: ")) {
+			
+			CmdUpdateShape.print = false;
+			undo();
 		} else if(line.contains("Added:")) {
 
 			if(line.contains("Circle")) {
@@ -742,150 +746,258 @@ public class Controller {
 			
 		} else if (line.contains("Modified: ")){
 			
-			if(line.contains("Circle")) {
+			if(lineBefore != null) {
+				
+				CmdUpdateShape.print = false;
+				//Selected: Circle: (398,139), radius: 50, outline: #000000, fill: #ffffff, Selected? true
 
-				//setOdabranOblik("Krug");
-				String outline = between(line, "outline: ", ", fill:");
-				String fill = between(line, "fill: ",", Selected");
-				String s = between(line, "Circle: (",")");
-				String[] myString = s.split(",");
-				String x = myString[0];
-				String y = myString[1];
-				String radius = between(line, "radius: ",", outline");
+				if(line.contains("Circle") && lineBefore.contains("Circle")) {
+					
+					
+					String outline1 = between(lineBefore, "outline: ", ", fill:");
+					String fill1 = between(lineBefore, "fill: ",", Selected");
+					String s1 = between(lineBefore, "Circle: (",")");
+					String[] myString1 = s1.split(",");
+					String x1 = myString1[0];
+					String y1 = myString1[1];
+					String radius1 = between(lineBefore, "radius: ",", outline");
+					
+					Krug k1 = new Krug(new Tacka(Integer.parseInt(x1),Integer.parseInt(y1)),Integer.parseInt(radius1),stringToColor(outline1),stringToColor(fill1));
+					k1.setSelektovan(true);
+			
+					String outline = between(line, "outline: ", ", fill:");
+					String fill = between(line, "fill: ",", Selected");
+					String s = between(line, "Circle: (",")");
+					String[] myString = s.split(",");
+					String x = myString[0];
+					String y = myString[1];
+					String radius = between(line, "radius: ",", outline");
 
+					Krug k2 = new Krug(new Tacka(Integer.parseInt(x),Integer.parseInt(y)),Integer.parseInt(radius),stringToColor(outline),stringToColor(fill));
+					k2.setSelektovan(true);
+					for(int i=0; i<model.getListaObjekata().size(); i++) {
 
-				model.setBojaUnutrasnjosti(stringToColor(fill));
-				model.setBojaIvice(stringToColor(outline));
-				model.setR(Integer.parseInt(radius));
-				model.setX(Integer.parseInt(x));
-				model.setY(Integer.parseInt(y));
+						if(model.getListaObjekata().get(i).equals(k1)) {
 
-				mouseClickedPnl(Integer.parseInt(x),Integer.parseInt(y));
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListaObjekata().get(i),k2);
+							cmdUpdate.execute();
+							cmdUndoRedo1.addToCommandList(cmdUpdate);
+						}
+					}
+				} else if (line.contains("Hexagon") && lineBefore.contains("Hexagon")) {
 
+					String outline1 = between(lineBefore, "outline: ", ", fill:");
+					String fill1 = between(lineBefore, "fill: ",", Selected");
+					String s1 = between(lineBefore, "Hexagon: (",")");
+					String[] myString1 = s1.split(",");
+					String x1 = myString1[0];
+					String y1 = myString1[1];
+					String radius1 = between(lineBefore, "radius: ",", outline");
+					
+					Hexagon h1 = new Hexagon(Integer.parseInt(x1),Integer.parseInt(y1),Integer.parseInt(radius1));
+					h1.setAreaColor(stringToColor(fill1));
+					h1.setBorderColor(stringToColor(outline1));
+					HexagonAdapter ha1 = new HexagonAdapter(h1);
+					ha1.setSelektovan(true);
+					
+					String outline = between(line, "outline: ", ", fill:");
+					String fill = between(line, "fill: ",", Selected");
+					String s = between(line, "Hexagon: (",")");
+					String[] myString = s.split(",");
+					String x = myString[0];
+					String y = myString[1];
+					String radius = between(line, "radius: ",", outline");
 
-			} else if (line.contains("Square")) {
+					Hexagon h = new Hexagon(Integer.parseInt(x),Integer.parseInt(y),Integer.parseInt(radius));
+					h.setAreaColor(stringToColor(fill));
+					h.setBorderColor(stringToColor(outline));
+					HexagonAdapter ha = new HexagonAdapter(h);
+					ha.setSelektovan(true);
 
+					for(int i=0; i<model.getListaObjekata().size(); i++) {
 
+						if(model.getListaObjekata().get(i).equals(ha1)) {
 
-				setOdabranOblik("Kvadrat");
-				String outline = between(line, "outline: ", ", fill:");
-				String fill = between(line, "fill: ",", Selected");
-				String s = between(line, "Square: (",")");
-				String[] myString = s.split(",");
-				String x = myString[0].trim();
-				String y = myString[1].trim();
-				String width = between(line, "width: ",", outline");
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListaObjekata().get(i),ha);
+							cmdUpdate.execute();
+							cmdUndoRedo1.addToCommandList(cmdUpdate);
 
-
-				model.setBojaUnutrasnjosti(stringToColor(fill));
-				model.setBojaIvice(stringToColor(outline));
-				model.setDuzinaStranice(Integer.parseInt(width));
-				model.setX(Integer.parseInt(x));
-				model.setY(Integer.parseInt(y));
-				mouseClickedPnl(Integer.parseInt(x),Integer.parseInt(y));
-
-
-			} else if(line.contains("Rectangle")){
-
-
-				setOdabranOblik("Pravougaonik");
-				String outline = between(line, "outline: ", ", fill:");
-				String fill = between(line, "fill: ",", Selected");
-				String s = between(line, "Rectangle: (",")");
-				String[] myString = s.split(",");
-				String x = myString[0].trim();
-				String y = myString[1].trim();
-				String width = between(line, "width: ",", height");
-				String height = between(line,"height: ",", outline");
-
-
-				model.setBojaUnutrasnjosti(stringToColor(fill));
-				model.setBojaIvice(stringToColor(outline));
-				model.setDuzina(Integer.parseInt(width));
-				model.setSirina(Integer.parseInt(height));
-				model.setX(Integer.parseInt(x));
-				model.setY(Integer.parseInt(y));
-				mouseClickedPnl(Integer.parseInt(x),Integer.parseInt(y));
-
-
-			} else if(line.contains("Line")) {
-
-				//Added: Line: startPoint (272,100), endPoint (208,91), outline: #000000, Selected? false
-				setOdabranOblik("Linija");
-				String outline = between(line, "outline: ", ", Selected");
-				//startpoint
-				String s = between(line, "startPoint (", "), endPoint");
-				String[] myString = s.split(",");
-				String x = myString[0].trim();
-				String y = myString[1].trim();
-
-				//endPoint
-
-				String sa = between(line, "endPoint (", "), outline:");
-				String[] myStrings = sa.split(",");
-				String newX = myStrings[0].trim();
-				String newY = myStrings[1].trim();
-
-				model.setBojaIvice(stringToColor(outline));
-
-				model.setX(Integer.parseInt(x));
-				model.setY(Integer.parseInt(y));
-				model.setNovoX(Integer.parseInt(newX));
-				model.setNovoY(Integer.parseInt(newY));
-
-				System.out.println(x);
-				System.out.println(newX);
-
-				model.setDvaKlika(true);
-				justRead=true;
-				mouseClickedPnl(Integer.parseInt(x),Integer.parseInt(y));
+						}
+					}
 
 
-			} else if (line.contains("Hexagon")) {
+				} else if(line.contains("Line") && lineBefore.contains("Line")) {
+					
+					String outline1 = between(lineBefore, "outline: ", ", Selected");
+					//startpoint
+					String s1 = between(lineBefore, "startPoint (", "), endPoint");
+					String[] myString1 = s1.split(",");
+					String x1 = myString1[0].trim();
+					String y1 = myString1[1].trim();
+					
+					//endPoint
 
-				//Added: Hexagon: (130,144), radius: 50, outline: #000000, fill: #ffffff, Selected? false  
+					String sa1 = between(lineBefore, "endPoint (", "), outline:");
+					String[] myStrings1 = sa1.split(",");
+					String newX1 = myStrings1[0].trim();
+					String newY1 = myStrings1[1].trim();
+					
+					
+					Linija l1 = new Linija(new Tacka(Integer.parseInt(x1),Integer.parseInt(y1)),new Tacka(Integer.parseInt(newX1),Integer.parseInt(newY1)), stringToColor(outline1));
+					l1.setSelektovan(true);
+					
+					
 
-				setOdabranOblik("Hexagon");
-				String outline = between(line, "outline: ", ", fill:");
-				String fill = between(line, "fill: ",", Selected");
-				String s = between(line, "Hexagon: (",")");
-				String[] myString = s.split(",");
-				String x = myString[0];
-				String y = myString[1];
-				String radius = between(line, "radius: ",", outline");
+					String outline = between(line, "outline: ", ", Selected");
+					//startpoint
+					String s = between(line, "startPoint (", "), endPoint");
+					String[] myString = s.split(",");
+					String x = myString[0].trim();
+					String y = myString[1].trim();
+					
+					//endPoint
+
+					String sa = between(line, "endPoint (", "), outline:");
+					String[] myStrings = sa.split(",");
+					String newX = myStrings[0].trim();
+					String newY = myStrings[1].trim();
+					
+					Linija l = new Linija(new Tacka(Integer.parseInt(x),Integer.parseInt(y)),new Tacka(Integer.parseInt(newX),Integer.parseInt(newY)), stringToColor(outline));
+					l.setSelektovan(true);
+					
+					for(int i=0; i<model.getListaObjekata().size(); i++) {
+
+						if(model.getListaObjekata().get(i).equals(l1)) {
+
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListaObjekata().get(i),l);
+							cmdUpdate.execute();
+							cmdUndoRedo1.addToCommandList(cmdUpdate);
+
+						}
+					}
+				} else if(line.contains("Point") && lineBefore.contains("Point")) {
+					
+					//Selected: Line: startPoint (310,66), endPoint (555,67), outline: #000000, Selected? true
 
 
-				model.setBojaUnutrasnjosti(stringToColor(fill));
-				model.setBojaIvice(stringToColor(outline));
-				model.setX(Integer.parseInt(x));
-				model.setY(Integer.parseInt(y));
-				model.setR(Integer.parseInt(radius));
+					String outline1 = between(lineBefore, "outline: ", ", Selected?");
 
-				mouseClickedPnl(Integer.parseInt(x),Integer.parseInt(y));
+					String s1 = between(lineBefore, "Point: (",")");
+					String[] myString1 = s1.split(",");
+				
+					String x1 = myString1[0];
+					String y1 = myString1[1];
+					
+					Tacka t1 = new Tacka(Integer.parseInt(x1),Integer.parseInt(y1),stringToColor(outline1));
+					t1.setSelektovan(true);
 
-			} else if (line.contains("Point")) {
+					
+					String outline = between(line, "outline: ", ", Selected?");
+					String s = between(line, "Point: (",")");
+					String[] myString = s.split(",");
+					System.out.println(myString);
+					String x = myString[0];
+					String y = myString[1];
+					
+				
 
-				//Added: Point: (681,232), outline: #000000, Selected? false
+					
+					
 
-				setOdabranOblik("Tacka");
-				String outline = between(line, "outline: ", ", Selected?");
+					Tacka t = new Tacka(Integer.parseInt(x),Integer.parseInt(y),stringToColor(outline));
+					t.setSelektovan(true);
+					
+					
+					for(int i=0; i<model.getListaObjekata().size(); i++) {
 
-				String s = between(line, "Point: (",")");
-				String[] myString = s.split(",");
-				String x = myString[0];
-				String y = myString[1];
+						if(model.getListaObjekata().get(i).equals(t1)) {
+
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListaObjekata().get(i),t);
+							cmdUpdate.execute();
+							cmdUndoRedo1.addToCommandList(cmdUpdate);
+
+						}
+					}
 
 
+				} else if (line.contains("Rectangle") && lineBefore.contains("Rectangle")) {
+					
+					String outline1 = between(lineBefore, "outline: ", ", fill:");
+					String fill1 = between(lineBefore, "fill: ",", Selected");
+					String s1 = between(lineBefore, "Rectangle: (",")");
+					String[] myString1 = s1.split(",");
+					String x1 = myString1[0].trim();
+					String y1 = myString1[1].trim();
+					String width1 = between(lineBefore, "width: ",", height");
+					String height1 = between(lineBefore,"height: ",", outline");
+					
+					Pravougaonik p1 = new Pravougaonik(new Tacka(Integer.parseInt(x1),Integer.parseInt(y1)),Integer.parseInt(width1),Integer.parseInt(height1),stringToColor(outline1),stringToColor(fill1));
+					p1.setSelektovan(true);
+					
+					
+					
+					String outline = between(line, "outline: ", ", fill:");
+					String fill = between(line, "fill: ",", Selected");
+					String s = between(line, "Rectangle: (",")");
+					String[] myString = s.split(",");
+					String x = myString[0].trim();
+					String y = myString[1].trim();
+					String width = between(line, "width: ",", height");
+					String height = between(line,"height: ",", outline");
+					
+					Pravougaonik p = new Pravougaonik(new Tacka(Integer.parseInt(x),Integer.parseInt(y)),Integer.parseInt(width),Integer.parseInt(height),stringToColor(outline),stringToColor(fill));   
+					p.setSelektovan(true);
+					
+					for(int i=0; i<model.getListaObjekata().size(); i++) {
 
+						if(model.getListaObjekata().get(i).equals(p1)) {
 
-				model.setBojaIvice(stringToColor(outline));
-				model.setX(Integer.parseInt(x));
-				model.setY(Integer.parseInt(y));
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListaObjekata().get(i),p);
+							cmdUpdate.execute();
+							cmdUndoRedo1.addToCommandList(cmdUpdate);
 
+						}
+					}
+				} else if (line.contains("Square") && lineBefore.contains("Square")) {
+					
+					String outline1 = between(lineBefore, "outline: ", ", fill:");
+					String fill1 = between(lineBefore, "fill: ",", Selected");
+					String s1 = between(lineBefore, "Square: (",")");
+					String[] myString1 = s1.split(",");
+					String x1 = myString1[0].trim();
+					String y1 = myString1[1].trim();
+					String width1 = between(lineBefore, "width: ",", outline");
+					
+					Kvadrat k1 = new Kvadrat(new Tacka(Integer.parseInt(x1),Integer.parseInt(y1)),Integer.parseInt(width1),stringToColor(outline1),stringToColor(fill1));
+					k1.setSelektovan(true);
+					
+					
+					
+					String outline = between(line, "outline: ", ", fill:");
+					String fill = between(line, "fill: ",", Selected");
+					String s = between(line, "Square: (",")");
+					String[] myString = s.split(",");
+					String x = myString[0].trim();
+					String y = myString[1].trim();
+					String width = between(line, "width: ",", outline");
+					
+					Kvadrat k = new Kvadrat(new Tacka(Integer.parseInt(x),Integer.parseInt(y)),Integer.parseInt(width),stringToColor(outline),stringToColor(fill));
+					k.setSelektovan(true);
+					for(int i=0; i<model.getListaObjekata().size(); i++) {
 
-				justRead=true;
-				mouseClickedPnl(Integer.parseInt(x),Integer.parseInt(y));
+						if(model.getListaObjekata().get(i).equals(k1)) {
+
+							
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListaObjekata().get(i),k);
+							cmdUpdate.execute();
+							cmdUndoRedo1.addToCommandList(cmdUpdate);
+						}
+					}
+
+				}
 			}
+			
+			
 		}
 
 

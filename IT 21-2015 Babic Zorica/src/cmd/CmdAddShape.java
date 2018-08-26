@@ -20,7 +20,7 @@ public class CmdAddShape implements Command {
 		
 
 		model.add(o);
-		System.out.println("Dodaje oblik");
+
 		
 		if(print == true) {
 			
