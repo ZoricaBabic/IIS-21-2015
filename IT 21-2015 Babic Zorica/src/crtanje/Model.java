@@ -1,6 +1,7 @@
 package crtanje;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -16,7 +17,9 @@ import geometrija.Pravougaonik;
 import geometrija.Tacka;
 
 
-public class Model {
+public class Model implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 
 	ArrayList<Oblik> listaObjekata = new ArrayList<Oblik>();
 	/*Stack<Oblik> stekSelekcija = new Stack<Oblik>();
@@ -80,7 +83,7 @@ public class Model {
 		return listaObjekata.removeAll(listaObjekata);
 	}
 
-	public void addToStackUndo(Oblik s) {
+	/*public void addToStackUndo(Oblik s) {
 
 		stackUndo.push(s);
 	}
@@ -108,7 +111,7 @@ public class Model {
 	public Oblik getLastShapeOnStackRedo() {
 
 		return stackRedo.peek();
-	}
+	}*/
 	
 	
 

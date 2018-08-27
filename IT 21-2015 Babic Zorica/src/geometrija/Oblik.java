@@ -2,11 +2,16 @@ package geometrija;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.Serializable;
 
 
 
-public abstract class Oblik implements Cloneable  {
+public abstract class Oblik implements Serializable  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public Color bojaIvice;
 	public boolean selektovan;
 

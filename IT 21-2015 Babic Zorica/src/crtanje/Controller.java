@@ -46,8 +46,10 @@ import geometrija.Tacka;
 import hexagon.Hexagon;
 import observer.Subject;
 import strategy.Context;
+import strategy.LoadPainting;
 import strategy.LogOperation;
 import strategy.OpenOperation;
+import strategy.SaveBin;
 import strategy.SavePaintingOperation;
 
 
@@ -137,6 +139,18 @@ public class Controller {
 
 
 
+	}
+	
+	public void loadPainting(File f) {
+		
+		context = new Context(new LoadPainting());
+		context.executeStrategy(frame, f);
+	}
+	
+	public void saveBin(File f) {
+		
+		context = new Context(new SaveBin());
+		context.executeStrategy(frame, f);
 	}
 
 	public void runCommandByCommand(String line,String lineBefore) {

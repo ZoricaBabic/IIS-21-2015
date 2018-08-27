@@ -752,18 +752,33 @@ public class NaslovnaPokretanje extends JFrame  {
 				JFileChooser fs = new JFileChooser(new File("c:\\"));
 				fs.setDialogTitle("Open a file");
 				//fs.setFileFilter(new FileTypeFilter(".txt","Text File"));
-				FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("Text file","txt");
-				fs.setFileFilter(fileNameExtensionFilter);
+				fs.addChoosableFileFilter(new FileNameExtensionFilter("Text File", "txt"));
+				fs.addChoosableFileFilter(new FileNameExtensionFilter("Bin File", "bin"));
 
 				int result = fs.showOpenDialog(null);
 
 				if(result == JFileChooser.APPROVE_OPTION) {
 
+					String path = fs.getSelectedFile().getAbsolutePath();
+					
 					try{
+						
+						if(path.contains(".txt")) {
+							
+							File file = new File(fs.getSelectedFile().getAbsolutePath());
+							controller.openTxt(file);
+							
+						} else if (path.contains(".bin")) {
+							
+							File file = new File(fs.getSelectedFile().getAbsolutePath());
+							controller.loadPainting(file);
+							
+						}
 
-
-						File file = new File(fs.getSelectedFile().getAbsolutePath());
-						controller.openTxt(file);
+						
+						
+						
+						
 
 
 
@@ -826,14 +841,7 @@ public class NaslovnaPokretanje extends JFrame  {
 					
 					
 					int pos2 = (int) firstArray.get(index);
-					
-					
-							
-							/*int start = firstArray.get( (firstArray.keySet().toArray())[index]);
-							int end = start + strings.get(index).length()-1;*/
-							
-							/*System.out.println("start: " + start);
-							System.out.println("end: " + end);*/
+
 							
 							int start = -1;
 							int end = -1;
@@ -848,9 +856,7 @@ public class NaslovnaPokretanje extends JFrame  {
 								e2.printStackTrace();
 							}
 							
-							System.out.println("start: " + start);
-							System.out.println("end: " + end);
-	                        
+						
 							
 					
 			
@@ -1425,8 +1431,12 @@ public class NaslovnaPokretanje extends JFrame  {
 	public void saveTxt() {
 
 		JFileChooser jFileChooser = new JFileChooser();
-		FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("Text file","txt");
-		jFileChooser.setFileFilter(fileNameExtensionFilter);
+		
+		jFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Text File", "txt"));
+		jFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Bin File", "bin"));
+		
+		//FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("Text file/bin","txt","bin");
+		//jFileChooser.setFileFilter(fileNameExtensionFilter);
 
 		int result = jFileChooser.showSaveDialog(null);
 
@@ -1436,39 +1446,34 @@ public class NaslovnaPokretanje extends JFrame  {
 
 				String path = jFileChooser.getSelectedFile().getAbsolutePath();
 
-				System.out.println(path);
-				File file;
-				File filePainting;
-				////////////////BufferedImage im = new BufferedImage(pnlZaCrtanje.getWidth(), pnlZaCrtanje.getHeight(), BufferedImage.TYPE_INT_ARGB);
-				//c.paint(im.getGraphics());
-
-
-				if(path.contains(".txt")) {
-
+				int length = path.length();
+				File file = null;
+				File filePainting = null;
+				File fileBin = null;
+				
+				if(path.contains(".txt")){
+					
 					file = new File(path);
-
-					int length = path.length();
 					String s = path.substring(0, length - 4) + ".png";
-
 					filePainting = new File(s);
-
-
-					//ImageIO.write(im, "PNG", new File(s));
-				} else {
-
+					
+				} else if(path.contains(".bin")) {
+					
+					String k = path.substring(0, length - 4) + ".bin";
+					fileBin = new File(k);
+				} else if (!path.contains(".txt") && !path.contains(".png") && !path.contains(".bin")) {
+					
 					file = new File(path + ".txt");
 					filePainting = new File(path + ".png");
-
-					////////////ImageIO.write(im, "PNG", new File(path + ".png"));
+					fileBin=new File(path + ".bin");
 				}
-
-
-				//File file = new File(jFileChooser.getSelectedFile().getCanonicalPath());
-
+				
+				
 				controller.saveTxt(file);
 				controller.savePainting(filePainting);
-
-
+				controller.saveBin(fileBin);
+			
+			
 
 			}catch (Exception exception) {
 
