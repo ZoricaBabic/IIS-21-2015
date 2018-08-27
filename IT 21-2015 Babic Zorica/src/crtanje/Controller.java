@@ -2730,7 +2730,7 @@ public class Controller {
 
 
 
-					if((i+1)<model.getListaObjekata().size()) {
+					if((i+1)< model.getListaObjekata().size()) {
 						o = model.getListaObjekata().get(i);
 
 						CmdToFront cmdToFront = new CmdToFront(model,model.getListaObjekata().get(i));

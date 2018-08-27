@@ -1380,6 +1380,7 @@ public class NaslovnaPokretanje extends JFrame  {
 		rdbtnmntmHexagon.setFont(new Font("Arial", Font.BOLD, 12));
 		rdbtnmntmHexagon.setBackground(Color.WHITE);
 		menuBar.add(rdbtnmntmHexagon);
+		buttonGroup.add(rdbtnmntmHexagon);
 
 
 
