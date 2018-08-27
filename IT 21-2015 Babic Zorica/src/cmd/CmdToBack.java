@@ -23,6 +23,8 @@ public class CmdToBack implements Command {
 
 	@Override
 	public void execute() {
+		
+		
 		 
 		i = model.getListaObjekata().indexOf(o);
 		Collections.swap(model.getListaObjekata(), i, i-1); 

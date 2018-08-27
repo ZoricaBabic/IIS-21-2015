@@ -38,6 +38,7 @@ public class DlgOsobineKruga extends JDialog {
 	private JEditorPane edpBojaIvice;
 	private JEditorPane edpBojaUnutrasnjosti;
 	private Model model = new Model();
+	private  boolean done=false;
 	
 
 	/*public static void main(String[] args) {
@@ -51,6 +52,8 @@ public class DlgOsobineKruga extends JDialog {
 	}*/
 
 	public DlgOsobineKruga() {
+		
+		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(DlgOsobineKruga.class.getResource("/windows/resources/paleta.png")));
 		setTitle("Krug");
 
@@ -83,6 +86,10 @@ public class DlgOsobineKruga extends JDialog {
 		edpBojaIvice = new JEditorPane();
 		edpBojaIvice.setEditable(true);
 		edpBojaIvice.setBackground(Color.WHITE);
+		
+		
+		
+		
 		edpBojaIvice.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -189,22 +196,40 @@ public class DlgOsobineKruga extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 
 				try{
+					
+					if(x != Integer.parseInt(txtXKoordinata.getText())
+							|| y != Integer.parseInt(txtYKoordinata.getText()) || 
+							poluprecnik != Integer.parseInt(txtPoluprecnik.getText()) ||
+							bojaIvice != edpBojaIvice.getBackground() || 
+							bojaUnutrasnjosti != edpBojaUnutrasnjosti.getBackground()){
+						
+						x = Integer.parseInt(txtXKoordinata.getText());
+						y = Integer.parseInt(txtYKoordinata.getText());
+						poluprecnik = Integer.parseInt(txtPoluprecnik.getText());
+						
+						if(x >= 0 && y>=0 && poluprecnik>0){
 
-					x = Integer.parseInt(txtXKoordinata.getText());
-					y = Integer.parseInt(txtYKoordinata.getText());
-					poluprecnik = Integer.parseInt(txtPoluprecnik.getText());
-					if(x >= 0 && y>=0 && poluprecnik>0){
+							bojaIvice = edpBojaIvice.getBackground();
+							bojaUnutrasnjosti = edpBojaUnutrasnjosti.getBackground();
+				
+							setVisible(false);
 
-						bojaIvice = edpBojaIvice.getBackground();
-						bojaUnutrasnjosti = edpBojaUnutrasnjosti.getBackground();
-			
-						setVisible(false);
+						} else {
 
-					} else {
+							JOptionPane.showMessageDialog(null, "Niste dobro uneli podatke!");
+						}
+						
+						
+						done=true;
 
-						JOptionPane.showMessageDialog(null, "Niste dobro uneli podatke!");
-					}
+								
+								
+				}
+					
+					setVisible(false);
+					
 
+					
 				} catch (NumberFormatException k){
 
 					JOptionPane.showMessageDialog(null, "Niste dobro uneli podatke!");
@@ -319,5 +344,13 @@ public class DlgOsobineKruga extends JDialog {
 
 	public void setEdpBojaUnutrasnjosti(JEditorPane edpBojaUnutrasnjosti) {
 		this.edpBojaUnutrasnjosti = edpBojaUnutrasnjosti;
+	}
+
+	public boolean isDone() {
+		return done;
+	}
+
+	public void setDone(boolean done) {
+		this.done = done;
 	}
 }

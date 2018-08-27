@@ -19,7 +19,7 @@ public class CmdAddShape implements Command {
 	@Override
 	public void execute() {
 		
-
+	
 		model.add(o);
 		NaslovnaPokretanje.btnSave.setEnabled(true);
 

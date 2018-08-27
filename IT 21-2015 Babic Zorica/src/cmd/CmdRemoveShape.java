@@ -38,6 +38,8 @@ public class CmdRemoveShape implements Command {
 
 	@Override
 	public void execute() {
+		
+	
 
 		if(!removedShapes.isEmpty()  && removedShapes.size() > 1) {
 

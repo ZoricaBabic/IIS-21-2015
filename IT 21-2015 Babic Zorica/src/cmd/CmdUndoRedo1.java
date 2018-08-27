@@ -22,6 +22,8 @@ public class CmdUndoRedo1 implements Command{
 	
 	public void addToCommandList(Command command) {
 		
+		NaslovnaPokretanje.done=true;
+		
 		redo.removeAllElements();
 		undo.push(command);
 		

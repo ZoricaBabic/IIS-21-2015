@@ -17,6 +17,7 @@ import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 
@@ -68,6 +69,7 @@ public class NaslovnaPokretanje extends JFrame  {
 
 	private static final long serialVersionUID = 1L;
 	protected static final Graphics Graphics = null;
+	private static final int ALWAYS_UPDATE = 0;
 	private JFrame frmPaint;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private int x;
@@ -83,6 +85,7 @@ public class NaslovnaPokretanje extends JFrame  {
 	private JPanel pnlBojaUnutrasnjosti;
 	private JPanel pnlBojaIvice;
 	public static JTextArea textArea;
+	public static boolean done = false;
 	
 	private ArrayList<String> lines = new ArrayList<String>();
 	
@@ -109,6 +112,7 @@ public class NaslovnaPokretanje extends JFrame  {
 	private Context context;
 	
 	private int lineNumber =0; 
+	
 	
 	
 	
@@ -259,6 +263,8 @@ public class NaslovnaPokretanje extends JFrame  {
 		textArea.setEditable(false);
 		scrollPane.setViewportView(textArea);
 		pnlLog.setLayout(gl_pnlLog);
+		
+	
 
 		//pnlLog.add(scrollPane);
 
@@ -757,13 +763,18 @@ public class NaslovnaPokretanje extends JFrame  {
 			public void mouseClicked(MouseEvent e) {
 
 				//pitanje da li zeli da obrise ako ima nesto
-				int dialogButton = JOptionPane.YES_NO_OPTION;
-				int dialogResult = JOptionPane.showConfirmDialog (null, "Would You Like to Save your previous drawing?","Warning",dialogButton);
-				if(dialogResult == JOptionPane.YES_OPTION){
+				
+				if(!textArea.getText().isEmpty() && done==true) {
+					
+					int dialogButton = JOptionPane.YES_NO_OPTION;
+					int dialogResult = JOptionPane.showConfirmDialog (null, "Would You Like to Save your previous drawing?","Warning",dialogButton);
+					if(dialogResult == JOptionPane.YES_OPTION){
 
-					saveTxt();
+						saveTxt();
 
+					}
 				}
+				
 
 
 				JFileChooser fs = new JFileChooser(new File("c:\\"));
@@ -822,7 +833,7 @@ public class NaslovnaPokretanje extends JFrame  {
 				
 				
 				
-		
+				done=false;
 			}
 
 
@@ -908,16 +919,28 @@ public class NaslovnaPokretanje extends JFrame  {
 						        pos2 + strings.get(index).length(),
 						        new DefaultHighlighter.DefaultHighlightPainter(new Color(255, 255, 153)));
 											//lines.add(line);*/
+					   
+					   
+					   Rectangle viewRect = textArea.modelToView(start);
+                       // Scroll to make the rectangle visible
+                       textArea.scrollRectToVisible(viewRect);
+                       // Highlight the text
+                       textArea.setCaretPosition(end);
+                       textArea.moveCaretPosition(start);
+                       // Move the search position beyond the current match
+                       
+                       
 						
 						if(start != -1 && end!=-1) {
 							
 							textArea.getHighlighter().addHighlight(start,
 							        end,
 							        new DefaultHighlighter.DefaultHighlightPainter(new Color(255, 255, 153)));
+							
+							
+							 textArea.requestFocusInWindow();
+							 
 						}
-						
-					
-						
 						
 					
 						if(index == 0) {
@@ -937,7 +960,7 @@ public class NaslovnaPokretanje extends JFrame  {
 				   
 				   
 				   
-				   Rectangle startIndex = null;
+				   /*Rectangle startIndex = null;
 					try {
 						startIndex = textArea.modelToView(start);
 					} catch (BadLocationException e2) {
@@ -946,7 +969,7 @@ public class NaslovnaPokretanje extends JFrame  {
 					}
 					int y = startIndex.y + (scrollPane.getHeight() - 10);
 				    textArea.setCaretPosition(textArea.viewToModel(new Point(startIndex.x, y)));
-				    scrollPane.scrollRectToVisible(new Rectangle(startIndex.x, y));
+				    scrollPane.scrollRectToVisible(new Rectangle(startIndex.x, y));*/
 				}
 				
 				
@@ -1466,63 +1489,72 @@ public class NaslovnaPokretanje extends JFrame  {
 	}
 
 	public void saveTxt() {
-
-		JFileChooser jFileChooser = new JFileChooser();
 		
-		jFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Text File", "txt"));
-		jFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Bin File", "bin"));
-		
-		//FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("Text file/bin","txt","bin");
-		//jFileChooser.setFileFilter(fileNameExtensionFilter);
+		if(done==true) {
+			
+			JFileChooser jFileChooser = new JFileChooser();
+			
+			jFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Text File", "txt"));
+			jFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Bin File", "bin"));
+			
+			//FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("Text file/bin","txt","bin");
+			//jFileChooser.setFileFilter(fileNameExtensionFilter);
 
-		int result = jFileChooser.showSaveDialog(null);
+			int result = jFileChooser.showSaveDialog(null);
 
-		if (result == JFileChooser.APPROVE_OPTION) {
+			if (result == JFileChooser.APPROVE_OPTION) {
 
-			try {
+				try {
 
-				String path = jFileChooser.getSelectedFile().getAbsolutePath();
+					String path = jFileChooser.getSelectedFile().getAbsolutePath();
 
-				int length = path.length();
-				File file = null;
-				File filePainting = null;
-				File fileBin = null;
+					int length = path.length();
+					File file = null;
+					File filePainting = null;
+					File fileBin = null;
+					
+					if(path.contains(".txt")){
+						
+						file = new File(path);
+						String s = path.substring(0, length - 4) + ".png";
+						filePainting = new File(s);
+						String k = path.substring(0, length - 4) + ".bin";
+						fileBin = new File(k);
+						
+					} else if(path.contains(".bin")) {
+						
+						String k = path.substring(0, length - 4) + ".bin";
+						fileBin = new File(k);
+						
+					} else if (!path.contains(".txt") && !path.contains(".png") && !path.contains(".bin")) {
+						
+						file = new File(path + ".txt");
+						filePainting = new File(path + ".png");
+						fileBin=new File(path + ".bin");
+					}
+					
+					
+					controller.saveTxt(file);
+					controller.savePainting(filePainting);
+					controller.saveBin(fileBin);
 				
-				if(path.contains(".txt")){
-					
-					file = new File(path);
-					String s = path.substring(0, length - 4) + ".png";
-					filePainting = new File(s);
-					String k = path.substring(0, length - 4) + ".bin";
-					fileBin = new File(k);
-					
-				} else if(path.contains(".bin")) {
-					
-					String k = path.substring(0, length - 4) + ".bin";
-					fileBin = new File(k);
-					
-				} else if (!path.contains(".txt") && !path.contains(".png") && !path.contains(".bin")) {
-					
-					file = new File(path + ".txt");
-					filePainting = new File(path + ".png");
-					fileBin=new File(path + ".bin");
+				
+
+				}catch (Exception exception) {
+
+
 				}
-				
-				
-				controller.saveTxt(file);
-				controller.savePainting(filePainting);
-				controller.saveBin(fileBin);
-			
-			
 
-			}catch (Exception exception) {
-
+				done=false;
 
 			}
-
-
-
+			
+			
 		}
+		
+		
+
+	
 	}
 
 

@@ -32,6 +32,8 @@ public class CmdSelectShape implements Command {
 	@Override
 	public void execute() {
 		
+	
+		
 		o.setSelektovan(true);
 		if(print == true) {
 			

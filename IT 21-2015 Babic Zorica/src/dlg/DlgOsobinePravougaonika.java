@@ -42,6 +42,7 @@ public class DlgOsobinePravougaonika extends JDialog {
 	private JEditorPane edpBojaIvice;
 	private JEditorPane edpBojaUnutrasnjosti;
 	private Model model = new Model();
+	private boolean  done = false;
 	
 
 
@@ -224,23 +225,41 @@ public class DlgOsobinePravougaonika extends JDialog {
 
 
 				try{
+					
+					if(x != Integer.parseInt(txtXKoordinata.getText()) ||
+							y != Integer.parseInt(txtYKoordinata.getText()) ||
+							duzina != Integer.parseInt(txtDuzina.getText()) ||
+							sirina != Integer.parseInt(txtSirina.getText()) ||
+							bojaIvice != edpBojaIvice.getBackground() ||
+							bojaUnutrasnjosti != edpBojaUnutrasnjosti.getBackground()) {
+						
+						
+						x = Integer.parseInt(txtXKoordinata.getText());
+						y = Integer.parseInt(txtYKoordinata.getText());
+						duzina = Integer.parseInt(txtDuzina.getText());
+						sirina = Integer.parseInt(txtSirina.getText());
+						if(x >= 0 && y>=0 && duzina>0 && sirina>0){
 
-					x = Integer.parseInt(txtXKoordinata.getText());
-					y = Integer.parseInt(txtYKoordinata.getText());
-					duzina = Integer.parseInt(txtDuzina.getText());
-					sirina = Integer.parseInt(txtSirina.getText());
-					if(x >= 0 && y>=0 && duzina>0 && sirina>0){
+							bojaIvice = edpBojaIvice.getBackground();
+							bojaUnutrasnjosti = edpBojaUnutrasnjosti.getBackground();
+				
+							setVisible(false);
+							done = true;
+							
+						} else {
 
-						bojaIvice = edpBojaIvice.getBackground();
-						bojaUnutrasnjosti = edpBojaUnutrasnjosti.getBackground();
-			
-						setVisible(false);
+							JOptionPane.showMessageDialog(null, "Niste dobro uneli podatke!");
+						}
+
+						
 						
 					} else {
-
-						JOptionPane.showMessageDialog(null, "Niste dobro uneli podatke!");
+						
+						setVisible(false);
+						done=false;
 					}
 
+				
 				} catch (NumberFormatException k){
 
 					JOptionPane.showMessageDialog(null, "Niste dobro uneli podatke!");
@@ -365,5 +384,13 @@ public class DlgOsobinePravougaonika extends JDialog {
 
 	public void setEdpBojaUnutrasnjosti(JEditorPane edpBojaUnutrasnjosti) {
 		this.edpBojaUnutrasnjosti = edpBojaUnutrasnjosti;
+	}
+
+	public boolean isDone() {
+		return done;
+	}
+
+	public void setDone(boolean done) {
+		this.done = done;
 	}
 }

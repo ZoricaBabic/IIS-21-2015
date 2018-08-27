@@ -37,6 +37,7 @@ public class DlgOsobineTacke extends JDialog {
 	private Tacka t; 
 	private JEditorPane edpBoja;
 	private Model model = new Model();
+	private boolean done=false;
 
 
 	/*public static void main(String[] args) {
@@ -147,25 +148,37 @@ public class DlgOsobineTacke extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 
 				try{
+					
+					if(x != Integer.parseInt(txtXKoordinata.getText()) ||
+							y != Integer.parseInt(txtYKoordinata.getText()) ||
+							bojaIvice != edpBoja.getBackground()) {
+						
+						x = Integer.parseInt(txtXKoordinata.getText());
+						y = Integer.parseInt(txtYKoordinata.getText());
+						if(x >= 0 && y>=0){
 
-					x = Integer.parseInt(txtXKoordinata.getText());
-					y = Integer.parseInt(txtYKoordinata.getText());
-					if(x >= 0 && y>=0){
-
-						bojaIvice = edpBoja.getBackground();
-						Tacka t = new Tacka(x,y,bojaIvice);
-						setT(t);
-						model.setBojaIvice(bojaIvice);
-	
-						setVisible(false);
+							bojaIvice = edpBoja.getBackground();
+							Tacka t = new Tacka(x,y,bojaIvice);
+							setT(t);
+							model.setBojaIvice(bojaIvice);
+		
+							setVisible(false);
+							done=true;
 
 
 
 
+						} else {
+
+							JOptionPane.showMessageDialog(null, "Niste dobro uneli podatke!");
+						}
 					} else {
-
-						JOptionPane.showMessageDialog(null, "Niste dobro uneli podatke!");
+						
+						setVisible(false);
+						done=false;
 					}
+
+					
 
 				} catch (NumberFormatException k){
 
@@ -254,5 +267,13 @@ public class DlgOsobineTacke extends JDialog {
 
 	public void setEdpBoja(JEditorPane edpBoja) {
 		this.edpBoja = edpBoja;
+	}
+
+	public boolean isDone() {
+		return done;
+	}
+
+	public void setDone(boolean done) {
+		this.done = done;
 	}
 }

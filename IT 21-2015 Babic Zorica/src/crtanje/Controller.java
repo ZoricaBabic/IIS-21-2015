@@ -1193,7 +1193,7 @@ public class Controller {
 
 
 						osobine = new DlgOsobinePravougaonika();
-
+						osobine.setDone(false);
 						//podesavanje vrednosti
 						osobine.setX(((Pravougaonik) o).gettGoreLevo().getX());
 						osobine.setY(((Pravougaonik) o).gettGoreLevo().getY());
@@ -1212,7 +1212,7 @@ public class Controller {
 
 						osobine.setVisible(true);
 
-						if(osobine.isVisible() == false) {
+						if(osobine.isVisible() == false && osobine.isDone() == true) {
 
 							Pravougaonik novi = new Pravougaonik(new Tacka(osobine.getX(),osobine.getY()),osobine.getDuzina(),osobine.getSirina(),osobine.getBojaIvice(),osobine.getBojaUnutrasnjosti());
 							novi.setSelektovan(true);
@@ -1225,6 +1225,7 @@ public class Controller {
 
 							cmdUpdate.execute();
 							cmdUndoRedo1.addToCommandList(cmdUpdate);
+							osobine.setDone(false);
 
 							//frame.getTextArea().append(novi + "\n");
 
@@ -1239,8 +1240,8 @@ public class Controller {
 
 					
 
-
 						DlgOsobineKvadrata osobine = new DlgOsobineKvadrata();
+						osobine.setDone(false);
 						osobine.setX(((Kvadrat) o).gettGoreLevo().getX());
 						osobine.setY(((Kvadrat) o).gettGoreLevo().getY());
 						osobine.setDuzinaStranice(((Kvadrat) o).getDuzinaStranice());
@@ -1256,7 +1257,7 @@ public class Controller {
 
 						osobine.setVisible(true);
 
-						if(osobine.isVisible() == false) {
+						if(osobine.isVisible() == false && osobine.isDone() == true) {
 
 							Kvadrat novi = new Kvadrat(new Tacka(osobine.getX(),osobine.getY()),osobine.getDuzinaStranice(),osobine.getBojaIvice(),osobine.getBojaUnutrasnjosti());
 							novi.setSelektovan(true);
@@ -1270,6 +1271,8 @@ public class Controller {
 							cmdUpdate.execute();
 
 							cmdUndoRedo1.addToCommandList(cmdUpdate);
+							
+							osobine.setDone(false);
 
 							//frame.getTextArea().append(novi + "\n");
 
@@ -1285,6 +1288,7 @@ public class Controller {
 
 
 						DlgOsobineKruga osobine = new DlgOsobineKruga();
+						osobine.setTitle("Krug");
 						osobine.setX(((Krug) o).getCentar().getX());
 						osobine.setY(((Krug) o).getCentar().getY());
 						osobine.setPoluprecnik(((Krug) o).getR());
@@ -1301,7 +1305,7 @@ public class Controller {
 
 
 
-						if(osobine.isVisible() == false) {
+						if(osobine.isVisible() == false && osobine.isDone()==true) {
 
 							Krug novi = new Krug(new Tacka(osobine.getX(),osobine.getY()),osobine.getPoluprecnik(),osobine.getBojaIvice(),osobine.getBojaUnutrasnjosti());
 							//novi.setSelektovan(true);
@@ -1325,6 +1329,7 @@ public class Controller {
 							//model.getCommands().add(q);
 
 							position++;
+							osobine.setDone(false);
 
 							//frame.getTextArea().append(novi + "\n");
 
@@ -1351,7 +1356,7 @@ public class Controller {
 						
 
 						DlgOsobineTacke osobine = new DlgOsobineTacke();
-
+						osobine.setDone(false);
 						osobine.setX(((Tacka) o).getX());
 						osobine.setY(((Tacka) o).getY());
 						osobine.setBojaIvice(o.getBojaIvice());
@@ -1363,27 +1368,35 @@ public class Controller {
 
 
 						osobine.setVisible(true);
-						Tacka t = osobine.getT();
-						//view.repaint();
+						
+						if(osobine.isVisible() == false && osobine.isDone() == true) {
+							
+							Tacka t = osobine.getT();
+							//view.repaint();
 
-						t.setSelektovan(true);
+							t.setSelektovan(true);
 
-						Oblik s = CopyShape(t);
+							Oblik s = CopyShape(t);
 
-						//model.addToStackUndo(s);
+							//model.addToStackUndo(s);
 
-						CmdUpdateShape cmdUpdate = new CmdUpdateShape(o,t);
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(o,t);
 
-						cmdUpdate.execute();
+							cmdUpdate.execute();
 
-						cmdUndoRedo1.addToCommandList(cmdUpdate);
+							cmdUndoRedo1.addToCommandList(cmdUpdate);
 
-						//frame.getTextArea().append(t + "\n");
+							//frame.getTextArea().append(t + "\n");
 
-						/*model.remove(model.stackPeek());
-						CmdAddShape cmd = new CmdAddShape(model,t);
-						cmd.execute();
-						model.removeAll();*/
+							/*model.remove(model.stackPeek());
+							CmdAddShape cmd = new CmdAddShape(model,t);
+							cmd.execute();
+							model.removeAll();*/
+							osobine.setDone(false);
+						}
+						
+						
+						
 
 
 
@@ -1393,16 +1406,15 @@ public class Controller {
 					
 
 						DlgOsobineLinije osobine = new DlgOsobineLinije();
-
-
+						osobine.setDone(false);
 						osobine.setxPocetna(((Linija) o).gettPocetna().getX());
 						osobine.setyPocetna(((Linija) o).gettPocetna().getY());
 						osobine.setxKrajnja(((Linija) o).gettKrajnja().getX());
 						osobine.setyKrajnja(((Linija) o).gettKrajnja().getY());
 						osobine.setBojaIvice(o.getBojaIvice());
-
-
-
+						
+						
+						
 						osobine.getTxtXKoordinataPocetneTacke().setText(Integer.toString(osobine.getxPocetna()));
 						osobine.getTxtYKoordinataPocetneTacke().setText(Integer.toString(osobine.getyPocetna()));
 						osobine.getTxtXKoordinataKrajnjeTacke().setText(Integer.toString(osobine.getxKrajnja()));
@@ -1415,7 +1427,7 @@ public class Controller {
 
 
 
-						if(osobine.isVisible() == false) {
+						if(osobine.isVisible() == false && osobine.isDone() == true) {
 
 							Linija novi = new Linija(new Tacka(osobine.getxPocetna(),osobine.getyPocetna()), new Tacka (osobine.getxKrajnja(),osobine.getyKrajnja()),osobine.getBojaIvice());
 							novi.setSelektovan(true);
@@ -1428,6 +1440,8 @@ public class Controller {
 							cmdUndoRedo1.addToCommandList(cmdUpdate);
 
 							cmdUpdate.execute();
+							
+							osobine.setDone(false);
 
 							//frame.getTextArea().append(novi + "\n");
 
@@ -1442,6 +1456,8 @@ public class Controller {
 
 					
 						DlgOsobineKruga osobineh = new DlgOsobineKruga();
+						osobineh.setTitle("Hexagon");
+						osobineh.setDone(false);
 						osobineh.setX(((HexagonAdapter) o).getHexagon().getX());
 						osobineh.setY(((HexagonAdapter) o).getHexagon().getY());
 						osobineh.setPoluprecnik(((HexagonAdapter) o).getHexagon().getR());
@@ -1455,7 +1471,7 @@ public class Controller {
 						osobineh.getEdpBojaUnutrasnjosti().setBackground(osobineh.getBojaUnutrasnjosti());
 						osobineh.setVisible(true);
 
-						if(osobineh.isVisible() == false) {
+						if(osobineh.isVisible() == false && osobineh.isDone() == true) {
 
 							Hexagon hexagon = new Hexagon(osobineh.getX(),osobineh.getY(),osobineh.getPoluprecnik());
 							hexagon.setAreaColor(osobineh.getBojaUnutrasnjosti());
@@ -1467,6 +1483,8 @@ public class Controller {
 							cmdUpdate.execute();
 
 							cmdUndoRedo1.addToCommandList(cmdUpdate);
+							
+							osobineh.setDone(false);
 
 
 
@@ -2008,11 +2026,14 @@ public class Controller {
 
 			if(model.getR() == -1) {
 
-				s=JOptionPane.showInputDialog("Unesi duzinu poluprecnika hexagona");
+				
 
 				try{
-
+					
+					s=JOptionPane.showInputDialog("Unesi duzinu poluprecnika hexagona");
+			
 					int r = Integer.parseInt(s);
+					
 					if(r > 0){
 
 						model.setR(r);
@@ -2046,33 +2067,28 @@ public class Controller {
 
 						//frame.getTextArea().append("Drawing: " + h.toString() +"\n");
 
-
-
-
 					} else {
-
-						JOptionPane.showMessageDialog(null, "Niste dobro uneli polupre�?nik kruga!");
+						
+						JOptionPane.showMessageDialog(null, "Niste dobro uneli poluprecnik hexagona!");
 					}
 
-				} catch (NumberFormatException k){
-
-					JOptionPane.showMessageDialog(null, "Niste dobro uneli polupre�?nik kruga!");
-
-
-				} catch(NullPointerException k){
-
-					JOptionPane.showConfirmDialog(null, "Niste uneli polupre�?nik kruga!");
+				} catch (Exception e){
+					
+						if(s!=null) {
+							
+							JOptionPane.showMessageDialog(null, "Niste dobro uneli poluprecnik hexagona!");
+						}
+						
+						
+					
 				}
 
 
 			} else {
-
-				try{
-
+				
+				
 					int r = model.getR();
 					if(r > 0){
-
-
 
 						Hexagon hexagon = new Hexagon(model.getX(),model.getY(),model.getR());
 						hexagon.setAreaColor(model.getBojaUnutrasnjosti());
@@ -2089,15 +2105,10 @@ public class Controller {
 						cmdAddShape.execute();
 						cmdUndoRedo1.addToCommandList(cmdAddShape);
 
-						/*Oblik l = CopyShape(h);
-						model.addToStackUndo(l);*/
 
 
 						frame.getBtnRedo().setEnabled(false);
 						frame.getBtnUndo().setEnabled(true);
-						//frame.getBtnSelektuj().setEnabled(true);
-
-						//frame.getTextArea().append("Drawing: " + h.toString() +"\n");
 
 
 
@@ -2107,15 +2118,7 @@ public class Controller {
 						JOptionPane.showMessageDialog(null, "Niste dobro uneli polupre�?nik kruga!");
 					}
 
-				} catch (NumberFormatException k){
-
-					JOptionPane.showMessageDialog(null, "Niste dobro uneli polupre�?nik kruga!");
-
-
-				} catch(NullPointerException k){
-
-					JOptionPane.showConfirmDialog(null, "Niste uneli polupre�?nik kruga!");
-				}
+			
 			}
 
 
@@ -2179,24 +2182,32 @@ public class Controller {
 
 		if(model.getOdabranOblik() == "Pravougaonik"){
 
-
+			String d=null;
+			String s=null;
 			if(model.getDuzina() == -1) {
 
-				String d=JOptionPane.showInputDialog("Unesi duzinu pravougaonika");
-
+				
+				
 				try{
-
+					
+					
+					d=JOptionPane.showInputDialog("Unesi duzinu pravougaonika");
 					model.setX(x);
 					model.setY(y);
 					int duzina = Integer.parseInt(d);
+					
+					
+					
 					if(duzina>0){
 
 						model.setDuzina(duzina);
-						String s = JOptionPane.showInputDialog("Unesi sirinu pravougoonika");
+						
 
 
 						try{
-
+							
+							
+							s = JOptionPane.showInputDialog("Unesi sirinu pravougoonika");
 							int sirina = Integer.parseInt(s);
 							if(sirina>0){
 
@@ -2214,16 +2225,9 @@ public class Controller {
 
 								cmdUndoRedo1.addToCommandList(cmdAddShape);
 
-
-								/*Oblik l = CopyShape(p);
-								model.addToStackUndo(l);*/
-
-
 								frame.getBtnRedo().setEnabled(false);
 								frame.getBtnUndo().setEnabled(true);
-								//frame.getBtnSelektuj().setEnabled(true);
-
-								//frame.getTextArea().append("Drawing: " + p.toString() +"\n");
+					
 
 
 
@@ -2234,25 +2238,29 @@ public class Controller {
 							}
 						} catch(NumberFormatException a){
 
-							JOptionPane.showMessageDialog(null, "Niste dobro uneli sirinu pravougaonika!");
+							if(s!=null) {
+								
+								JOptionPane.showMessageDialog(null, "Niste dobro uneli sirinu pravougaonika!");
+							}
+							
 
-						} catch(NullPointerException k){
-
-							JOptionPane.showMessageDialog(null, "Niste uneli sirinu pravougaonika");
-						}
+						} 
 
 					} else {
 
 						JOptionPane.showMessageDialog(null, "Niste dobro uneli dužinu pravougaonika!");
 					}
 				} catch(NumberFormatException a){
+					
+					if(d!=null) {
+						
+						JOptionPane.showMessageDialog(null, "Niste dobro uneli dužinu pravougaonika!");
+					}
 
-					JOptionPane.showMessageDialog(null, "Niste dobro uneli dužinu pravougaonika!");
+					
+					
 
-				} catch(NullPointerException k){
-
-					JOptionPane.showMessageDialog(null, "Niste uneli dužinu pravougaonika!");
-				}
+				} 
 			} else {
 
 
@@ -2345,9 +2353,11 @@ public class Controller {
 			if(model.getDuzinaStranice() == -1) {
 
 			
-				s=JOptionPane.showInputDialog("Unesi duzinu stranice kvadrata");
+				
 				try{
-
+					
+					
+					s=JOptionPane.showInputDialog("Unesi duzinu stranice kvadrata");
 					int duzinaStranice = Integer.parseInt(s);
 					if(duzinaStranice>0){
 
@@ -2376,17 +2386,20 @@ public class Controller {
 						//frame.getTextArea().append("Drawing: " + kv.toString() +"\n");
 
 					} else {
+						
 						JOptionPane.showMessageDialog(null, "Niste  dobro uneli dužinu stranice kvadrata!");
 					}
 
 				} catch(NumberFormatException a){
+					
+					if(s!=null) {
+						
+						JOptionPane.showMessageDialog(null, "Niste dobro uneli dužinu stranice kvadrata!");
+					}
 
-					JOptionPane.showMessageDialog(null, "Niste dobro uneli dužinu stranice kvadrata!");
+					
 
-				} catch(NullPointerException k){
-
-					JOptionPane.showMessageDialog(null, "Niste uneli dužinu stanice kvadrata!");
-				}
+				} 
 
 			} else {
 
@@ -2449,18 +2462,20 @@ public class Controller {
 
 
 			s=true; //proveriti šta ovo znači
-			String a = "";
+			String s = null;
 			int r;
 
 			if(model.getR() == -1) {
 
 				
 
-				a=JOptionPane.showInputDialog("Unesi duzinu poluprecnika kruga");
-				r = Integer.parseInt(a);
-
+				
 
 				try{
+					
+					s=JOptionPane.showInputDialog("Unesi duzinu poluprecnika kruga");
+					r = Integer.parseInt(s);
+
 
 
 					if(r > 0){
@@ -2509,14 +2524,16 @@ public class Controller {
 					}
 
 				} catch (NumberFormatException k){
+					
+					if(s!=null) {
+						
+						JOptionPane.showMessageDialog(null, "Niste dobro uneli polupre�?nik kruga!");
+					}
 
-					JOptionPane.showMessageDialog(null, "Niste dobro uneli polupre�?nik kruga!");
+					
 
 
-				} catch(NullPointerException k){
-
-					JOptionPane.showConfirmDialog(null, "Niste uneli polupre�?nik kruga!");
-				}
+				} 
 
 			} else {
 

@@ -39,6 +39,7 @@ public class DlgOsobineLinije extends JDialog {
 	private Linija l;
 	private JEditorPane edpBoja;
 	private Model model = new Model();
+	private boolean done=false;
 
 	/*public static void main(String[] args) {
 		try {
@@ -181,22 +182,43 @@ public class DlgOsobineLinije extends JDialog {
 
 
 				try{
-
-					xPocetna = Integer.parseInt(txtXKoordinataPocetneTacke.getText());
-					yPocetna = Integer.parseInt(txtYKoordinataPocetneTacke.getText());
-					xKrajnja = Integer.parseInt(txtXKoordinataKrajnjeTacke.getText());
-					yKrajnja = Integer.parseInt(txtYKoordinataKrajnjeTacke.getText());
-					if(xPocetna >= 0 && yPocetna>=0 && xKrajnja >= 0 && yKrajnja >= 0){
+					
+					if(xPocetna != Integer.parseInt(txtXKoordinataPocetneTacke.getText()) ||
+					   
+							yPocetna != Integer.parseInt(txtYKoordinataPocetneTacke.getText()) ||
+							
+							xKrajnja != Integer.parseInt(txtXKoordinataKrajnjeTacke.getText()) ||
+							
+							yKrajnja != Integer.parseInt(txtYKoordinataKrajnjeTacke.getText()) ||
+							
+							bojaIvice != edpBoja.getBackground()) {
 						
-						bojaIvice = edpBoja.getBackground();
 						
-				
-						setVisible(false);
+						
+						xPocetna = Integer.parseInt(txtXKoordinataPocetneTacke.getText());
+						yPocetna = Integer.parseInt(txtYKoordinataPocetneTacke.getText());
+						xKrajnja = Integer.parseInt(txtXKoordinataKrajnjeTacke.getText());
+						yKrajnja = Integer.parseInt(txtYKoordinataKrajnjeTacke.getText());
+						if(xPocetna >= 0 && yPocetna>=0 && xKrajnja >= 0 && yKrajnja >= 0){
+							
+							bojaIvice = edpBoja.getBackground();
+							
+					
+							setVisible(false);
+							done=true;
 
+						} else {
+
+							JOptionPane.showMessageDialog(null, "Niste dobro uneli podatke!");
+						}
+						
+						
 					} else {
-
-						JOptionPane.showMessageDialog(null, "Niste dobro uneli podatke!");
+						
+						setVisible(false);
 					}
+
+					
 
 				} catch (NumberFormatException k){
 
@@ -315,6 +337,16 @@ public class DlgOsobineLinije extends JDialog {
 
 	public void setEdpBoja(JEditorPane edpBoja) {
 		this.edpBoja = edpBoja;
+	}
+
+
+	public boolean isDone() {
+		return done;
+	}
+
+
+	public void setDone(boolean done) {
+		this.done = done;
 	}
 
 }

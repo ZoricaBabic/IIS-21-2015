@@ -40,6 +40,7 @@ public class DlgOsobineKvadrata extends JDialog {
 	public JEditorPane edpBojaIvice;
 	public JEditorPane edpBojaUnutrasnjosti;
 	private Model model = new Model();
+	private boolean done=false;
 
 	/*public static void main(String[] args) {
 		try {
@@ -198,32 +199,49 @@ public class DlgOsobineKvadrata extends JDialog {
 
 
 				try{
-
-					x = Integer.parseInt(txtXKoordinata.getText());
-					y = Integer.parseInt(txtYKoordinata.getText());
-					duzinaStranice = Integer.parseInt(txtDuzinaStranice.getText());
-					if(x >= 0 && y>=0 && duzinaStranice>0){
-
-						bojaIvice = edpBojaIvice.getBackground();
-						bojaUnutrasnjosti = edpBojaUnutrasnjosti.getBackground();
+					
+					if( x != Integer.parseInt(txtXKoordinata.getText()) ||
+							y != Integer.parseInt(txtYKoordinata.getText()) ||
+							duzinaStranice != Integer.parseInt(txtDuzinaStranice.getText()) ||
+							bojaIvice != edpBojaIvice.getBackground() || 
+							bojaUnutrasnjosti != edpBojaUnutrasnjosti.getBackground()) {
 						
-						setVisible(false);
+						x = Integer.parseInt(txtXKoordinata.getText());
+						y = Integer.parseInt(txtYKoordinata.getText());
+						duzinaStranice = Integer.parseInt(txtDuzinaStranice.getText());
+						if(x >= 0 && y>=0 && duzinaStranice>0){
+
+							bojaIvice = edpBojaIvice.getBackground();
+							bojaUnutrasnjosti = edpBojaUnutrasnjosti.getBackground();
+							
+							setVisible(false);
+							done=true;
 
 
+
+						} else {
+
+							JOptionPane.showMessageDialog(null, "Niste dobro uneli podatke!");
+							
+						}
 
 					} else {
-
-						JOptionPane.showMessageDialog(null, "Niste dobro uneli podatke!");
+						
+						done=false;
+						setVisible(false);
 					}
 
+					
 				} catch (NumberFormatException k){
 
 					JOptionPane.showMessageDialog(null, "Niste dobro uneli podatke!");
+					
 
 
 				} catch(NullPointerException k){
 
 					JOptionPane.showConfirmDialog(null, "Niste dobro uneli podatke!");
+					
 				}
 
 			}
@@ -349,5 +367,17 @@ public class DlgOsobineKvadrata extends JDialog {
 
 	public void setEdpBojaUnutrasnjosti(JEditorPane edpBojaUnutrasnjosti) {
 		this.edpBojaUnutrasnjosti = edpBojaUnutrasnjosti;
+	}
+
+
+
+	public boolean isDone() {
+		return done;
+	}
+
+
+
+	public void setDone(boolean done) {
+		this.done = done;
 	}
 }

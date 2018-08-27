@@ -24,6 +24,8 @@ public class CmdBringToFront implements Command {
 	@Override
 	public void execute() {
 		
+
+		
 		i = model.getListaObjekata().indexOf(o);
 		
 		Collections.swap(model.getListaObjekata(), i, model.getListaObjekata().size()-1); 
