@@ -46,6 +46,8 @@ public class OpenOperation implements Strategy {
             System.err.println("Error: " + ek.getMessage());
         }
 		
+		np.btnCmdbycmd.setEnabled(false);
+		
          return 0;
 	}
 

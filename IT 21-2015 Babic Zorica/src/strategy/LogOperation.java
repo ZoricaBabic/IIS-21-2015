@@ -37,6 +37,9 @@ public class LogOperation implements Strategy{
 			
 			JOptionPane.showMessageDialog(null, ee.getMessage());
 		}
+		
+		
+		
 		return 0;
 	}
 

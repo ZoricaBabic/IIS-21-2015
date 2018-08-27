@@ -52,6 +52,8 @@ public class LoadPainting implements Strategy {
 			e.printStackTrace();
 		}
 		
+		np.btnCmdbycmd.setEnabled(false);
+		
 		
 		
 		return 0;

@@ -26,7 +26,7 @@ public class SavePaintingOperation implements Strategy{
 			
 		}
 		
-		
+		np.btnCmdbycmd.setEnabled(false);
 		return 0;
 	}
 

@@ -25,6 +25,8 @@ public class SaveBin implements Strategy {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		np.btnCmdbycmd.setEnabled(false);
 		return 0;
 	}
 

@@ -1517,6 +1517,9 @@ public class Controller {
 
 	//SELEKCIJA
 	public void mouseClickedPnl(int x, int y) {
+		
+		
+		
 
 		/*model.getUnselectedShapes().removeAll(model.getUnselectedShapes());
 		for(int i =0; i<model.getListaObjekata().size(); i++) {

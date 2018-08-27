@@ -10,6 +10,7 @@ public class CmdAddShape implements Command {
 	private Model model = new Model();
 	private Oblik o;
 	public static boolean print = true;
+	
 	public CmdAddShape(Model model, Oblik o) {
 		this.model = model;
 		this.o = o;
@@ -20,6 +21,7 @@ public class CmdAddShape implements Command {
 		
 
 		model.add(o);
+		NaslovnaPokretanje.btnSave.setEnabled(true);
 
 		
 		if(print == true) {

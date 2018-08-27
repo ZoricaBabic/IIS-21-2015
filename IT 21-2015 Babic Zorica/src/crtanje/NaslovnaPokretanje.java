@@ -85,6 +85,11 @@ public class NaslovnaPokretanje extends JFrame  {
 	public static JTextArea textArea;
 	
 	private ArrayList<String> lines = new ArrayList<String>();
+	
+	
+	public static JButton btnSave;
+	
+	public static JButton btnCmdbycmd;
 
 
 
@@ -212,8 +217,11 @@ public class NaslovnaPokretanje extends JFrame  {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 
-
-				controller.mouseClickedPnl(e.getX(),e.getY());
+				if(!btnCmdbycmd.isEnabled()) {
+					
+					controller.mouseClickedPnl(e.getX(),e.getY());
+				}
+				
 			}
 
 		});
@@ -711,7 +719,7 @@ public class NaslovnaPokretanje extends JFrame  {
 		lblAreaColor.setForeground(new Color(139, 0, 139));
 		lblAreaColor.setFont(new Font("Arial", Font.BOLD, 14));
 
-		JButton btnSave = new JButton("Save");
+		btnSave = new JButton("Save");
 		btnSave.setActionCommand("");
 		btnSave.setForeground(new Color(139, 0, 139));
 		btnSave.setFont(new Font("Arial", Font.BOLD, 14));
@@ -734,6 +742,15 @@ public class NaslovnaPokretanje extends JFrame  {
 		btnOpen.setFont(new Font("Arial", Font.BOLD, 14));
 		btnOpen.setBackground(new Color(255, 240, 245));
 
+		
+		btnCmdbycmd = new JButton("cmdBycmd");
+		btnCmdbycmd.setForeground(new Color(139, 0, 139));
+		btnCmdbycmd.setFont(new Font("Arial", Font.BOLD, 14));
+		btnCmdbycmd.setBackground(new Color(255, 240, 245));
+		btnCmdbycmd.setEnabled(false);
+		
+		
+		
 		btnOpen.addMouseListener(new MouseAdapter() {
 
 			@Override
@@ -767,11 +784,17 @@ public class NaslovnaPokretanje extends JFrame  {
 							
 							File file = new File(fs.getSelectedFile().getAbsolutePath());
 							controller.openTxt(file);
+							btnCmdbycmd.setEnabled(true);
 							
 						} else if (path.contains(".bin")) {
 							
 							File file = new File(fs.getSelectedFile().getAbsolutePath());
 							controller.loadPainting(file);
+							btnCmdbycmd.setEnabled(false);
+							if(!controller.getModel().getListaObjekata().isEmpty()) {
+								
+								btnSelektuj.setEnabled(true);
+							}
 							
 						}
 
@@ -794,17 +817,18 @@ public class NaslovnaPokretanje extends JFrame  {
 				lines.removeAll(lines);
 				
 				index=0;
-
-
+				
+				
+				
+				
+				
+		
 			}
 
 
 		});
 
-		JButton btnCmdbycmd = new JButton("cmdBycmd");
-		btnCmdbycmd.setForeground(new Color(139, 0, 139));
-		btnCmdbycmd.setFont(new Font("Arial", Font.BOLD, 14));
-		btnCmdbycmd.setBackground(new Color(255, 240, 245));
+	
 		
 		
 
@@ -840,7 +864,7 @@ public class NaslovnaPokretanje extends JFrame  {
 				if(index < firstArray.size()) {
 					
 					
-					int pos2 = (int) firstArray.get(index);
+					
 
 							
 							int start = -1;
@@ -856,12 +880,12 @@ public class NaslovnaPokretanje extends JFrame  {
 								e2.printStackTrace();
 							}
 							
-						
 							
-					
-			
+							
+							
+						   
 				
-				   /* int y;
+				  /* int y;
 				    Rectangle startIndex;
 					try {
 						
@@ -910,6 +934,19 @@ public class NaslovnaPokretanje extends JFrame  {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					} 
+				   
+				   
+				   
+				   Rectangle startIndex = null;
+					try {
+						startIndex = textArea.modelToView(start);
+					} catch (BadLocationException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+					int y = startIndex.y + (scrollPane.getHeight() - 10);
+				    textArea.setCaretPosition(textArea.viewToModel(new Point(startIndex.x, y)));
+				    scrollPane.scrollRectToVisible(new Rectangle(startIndex.x, y));
 				}
 				
 				
@@ -1456,11 +1493,14 @@ public class NaslovnaPokretanje extends JFrame  {
 					file = new File(path);
 					String s = path.substring(0, length - 4) + ".png";
 					filePainting = new File(s);
+					String k = path.substring(0, length - 4) + ".bin";
+					fileBin = new File(k);
 					
 				} else if(path.contains(".bin")) {
 					
 					String k = path.substring(0, length - 4) + ".bin";
 					fileBin = new File(k);
+					
 				} else if (!path.contains(".txt") && !path.contains(".png") && !path.contains(".bin")) {
 					
 					file = new File(path + ".txt");
@@ -1606,6 +1646,14 @@ public class NaslovnaPokretanje extends JFrame  {
 
 	public Controller getController() {
 		return controller;
+	}
+
+	public JButton getBtnSave() {
+		return btnSave;
+	}
+
+	public void setBtnSave(JButton btnSave) {
+		this.btnSave = btnSave;
 	}
 }
 
