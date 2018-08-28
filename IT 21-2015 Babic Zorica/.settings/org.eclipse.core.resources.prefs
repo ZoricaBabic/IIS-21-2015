@@ -1,4 +1,4 @@
 eclipse.preferences.version=1
-encoding//src/crtanje/Controller.java=UTF-8
-encoding//src/crtanje/NaslovnaPokretanje.java=UTF-8
-encoding//src/crtanje/ProstorZaCrtanje.java=UTF-8
+encoding//src/mvc/Controller.java=UTF-8
+encoding//src/mvc/Frame.java=UTF-8
+encoding//src/mvc/View.java=UTF-8

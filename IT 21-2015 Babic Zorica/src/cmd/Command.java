@@ -1,6 +1,7 @@
 package cmd;
 
-import geometrija.Oblik;
+
+
 
 public interface Command {
 	

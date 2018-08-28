@@ -1,29 +1,30 @@
 package cmd;
 
-import crtanje.Model;
-import crtanje.NaslovnaPokretanje;
-import geometrija.Oblik;
+
+
+import geometry.Shape;
+import mvc.Frame;
 
 public class CmdSelectShape implements Command {
 	
-	private Model model = new Model();
-	private Oblik o;
+
+	private Shape o;
 	public static boolean print = true;
 
 
-	public  CmdSelectShape(Model model, Oblik o) {
+	public  CmdSelectShape(Shape o) {
 		
-		this.model = model;
+		
 		this.o =o;
 	}
 
 	@Override
 	public void unexecute() {
 		
-		o.setSelektovan(false);
+		o.setSelected(false);
 		if(print == true) {
 			
-			NaslovnaPokretanje.getTextArea().append("UNDO >>> Deselected: " + o.toString() +"\n");
+			Frame.textArea.append("UNDO >>> Deselected: " + o.toString() +"\n");
 		}
 	
 		print = true;
@@ -34,10 +35,10 @@ public class CmdSelectShape implements Command {
 		
 	
 		
-		o.setSelektovan(true);
+		o.setSelected(true);
 		if(print == true) {
 			
-			NaslovnaPokretanje.getTextArea().append("Selected: " + o.toString() +"\n");
+			Frame.textArea.append("Selected: " + o.toString() +"\n");
 		}
 		print = true;
 		

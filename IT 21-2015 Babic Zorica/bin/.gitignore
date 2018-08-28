@@ -1,7 +1,6 @@
-/crtanje/
 /dlg/
-/geometrija/
-/lista/
+/geometry/
+/mvc/
 /observer/
-/stek/
 /strategy/
+/cmd/

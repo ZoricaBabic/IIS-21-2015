@@ -2,25 +2,23 @@ package cmd;
 
 import java.util.ArrayList;
 
-import crtanje.Model;
-import crtanje.NaslovnaPokretanje;
-import geometrija.HexagonAdapter;
-import geometrija.Kvadrat;
-import geometrija.Oblik;
-import geometrija.Pravougaonik;
+import geometry.Shape;
+import mvc.Frame;
+import mvc.Model;
+
 
 public class CmdRemoveShape implements Command {
 
 	private Model model = new Model();
-	private Oblik o;
+	private Shape s;
 	private int count = 0;
-	private ArrayList<Oblik> removedShapes = new ArrayList<Oblik>();
+	private ArrayList<Shape> removedShapes = new ArrayList<Shape>();
 	public static boolean print = true;
 
-	public CmdRemoveShape(Model model, Oblik o) {
+	public CmdRemoveShape(Model model, Shape o) {
 
 		this.model = model;
-		this.o = o;
+		this.s = o;
 	}
 
 	public CmdRemoveShape(Model model) {
@@ -30,7 +28,7 @@ public class CmdRemoveShape implements Command {
 	}
 
 
-	public CmdRemoveShape(Model model, ArrayList<Oblik> removedShapes) {
+	public CmdRemoveShape(Model model, ArrayList<Shape> removedShapes) {
 
 		this.model = model;
 		this.removedShapes = removedShapes;
@@ -45,7 +43,7 @@ public class CmdRemoveShape implements Command {
 
 			if(print ==true) {
 
-				NaslovnaPokretanje.getTextArea().append("Multiple shapes removed: ");
+				Frame.textArea.append("Multiple shapes removed: ");
 			}
 
 
@@ -55,23 +53,23 @@ public class CmdRemoveShape implements Command {
 
 				if(print == true) {
 
-					NaslovnaPokretanje.getTextArea().append("        Removed: " + removedShapes.get(i).toString());
+					Frame.textArea.append("        Removed: " + removedShapes.get(i).toString());
 				}
 
 			}
 
 			if(print == true) {
 
-				NaslovnaPokretanje.getTextArea().append("\n");
+				Frame.textArea.append("\n");
 			}
 
 
 		} else {
 
-			model.remove(o);
+			model.remove(s);
 			if(print == true) {
 
-				NaslovnaPokretanje.getTextArea().append("Removed: " + o +"\n");
+				Frame.textArea.append("Removed: " + s +"\n");
 			}
 
 		}
@@ -91,7 +89,7 @@ public class CmdRemoveShape implements Command {
 
 			if(print == true) {
 
-				NaslovnaPokretanje.getTextArea().append("UNDO >>> Multiple shapes added: ");
+				Frame.textArea.append("UNDO >>> Multiple shapes added: ");
 			}
 
 
@@ -100,22 +98,22 @@ public class CmdRemoveShape implements Command {
 				model.add(removedShapes.get(i));
 				if(print == true) {
 
-					NaslovnaPokretanje.getTextArea().append("        Added: " + removedShapes.get(i).toString());
+					Frame.textArea.append("        Added: " + removedShapes.get(i).toString());
 				}
 
 			}
 
 			if(print == true) {
 
-				NaslovnaPokretanje.getTextArea().append("\n");
+				Frame.textArea.append("\n");
 			}
 		} else {
 
-			model.add(o);
+			model.add(s);
 
 			if(print == true) {
 				
-				NaslovnaPokretanje.getTextArea().append("UNDO >>> Added: " + o +"\n");
+				Frame.textArea.append("UNDO >>> Added: " + s +"\n");
 
 			}
 
@@ -132,13 +130,13 @@ public class CmdRemoveShape implements Command {
 	}
 
 
-	public Oblik getO() {
-		return o;
+	public Shape getS() {
+		return s;
 	}
 
 
-	public void setO(Oblik o) {
-		this.o = o;
+	public void setS(Shape o) {
+		this.s = o;
 	}
 
 	public int getCount() {

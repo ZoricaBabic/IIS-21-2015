@@ -2,28 +2,21 @@ package cmd;
 
 import java.util.ArrayList;
 
-import crtanje.Model;
-import crtanje.NaslovnaPokretanje;
-import geometrija.HexagonAdapter;
-import geometrija.Krug;
-import geometrija.Kvadrat;
-import geometrija.Linija;
-import geometrija.Oblik;
-import geometrija.Pravougaonik;
-import geometrija.Tacka;
-import hexagon.Hexagon;
+import geometry.Shape;
+import mvc.Frame;
+
 
 public class CmdUpdateSelectedShapes implements Command {
 	
 	//kad se odsleketuje vise 
-	private Model model = new Model();
-	private ArrayList<Oblik> selectedShapes = new ArrayList<Oblik>();
+
+	private ArrayList<Shape> selectedShapes = new ArrayList<Shape>();
 	public static boolean print = true;
 	
 	
-	public CmdUpdateSelectedShapes(Model model, ArrayList<Oblik> selectedShapes) {
+	public CmdUpdateSelectedShapes(ArrayList<Shape> selectedShapes) {
 		
-		this.model = model;
+	
 		this.selectedShapes = selectedShapes;
 		
 	}
@@ -36,16 +29,16 @@ public class CmdUpdateSelectedShapes implements Command {
 		if(!selectedShapes.isEmpty()) {
 			if(print == true) {
 				
-				NaslovnaPokretanje.getTextArea().append("Multiple shapes deselected: ");
+				Frame.textArea.append("Multiple shapes deselected: ");
 			}
 			
 			for(int i=0; i<selectedShapes.size(); i++) {
 				
-				selectedShapes.get(i).setSelektovan(false);
+				selectedShapes.get(i).setSelected(false);
 				
 				if(print == true) {
 					
-					NaslovnaPokretanje.getTextArea().append("        Deselected: " + selectedShapes.get(i).toString());
+					Frame.textArea.append("        Deselected: " + selectedShapes.get(i).toString());
 				}
 				
 				
@@ -53,7 +46,7 @@ public class CmdUpdateSelectedShapes implements Command {
 			
 			if(print == true) {
 
-				NaslovnaPokretanje.getTextArea().append("\n");
+				Frame.textArea.append("\n");
 			}
 		}
 		
@@ -69,17 +62,17 @@ public class CmdUpdateSelectedShapes implements Command {
 			
 			if(print == true) {
 				
-				NaslovnaPokretanje.getTextArea().append("UNDO >>> Multiple shapes selected: ");
+				Frame.textArea.append("UNDO >>> Multiple shapes selected: ");
 			}
 			
 			
 			for(int i=0; i<selectedShapes.size(); i++) {
 				
-				selectedShapes.get(i).setSelektovan(true);
+				selectedShapes.get(i).setSelected(true);
 				
 				if(print == true) {
 					
-					NaslovnaPokretanje.getTextArea().append("        Selected: " + selectedShapes.get(i).toString());
+					Frame.textArea.append("        Selected: " + selectedShapes.get(i).toString());
 				}
 				
 				
@@ -87,7 +80,7 @@ public class CmdUpdateSelectedShapes implements Command {
 			
 			if(print == true) {
 
-				NaslovnaPokretanje.getTextArea().append("\n");
+				Frame.textArea.append("\n");
 			}
 			
 		}

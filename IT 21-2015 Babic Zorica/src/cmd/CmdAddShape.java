@@ -1,36 +1,37 @@
 package cmd;
 
-import crtanje.Model;
-import crtanje.NaslovnaPokretanje;
-import geometrija.Oblik;
+import geometry.Shape;
+import mvc.Frame;
+import mvc.Model;
 
 
 public class CmdAddShape implements Command {
 	
 	private Model model = new Model();
-	private Oblik o;
+	private Shape s;
 	public static boolean print = true;
 	
-	public CmdAddShape(Model model, Oblik o) {
+	public CmdAddShape(Model model, Shape os) {
 		this.model = model;
-		this.o = o;
+		this.s = os;
 	}
 
 	@Override
 	public void execute() {
 		
 	
-		model.add(o);
-		NaslovnaPokretanje.btnSave.setEnabled(true);
+		model.add(s);
+		Frame.btnSave.setEnabled(true);
 
 		
 		if(print == true) {
 			
-			NaslovnaPokretanje.getTextArea().append("Added: " + o.toString() +"\n");
+			Frame.textArea.append("Added: " + s.toString() +"\n");
+			
 			
 		} 
 		
-		NaslovnaPokretanje.btnSelektuj.setEnabled(true);
+		Frame.btnSelect.setEnabled(true);
 		print=true;
 
 	}
@@ -39,19 +40,19 @@ public class CmdAddShape implements Command {
 	public void unexecute() {
 		
 
-		model.remove(o);
-		System.out.println("Brise se oblik!");
+		model.remove(s);
+		
 		
 		if(print == true) {
 			
-			NaslovnaPokretanje.getTextArea().append("UNDO >>> Removed: " + o.toString() +"\n");
+			Frame.textArea.append("UNDO >>> Removed: " + s.toString() +"\n");
 		}
 		
 		
 		
-		if(model.getListaObjekata().isEmpty()) {
+		if(model.getListOfShapes().isEmpty()) {
 			
-			NaslovnaPokretanje.btnSelektuj.setEnabled(false);
+			Frame.btnSelect.setEnabled(false);
 		}
 		
 		print=true;
@@ -61,17 +62,17 @@ public class CmdAddShape implements Command {
 	}
 
 	//ovo ne treba
-	public void setShape(Oblik o) {
+	public void setShape(Shape o) {
 		
-		this.o = o;
+		this.s = o;
 		
 		
 	}
 
 
-	public Oblik getShape() {
+	public Shape getShape() {
 		
-		return o;
+		return s;
 		
 	}
 

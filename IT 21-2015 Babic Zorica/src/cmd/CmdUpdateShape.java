@@ -2,31 +2,27 @@ package cmd;
 
 
 
-import java.awt.Color;
-
-import crtanje.Controller;
-import crtanje.Model;
-import crtanje.NaslovnaPokretanje;
-import geometrija.HexagonAdapter;
-import geometrija.Krug;
-import geometrija.Kvadrat;
-import geometrija.Linija;
-import geometrija.Oblik;
-import geometrija.PovrsinskiOblik;
-import geometrija.Pravougaonik;
-import geometrija.Tacka;
+import geometry.Circle;
+import geometry.HexagonAdapter;
+import geometry.Line;
+import geometry.Point;
+import geometry.Rectangle;
+import geometry.Shape;
+import geometry.Square;
 import hexagon.Hexagon;
+import mvc.Frame;
+import mvc.Model;
 
 
 public class CmdUpdateShape implements Command {
 
-	private Oblik original;
-	private Oblik newState;
-	private Oblik oldState;
+	private Shape original;
+	private Shape newState;
+	private Shape oldState;
 	public static Model model;
 	public static boolean print = true;
 
-	public CmdUpdateShape(Oblik original,Oblik newState) {
+	public CmdUpdateShape(Shape original,Shape newState) {
 
 
 		this.original = original;
@@ -42,110 +38,110 @@ public class CmdUpdateShape implements Command {
 	@Override
 	public void execute() {
 
-		if(original instanceof Tacka) {
+		if(original instanceof Point) {
 
 
-			oldState = new Tacka();
+			oldState = new Point();
 
-			((Tacka) oldState).setX(((Tacka) original).getX());
-			((Tacka) oldState).setY(((Tacka) original).getY());
-			oldState.setBojaIvice(original.getBojaIvice());
-			oldState.setSelektovan(original.isSelektovan());
-
-
-			((Tacka) original).setX(((Tacka) newState).getX());
-			((Tacka) original).setY(((Tacka) newState).getY());
-			original.setBojaIvice(newState.getBojaIvice());
-			original.setSelektovan(newState.isSelektovan());
-
-			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
+			((Point) oldState).setX(((Point) original).getX());
+			((Point) oldState).setY(((Point) original).getY());
+			oldState.setBorderColor(original.getBorderColor());
+			oldState.setSelected(original.isSelected());
 
 
+			((Point) original).setX(((Point) newState).getX());
+			((Point) original).setY(((Point) newState).getY());
+			original.setBorderColor(newState.getBorderColor());
+			original.setSelected(newState.isSelected());
 
-
-		} else if(original instanceof Linija) {
-
-			oldState = new Linija();
-
-			((Linija) oldState).settPocetna(((Linija) original).gettPocetna());
-			((Linija) oldState).settKrajnja(((Linija) original).gettKrajnja());
-			oldState.setBojaIvice(original.getBojaIvice());
-			oldState.setSelektovan(original.isSelektovan());
-
-
-			((Linija) original).settPocetna(((Linija) newState).gettPocetna());
-			((Linija) original).settKrajnja(((Linija) newState).gettKrajnja());
-
-			original.setBojaIvice(newState.getBojaIvice());
-			original.setSelektovan(newState.isSelektovan());
-
-			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
-
-
-		} else if(original instanceof Krug) {
-
-			oldState=new Krug();
-
-			((Krug) oldState).setCentar(((Krug) original).getCentar());
-			((Krug) oldState).setR(((Krug) original).getR());
-			oldState.setBojaIvice(original.getBojaIvice());
-			((Krug) oldState).setBojaUnutrasnjosti(((Krug) original).getBojaUnutrasnjosti());
-			oldState.setSelektovan(original.isSelektovan());
-
-			((Krug) original).setCentar(((Krug) newState).getCentar());
-			((Krug) original).setR(((Krug) newState).getR());
-			original.setBojaIvice(newState.getBojaIvice());
-			((Krug) original).setBojaUnutrasnjosti(((Krug) newState).getBojaUnutrasnjosti());
-			original.setSelektovan(newState.isSelektovan());
+			model.getListOfShapes().set(model.getListOfShapes().indexOf(original), original);
 
 
 
 
-			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
+		} else if(original instanceof Line) {
+
+			oldState = new Line();
+
+			((Line) oldState).setStart(((Line) original).getStart());
+			((Line) oldState).setEnd(((Line) original).getEnd());
+			oldState.setBorderColor(original.getBorderColor());
+			oldState.setSelected(original.isSelected());
+
+
+			((Line) original).setStart(((Line) newState).getStart());
+			((Line) original).setEnd(((Line) newState).getEnd());
+
+			original.setBorderColor(newState.getBorderColor());
+			original.setSelected(newState.isSelected());
+
+			model.getListOfShapes().set(model.getListOfShapes().indexOf(original), original);
+
+
+		} else if(original instanceof Circle) {
+
+			oldState=new Circle();
+
+			((Circle) oldState).setCenter(((Circle) original).getCenter());
+			((Circle) oldState).setR(((Circle) original).getR());
+			oldState.setBorderColor(original.getBorderColor());
+			((Circle) oldState).setFillColor(((Circle) original).getFillColor());
+			oldState.setSelected(original.isSelected());
+
+			((Circle) original).setCenter(((Circle) newState).getCenter());
+			((Circle) original).setR(((Circle) newState).getR());
+			original.setBorderColor(newState.getBorderColor());
+			((Circle) original).setFillColor(((Circle) newState).getFillColor());
+			original.setSelected(newState.isSelected());
 
 
 
-		} else if(original instanceof Pravougaonik) {
+
+			model.getListOfShapes().set(model.getListOfShapes().indexOf(original), original);
 
 
 
-			oldState = new Pravougaonik();
-
-			((Pravougaonik) oldState).settGoreLevo(((Pravougaonik) original).gettGoreLevo());
-			((Pravougaonik) oldState).setSirina(((Pravougaonik) original).getSirina());
-			((Pravougaonik) oldState).setDuzinaStranice(((Pravougaonik) original).getDuzinaStranice());
-			((Pravougaonik) oldState).setBojaIvice(original.getBojaIvice());
-			((Pravougaonik) oldState).setBojaUnutrasnjosti(((Pravougaonik) original).getBojaUnutrasnjosti());
-			oldState.setSelektovan(original.isSelektovan());
-
-			((Pravougaonik) original).settGoreLevo(((Pravougaonik) newState).gettGoreLevo());
-			((Pravougaonik) original).setSirina(((Pravougaonik) newState).getSirina());
-			((Pravougaonik) original).setDuzinaStranice(((Pravougaonik) newState).getDuzinaStranice());
-			((Pravougaonik) original).setBojaIvice(newState.getBojaIvice());
-			((Pravougaonik) original).setBojaUnutrasnjosti(((Pravougaonik) newState).getBojaUnutrasnjosti());
-			original.setSelektovan(newState.isSelektovan());
-
-			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
-
-
-		}  else if(original instanceof Kvadrat) {
-
-			oldState = new Kvadrat();
+		} else if(original instanceof Rectangle) {
 
 
 
-			((Kvadrat) oldState).settGoreLevo(((Kvadrat) original).gettGoreLevo());
-			((Kvadrat) oldState).setDuzinaStranice(((Kvadrat) original).getDuzinaStranice());
-			((Kvadrat) oldState).setBojaIvice(original.getBojaIvice());
-			((Kvadrat) oldState).setBojaUnutrasnjosti(((Kvadrat) original).getBojaUnutrasnjosti());
-			oldState.setSelektovan(original.isSelektovan());
+			oldState = new Rectangle();
 
-			((Kvadrat) original).settGoreLevo(((Kvadrat) newState).gettGoreLevo());
-			((Kvadrat) original).setDuzinaStranice(((Kvadrat) newState).getDuzinaStranice());
-			((Kvadrat) original).setBojaIvice(newState.getBojaIvice());
-			((Kvadrat) original).setBojaUnutrasnjosti(((Kvadrat) newState).getBojaUnutrasnjosti());
-			original.setSelektovan(newState.isSelektovan());
-			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
+			((Rectangle) oldState).setpUpLeft(((Rectangle) original).getpUpLeft());
+			((Rectangle) oldState).setWidth(((Rectangle) original).getWidth());
+			((Rectangle) oldState).setSideLength(((Rectangle) original).getSideLength());
+			((Rectangle) oldState).setBorderColor(original.getBorderColor());
+			((Rectangle) oldState).setFillColor(((Rectangle) original).getFillColor());
+			oldState.setSelected(original.isSelected());
+
+			((Rectangle) original).setpUpLeft(((Rectangle) newState).getpUpLeft());
+			((Rectangle) original).setWidth(((Rectangle) newState).getWidth());
+			((Rectangle) original).setSideLength(((Rectangle) newState).getSideLength());
+			((Rectangle) original).setBorderColor(newState.getBorderColor());
+			((Rectangle) original).setFillColor(((Rectangle) newState).getFillColor());
+			original.setSelected(newState.isSelected());
+
+			model.getListOfShapes().set(model.getListOfShapes().indexOf(original), original);
+
+
+		}  else if(original instanceof Square) {
+
+			oldState = new Square();
+
+
+
+			((Square) oldState).setpUpLeft(((Square) original).getpUpLeft());
+			((Square) oldState).setSideLength(((Square) original).getSideLength());
+			((Square) oldState).setBorderColor(original.getBorderColor());
+			((Square) oldState).setFillColor(((Square) original).getFillColor());
+			oldState.setSelected(original.isSelected());
+
+			((Square) original).setpUpLeft(((Square) newState).getpUpLeft());
+			((Square) original).setSideLength(((Square) newState).getSideLength());
+			((Square) original).setBorderColor(newState.getBorderColor());
+			((Square) original).setFillColor(((Square) newState).getFillColor());
+			original.setSelected(newState.isSelected());
+			model.getListOfShapes().set(model.getListOfShapes().indexOf(original), original);
 
 
 		} else if (original instanceof HexagonAdapter) {
@@ -156,7 +152,7 @@ public class CmdUpdateShape implements Command {
 			((HexagonAdapter) oldState).setHexagon(new Hexagon(((HexagonAdapter) original).getHexagon().getX(),((HexagonAdapter) original).getHexagon().getY(),((HexagonAdapter) original).getHexagon().getR()));
 			((HexagonAdapter) oldState).getHexagon().setAreaColor(((HexagonAdapter) original).getHexagon().getAreaColor());
 			((HexagonAdapter) oldState).getHexagon().setBorderColor(((HexagonAdapter) original).getHexagon().getBorderColor());
-			oldState.setSelektovan(original.isSelektovan());
+			oldState.setSelected(original.isSelected());
 
 			System.out.println("OLD STATE: " + oldState);
 
@@ -167,14 +163,14 @@ public class CmdUpdateShape implements Command {
 
 
 
-			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
+			model.getListOfShapes().set(model.getListOfShapes().indexOf(original), original);
 
 
 		}
 
 		if(print == true) {
 
-			NaslovnaPokretanje.getTextArea().append("Modified: " + original + "\n");
+			Frame.textArea.append("Modified: " + original + "\n");
 		}
 
 
@@ -184,72 +180,72 @@ public class CmdUpdateShape implements Command {
 	@Override
 	public void unexecute() {
 
-		if(original instanceof Tacka) {
+		if(original instanceof Point) {
 
 
-			((Tacka) original).setX(((Tacka) oldState).getX());
-			((Tacka) original).setY(((Tacka) oldState).getY());
-			original.setBojaIvice(oldState.getBojaIvice());
-			original.setSelektovan(oldState.isSelektovan());
+			((Point) original).setX(((Point) oldState).getX());
+			((Point) original).setY(((Point) oldState).getY());
+			original.setBorderColor(oldState.getBorderColor());
+			original.setSelected(oldState.isSelected());
 
-			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
-
-
-		} else if(original instanceof Linija) {
+			model.getListOfShapes().set(model.getListOfShapes().indexOf(original), original);
 
 
-
-			((Linija) original).settPocetna(((Linija) oldState).gettPocetna());
-			((Linija) original).settKrajnja(((Linija) oldState).gettKrajnja());
-			original.setBojaIvice(oldState.getBojaIvice());
-			original.setSelektovan(oldState.isSelektovan());
-			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
-
-		} else if(original instanceof Krug) {
+		} else if(original instanceof Line) {
 
 
 
-			((Krug) original).setCentar(((Krug) oldState).getCentar());
-			((Krug) original).setR(((Krug) oldState).getR());
-			((Krug) original).setBojaIvice(oldState.getBojaIvice());
-			((Krug) original).setBojaUnutrasnjosti(((Krug) oldState).getBojaUnutrasnjosti());
-			original.setSelektovan(oldState.isSelektovan());
+			((Line) original).setStart(((Line) oldState).getStart());
+			((Line) original).setEnd(((Line) oldState).getEnd());
+			original.setBorderColor(oldState.getBorderColor());
+			original.setSelected(oldState.isSelected());
+			model.getListOfShapes().set(model.getListOfShapes().indexOf(original), original);
 
-
-			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
-
-
+		} else if(original instanceof Circle) {
 
 
 
-		} else if(original instanceof Pravougaonik) {
+			((Circle) original).setCenter(((Circle) oldState).getCenter());
+			((Circle) original).setR(((Circle) oldState).getR());
+			((Circle) original).setBorderColor(oldState.getBorderColor());
+			((Circle) original).setFillColor(((Circle) oldState).getFillColor());
+			original.setSelected(oldState.isSelected());
 
 
-
-			((Pravougaonik) original).setSirina(((Pravougaonik) oldState).getSirina());
-			((Pravougaonik) original).setDuzinaStranice(((Pravougaonik) oldState).getDuzinaStranice());
-			((Pravougaonik) original).settGoreLevo(((Pravougaonik) oldState).gettGoreLevo());
-			((Pravougaonik) original).setBojaIvice(((Pravougaonik) oldState).getBojaIvice());
-			((Pravougaonik) original).setBojaUnutrasnjosti(((Pravougaonik) oldState).getBojaUnutrasnjosti());
-			original.setSelektovan(oldState.isSelektovan());
-
-			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
-
-
-
-		} else if(original instanceof Kvadrat) {
+			model.getListOfShapes().set(model.getListOfShapes().indexOf(original), original);
 
 
 
 
 
-			((Kvadrat) original).setDuzinaStranice(((Kvadrat) oldState).getDuzinaStranice());
-			((Kvadrat) original).settGoreLevo(((Kvadrat) oldState).gettGoreLevo());
-			((Kvadrat) original).setBojaIvice(((Kvadrat) oldState).getBojaIvice());
-			((Kvadrat) original).setBojaUnutrasnjosti(((Kvadrat) oldState).getBojaUnutrasnjosti());
-			original.setSelektovan(oldState.isSelektovan());
+		} else if(original instanceof Rectangle) {
 
-			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
+
+
+			((Rectangle) original).setWidth(((Rectangle) oldState).getWidth());
+			((Rectangle) original).setSideLength(((Rectangle) oldState).getSideLength());
+			((Rectangle) original).setpUpLeft(((Rectangle) oldState).getpUpLeft());
+			((Rectangle) original).setBorderColor(((Rectangle) oldState).getBorderColor());
+			((Rectangle) original).setFillColor(((Rectangle) oldState).getFillColor());
+			original.setSelected(oldState.isSelected());
+
+			model.getListOfShapes().set(model.getListOfShapes().indexOf(original), original);
+
+
+
+		} else if(original instanceof Square) {
+
+
+
+
+
+			((Square) original).setSideLength(((Square) oldState).getSideLength());
+			((Square) original).setpUpLeft(((Square) oldState).getpUpLeft());
+			((Square) original).setBorderColor(((Square) oldState).getBorderColor());
+			((Square) original).setFillColor(((Square) oldState).getFillColor());
+			original.setSelected(oldState.isSelected());
+
+			model.getListOfShapes().set(model.getListOfShapes().indexOf(original), original);
 
 		} else if(original instanceof HexagonAdapter) {
 
@@ -262,7 +258,7 @@ public class CmdUpdateShape implements Command {
 
 			((HexagonAdapter) original).setHexagon(((HexagonAdapter) oldState).getHexagon());
 
-			model.getListaObjekata().set(model.getListaObjekata().indexOf(original), original);
+			model.getListOfShapes().set(model.getListOfShapes().indexOf(original), original);
 
 
 		}
@@ -271,33 +267,33 @@ public class CmdUpdateShape implements Command {
 
 		if(print == true) {
 
-			NaslovnaPokretanje.getTextArea().append("UNDO >>> Modified: " + original + "\n");
+			Frame.textArea.append("UNDO >>> Modified: " + original + "\n");
 		}
 
 
 	}
 
-	public Oblik getOriginal() {
+	public Shape getOriginal() {
 		return original;
 	}
 
-	public void setOriginal(Oblik original) {
+	public void setOriginal(Shape original) {
 		this.original = original;
 	}
 
-	public Oblik getNewState() {
+	public Shape getNewState() {
 		return newState;
 	}
 
-	public void setNewState(Oblik newState) {
+	public void setNewState(Shape newState) {
 		this.newState = newState;
 	}
 
-	public Oblik getOldState() {
+	public Shape getOldState() {
 		return oldState;
 	}
 
-	public void setOldState(Oblik oldState) {
+	public void setOldState(Shape oldState) {
 		this.oldState = oldState;
 	}
 
@@ -305,10 +301,7 @@ public class CmdUpdateShape implements Command {
 		return model;
 	}
 
-	public static void setModel(Model model) {
-		model = model;
-	}
-
+	
 
 
 

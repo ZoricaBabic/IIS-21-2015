@@ -2,21 +2,21 @@ package cmd;
 
 import java.util.Collections;
 
-import crtanje.Model;
-import crtanje.NaslovnaPokretanje;
-import geometrija.Oblik;
+import geometry.Shape;
+import mvc.Frame;
+import mvc.Model;
 
 public class CmdToFront implements Command {
 	
 	private Model model = new Model();
-	private Oblik o;
+	private Shape s;
 	private int i=0;
 	public static boolean print = true;
 	
-	public CmdToFront(Model model, Oblik o) {
+	public CmdToFront(Model model, Shape o) {
 		
 		this.model = model;
-		this.o=o;
+		this.s=o;
 	}
 
 	@Override
@@ -25,13 +25,13 @@ public class CmdToFront implements Command {
 		
 		
 		
-		i=model.getListaObjekata().indexOf(o);
+		i=model.getListOfShapes().indexOf(s);
 
-		Collections.swap(model.getListaObjekata(), i, i+1);  
+		Collections.swap(model.getListOfShapes(), i, i+1);  
 		
 		if(print == true) {
 			
-			NaslovnaPokretanje.getTextArea().append("Move to front: " + o +"\n");
+			Frame.textArea.append("Move to front: " + s +"\n");
 		}
 		
 		print = true;
@@ -42,11 +42,11 @@ public class CmdToFront implements Command {
 	@Override
 	public void unexecute() {
 		// TODO Auto-generated method stub
-		Collections.swap(model.getListaObjekata(), i+1, i); 
+		Collections.swap(model.getListOfShapes(), i+1, i); 
 		
 		if(print == true) {
 			
-			NaslovnaPokretanje.getTextArea().append("UNDO >>> Move to back: " + o +"\n");
+			Frame.textArea.append("UNDO >>> Move to back: " + s +"\n");
 		}
 		
 		print = true;

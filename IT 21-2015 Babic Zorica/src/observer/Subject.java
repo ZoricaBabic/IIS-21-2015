@@ -8,7 +8,6 @@ public class Subject {
 	   private boolean state;
 
 	  
-
 	   public void attach(javax.swing.JButton btn){
 	      observers.add(btn);		
 	   }

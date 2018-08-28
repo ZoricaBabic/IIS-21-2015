@@ -2,21 +2,21 @@ package cmd;
 
 import java.util.Collections;
 
-import crtanje.Model;
-import crtanje.NaslovnaPokretanje;
-import geometrija.Oblik;
+import geometry.Shape;
+import mvc.Frame;
+import mvc.Model;
 
 public class CmdBringToFront implements Command {
 	
 	private Model model = new Model();
-	private Oblik o;
+	private Shape s;
 	private int i=0;
 	public static boolean print = true;
 	
-	public CmdBringToFront (Model model, Oblik o) {
+	public CmdBringToFront (Model model, Shape s) {
 		
 		this.model=model;
-		this.o=o;
+		this.s=s;
 	}
 	
 	
@@ -26,13 +26,13 @@ public class CmdBringToFront implements Command {
 		
 
 		
-		i = model.getListaObjekata().indexOf(o);
+		i = model.getListOfShapes().indexOf(s);
 		
-		Collections.swap(model.getListaObjekata(), i, model.getListaObjekata().size()-1); 
+		Collections.swap(model.getListOfShapes(), i, model.getListOfShapes().size()-1); 
 		
 		if(print==true) {
 			
-			NaslovnaPokretanje.getTextArea().append("Bring to front: " + o +"\n");
+			Frame.textArea.append("Bring to front: " + s +"\n");
 		}
 		
 		print =true;
@@ -44,11 +44,11 @@ public class CmdBringToFront implements Command {
 	public void unexecute() {
 		// TODO Auto-generated method stub
 		
-		Collections.swap(model.getListaObjekata(), model.getListaObjekata().size()-1, i); 
+		Collections.swap(model.getListOfShapes(), model.getListOfShapes().size()-1, i); 
 		
 		if(print == true) {
 			
-			NaslovnaPokretanje.getTextArea().append("UNDO >>> Bring to back: " + o +"\n");
+			Frame.textArea.append("UNDO >>> Bring to back: " + s +"\n");
 		}
 		
 		print = true;
