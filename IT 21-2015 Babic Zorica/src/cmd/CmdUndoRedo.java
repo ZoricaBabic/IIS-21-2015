@@ -20,7 +20,7 @@ public class CmdUndoRedo implements Command{
 	
 	public void addToCommandList(Command command) {
 		
-		Frame.done=true;
+		//Frame.done=true;
 		redo.removeAllElements();
 		undo.push(command);
 		
@@ -36,7 +36,7 @@ public class CmdUndoRedo implements Command{
 		
 	
 		//undo
-		Frame.done=true;
+		//Frame.done=true;
 		undo.peek().unexecute();
 		redo.push(undo.peek());
 		undo.pop();

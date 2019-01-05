@@ -11,7 +11,7 @@ public class CmdBringToBack implements Command{
 	private Model model = new Model();
 	private Shape s; 
 	private int i=0;
-	public static boolean print = true;
+
 	
 	
 	public CmdBringToBack() {
@@ -35,13 +35,13 @@ public class CmdBringToBack implements Command{
 		i= model.getListOfShapes().indexOf(s);
 		Collections.swap(model.getListOfShapes(), i, 0); 
 		
-		if(print == true) {
+		/*if(print == true) {
 			
 			Frame.textArea.append("Bring to back: " + s +"\n");
 			//i=0;
 		} 
 		
-		print = true;
+		print = true;*/
 		
 			
 		
@@ -55,14 +55,22 @@ public class CmdBringToBack implements Command{
 		// TODO Auto-generated method stub
 		Collections.swap(model.getListOfShapes(), 0, i); 
 		
-		if(print == true) {
+		/*if(print == true) {
 			
 			Frame.textArea.append("UNDO >>> Bring to front: " + s +"\n");
 		}
 		
-		print=true;
+		print=true;*/
 		
 		
+	}
+
+	public Shape getS() {
+		return s;
+	}
+
+	public void setS(Shape s) {
+		this.s = s;
 	}
 
 	

@@ -11,11 +11,11 @@ public class CmdUpdateSelectedShapes implements Command {
 	//kad se odsleketuje vise 
 
 	private ArrayList<Shape> selectedShapes = new ArrayList<Shape>();
-	public static boolean print = true;
+
 	
 	
 	public CmdUpdateSelectedShapes(ArrayList<Shape> selectedShapes) {
-		
+
 	
 		this.selectedShapes = selectedShapes;
 		
@@ -27,30 +27,31 @@ public class CmdUpdateSelectedShapes implements Command {
 	public void execute() {
 		
 		if(!selectedShapes.isEmpty()) {
-			if(print == true) {
+			
+			/*if(print == true) {
 				
 				Frame.textArea.append("Multiple shapes deselected: ");
-			}
+			}*/
 			
 			for(int i=0; i<selectedShapes.size(); i++) {
 				
 				selectedShapes.get(i).setSelected(false);
 				
-				if(print == true) {
+				/*if(print == true) {
 					
 					Frame.textArea.append("        Deselected: " + selectedShapes.get(i).toString());
-				}
+				}*/
 				
 				
 			}
 			
-			if(print == true) {
+			/*if(print == true) {
 
 				Frame.textArea.append("\n");
-			}
+			}*/
 		}
 		
-		print = true;
+		//print = true;
 		
 		
 	}
@@ -60,33 +61,45 @@ public class CmdUpdateSelectedShapes implements Command {
 		
 		if(!selectedShapes.isEmpty()) {
 			
-			if(print == true) {
+			/*if(print == true) {
 				
 				Frame.textArea.append("UNDO >>> Multiple shapes selected: ");
-			}
+			}*/
 			
 			
 			for(int i=0; i<selectedShapes.size(); i++) {
 				
 				selectedShapes.get(i).setSelected(true);
 				
-				if(print == true) {
+				/*if(print == true) {
 					
 					Frame.textArea.append("        Selected: " + selectedShapes.get(i).toString());
-				}
+				}*/
 				
 				
 			}
 			
-			if(print == true) {
+			/*if(print == true) {
 
 				Frame.textArea.append("\n");
-			}
+			}*/
 			
 		}
 		
-		print = true;
+		//print = true;
 		
+	}
+
+
+
+	public ArrayList<Shape> getSelectedShapes() {
+		return selectedShapes;
+	}
+
+
+
+	public void setSelectedShapes(ArrayList<Shape> selectedShapes) {
+		this.selectedShapes = selectedShapes;
 	}
 
 }

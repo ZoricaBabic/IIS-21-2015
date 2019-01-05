@@ -54,16 +54,27 @@ public class Frame extends JFrame  {
 	private int newY;
 	private JPanel pnlFillColor;                 
 	private JPanel pnlBorderColor;
-	public static JTextArea textArea;
-	public static boolean done = false;
+	/*public static JTextArea textArea;
+	public static boolean done = false;*/
+	
+	private  JTextArea textArea;
+	private  boolean done = false;
+	
+	
 	private ArrayList<String> lines = new ArrayList<String>();
-	public static JButton btnSave;
+	private JButton btnSave;
 	private JButton btnCmdbycmd;
 	private JButton btnUndo;
 	private JButton btnRedo;
-	public static JButton btnModify;
+	/*public static JButton btnModify;
 	public static JButton btnDelete;
-	public static JButton btnSelect;
+	public static JButton btnSelect;*/
+	
+	private JButton btnModify;
+	private JButton btnDelete;
+	private JButton btnSelect;
+	
+	
 	private View pnlForDrawing = new View(); //view
 	private Controller controller;
 	private JPanel panel;
@@ -71,7 +82,7 @@ public class Frame extends JFrame  {
 	private int index=0;
 	private ArrayList<Integer> firstArray = new ArrayList<Integer>();
 	private ArrayList<String> strings = new ArrayList<String>();
-	public static boolean txtOpened = false;
+	private boolean txtOpened = false;
 
 
 	public View getView() {
@@ -1027,6 +1038,46 @@ public class Frame extends JFrame  {
 
 	public void setBtnCmdbycmd(JButton btnCmdbycmd) {
 		this.btnCmdbycmd = btnCmdbycmd;
+	}
+
+	public void setBtnModify(JButton btnModify) {
+		this.btnModify = btnModify;
+	}
+
+	public void setBtnDelete(JButton btnDelete) {
+		this.btnDelete = btnDelete;
+	}
+
+	public void setBtnSelect(JButton btnSelect) {
+		this.btnSelect = btnSelect;
+	}
+
+	public JTextArea getTextArea() {
+		return textArea;
+	}
+
+	public void setTextArea(JTextArea textArea) {
+		this.textArea = textArea;
+	}
+
+	public boolean isDone() {
+		return done;
+	}
+
+	public void setDone(boolean done) {
+		this.done = done;
+	}
+
+	public void setBtnSave(JButton btnSave) {
+		this.btnSave = btnSave;
+	}
+
+	public boolean isTxtOpened() {
+		return txtOpened;
+	}
+
+	public void setTxtOpened(boolean txtOpened) {
+		this.txtOpened = txtOpened;
 	}
 
 	

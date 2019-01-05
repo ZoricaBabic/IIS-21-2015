@@ -19,14 +19,15 @@ public class CmdUpdateShape implements Command {
 	private Shape original;
 	private Shape newState;
 	private Shape oldState;
-	public static Model model;
-	public static boolean print = true;
+	private Model model;
 
-	public CmdUpdateShape(Shape original,Shape newState) {
+
+	public CmdUpdateShape(Shape original,Shape newState,Model model) {
 
 
 		this.original = original;
 		this.newState = newState;
+		this.model = model;
 
 	}
 
@@ -168,10 +169,10 @@ public class CmdUpdateShape implements Command {
 
 		}
 
-		if(print == true) {
+		/*if(print == true) {
 
 			Frame.textArea.append("Modified: " + original + "\n");
-		}
+		}*/
 
 
 
@@ -265,10 +266,10 @@ public class CmdUpdateShape implements Command {
 
 		
 
-		if(print == true) {
+		/*if(print == true) {
 
 			Frame.textArea.append("UNDO >>> Modified: " + original + "\n");
-		}
+		}*/
 
 
 	}
@@ -299,6 +300,10 @@ public class CmdUpdateShape implements Command {
 
 	public Model getModel() {
 		return model;
+	}
+
+	public void setModel(Model model) {
+		this.model = model;
 	}
 
 	

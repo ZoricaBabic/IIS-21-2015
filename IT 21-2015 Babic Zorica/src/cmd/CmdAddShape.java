@@ -9,11 +9,13 @@ public class CmdAddShape implements Command {
 	
 	private Model model = new Model();
 	private Shape s;
-	public static boolean print = true;
+	//private boolean print = true;
+
 	
 	public CmdAddShape(Model model, Shape os) {
 		this.model = model;
 		this.s = os;
+		
 	}
 
 	@Override
@@ -21,18 +23,17 @@ public class CmdAddShape implements Command {
 		
 	
 		model.add(s);
-		Frame.btnSave.setEnabled(true);
+		
 
 		
-		if(print == true) {
+		/*if(print == true) {
 			
 			Frame.textArea.append("Added: " + s.toString() +"\n");
 			
-			
-		} 
+		} */
 		
-		Frame.btnSelect.setEnabled(true);
-		print=true;
+		//Frame.btnSelect.setEnabled(true);
+		//print=true;
 
 	}
 
@@ -43,19 +44,19 @@ public class CmdAddShape implements Command {
 		model.remove(s);
 		
 		
-		if(print == true) {
+		/*if(print == true) {
 			
-			Frame.textArea.append("UNDO >>> Removed: " + s.toString() +"\n");
-		}
+			frame.getTextArea().append("UNDO >>> Removed: " + s.toString() +"\n");
+		}*/
 		
 		
 		
-		if(model.getListOfShapes().isEmpty()) {
+		/*if(model.getListOfShapes().isEmpty()) {
 			
 			Frame.btnSelect.setEnabled(false);
-		}
+		}*/
 		
-		print=true;
+		//print=true;
 		
 	
 	
@@ -76,13 +77,6 @@ public class CmdAddShape implements Command {
 		
 	}
 
-	public boolean isPrint() {
-		return print;
-	}
-
-	public static void setPrint(boolean prints) {
-		
-		print = prints;
-	}
+	
 
 }

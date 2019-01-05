@@ -9,7 +9,7 @@ public class CmdSelectShape implements Command {
 	
 
 	private Shape o;
-	public static boolean print = true;
+
 
 
 	public  CmdSelectShape(Shape o) {
@@ -22,12 +22,12 @@ public class CmdSelectShape implements Command {
 	public void unexecute() {
 		
 		o.setSelected(false);
-		if(print == true) {
+		/*if(print == true) {
 			
 			Frame.textArea.append("UNDO >>> Deselected: " + o.toString() +"\n");
 		}
 	
-		print = true;
+		print = true;*/
 	}
 
 	@Override
@@ -36,13 +36,21 @@ public class CmdSelectShape implements Command {
 	
 		
 		o.setSelected(true);
-		if(print == true) {
+		/*if(print == true) {
 			
 			Frame.textArea.append("Selected: " + o.toString() +"\n");
 		}
-		print = true;
+		print = true;*/
 		
 		
+	}
+
+	public Shape getO() {
+		return o;
+	}
+
+	public void setO(Shape o) {
+		this.o = o;
 	}
 
 	

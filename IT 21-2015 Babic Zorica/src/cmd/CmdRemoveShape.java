@@ -13,7 +13,7 @@ public class CmdRemoveShape implements Command {
 	private Shape s;
 	private int count = 0;
 	private ArrayList<Shape> removedShapes = new ArrayList<Shape>();
-	public static boolean print = true;
+
 
 	public CmdRemoveShape(Model model, Shape o) {
 
@@ -41,42 +41,43 @@ public class CmdRemoveShape implements Command {
 
 		if(!removedShapes.isEmpty()  && removedShapes.size() > 1) {
 
-			if(print ==true) {
+			/*if(print ==true) {
 
 				Frame.textArea.append("Multiple shapes removed: ");
-			}
+			}*/
 
 
 			for(int i =0; i<removedShapes.size(); i++) {
 
 				model.remove(removedShapes.get(i));
 
-				if(print == true) {
+				/*if(print == true) {
 
 					Frame.textArea.append("        Removed: " + removedShapes.get(i).toString());
-				}
+				}*/
 
 			}
 
-			if(print == true) {
+			/*if(print == true) {
 
 				Frame.textArea.append("\n");
-			}
+			}*/
 
 
 		} else {
 
 			model.remove(s);
-			if(print == true) {
+			/*if(print == true) {
 
 				Frame.textArea.append("Removed: " + s +"\n");
 			}
+			print = true;*/
 
 		}
 
 
 
-		print = true;
+		//print = true;
 
 
 	}
@@ -87,42 +88,40 @@ public class CmdRemoveShape implements Command {
 
 		if(!removedShapes.isEmpty() && removedShapes.size() > 1) {
 
-			if(print == true) {
+			/*if(print == true) {
 
 				Frame.textArea.append("UNDO >>> Multiple shapes added: ");
-			}
+			}*/
 
 
 			for(int i =0; i<removedShapes.size(); i++) {
 
 				model.add(removedShapes.get(i));
-				if(print == true) {
+				/*if(print == true) {
 
 					Frame.textArea.append("        Added: " + removedShapes.get(i).toString());
-				}
+				}*/
 
 			}
 
-			if(print == true) {
+			/*if(print == true) {
 
 				Frame.textArea.append("\n");
-			}
+			}*/
 		} else {
 
 			model.add(s);
 
-			if(print == true) {
+			/*if(print == true) {
 				
 				Frame.textArea.append("UNDO >>> Added: " + s +"\n");
 
-			}
+			}*/
 
 		}
 
 
-
-
-		print = true;
+		//print = true;
 
 
 
@@ -145,6 +144,14 @@ public class CmdRemoveShape implements Command {
 
 	public void setCount(int count) {
 		this.count = count;
+	}
+
+	public ArrayList<Shape> getRemovedShapes() {
+		return removedShapes;
+	}
+
+	public void setRemovedShapes(ArrayList<Shape> removedShapes) {
+		this.removedShapes = removedShapes;
 	}
 
 }

@@ -20,7 +20,8 @@ public class SaveBinOperation implements Strategy {
 			outputStream = new ObjectOutputStream(new FileOutputStream(f));
 			outputStream.writeObject(frame.getController().getModel().getListOfShapes());
 			outputStream.close();
-			Frame.done=false;
+			
+			frame.setDone(false);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

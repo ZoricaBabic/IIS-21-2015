@@ -19,7 +19,8 @@ public class SavePngOperation implements Strategy{
 			BufferedImage im = new BufferedImage(frame.getPnlForDrawing().getWidth(), frame.getPnlForDrawing().getHeight(), BufferedImage.TYPE_INT_ARGB);
 			frame.getPnlForDrawing().paint(im.getGraphics());
 			ImageIO.write(im, "PNG", f);
-			frame.done=false;
+		
+			frame.setDone(false);
 			
 			
 		}catch(Exception e){

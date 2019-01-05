@@ -24,24 +24,26 @@ public class LoadLogOperation implements Strategy {
 			
 			
 			FileInputStream ft = new FileInputStream(f);
-	         DataInputStream in = new DataInputStream(ft);
-	         BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	        DataInputStream in = new DataInputStream(ft);
+	        BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	         String strline;
 	         
-	         	Frame.textArea.setText("");
+	         	frame.getTextArea().setText("");
 				frame.getController().getModel().getListOfShapes().removeAll(frame.getController().getModel().getListOfShapes());
 				frame.getController().getCmdUndoRedo().getUndo().removeAllElements();
 				frame.getController().getCmdUndoRedo().getRedo().removeAllElements();
 				frame.getBtnUndo().setEnabled(false);
 				frame.getBtnRedo().setEnabled(false);
 				frame.getBtnCmdbycmd().setEnabled(false);
-				Frame.done=false;
-				Frame.txtOpened = true;
+		
+				frame.setDone(false);
+		
+				frame.setTxtOpened(true);
 	        
 	         while((strline = br.readLine()) != null){
 	         	
 	             
-	        	 Frame.textArea.append(strline + "\n");
+	        	 frame.getTextArea().append(strline + "\n");
 	         }
 	         in.close();
 	         

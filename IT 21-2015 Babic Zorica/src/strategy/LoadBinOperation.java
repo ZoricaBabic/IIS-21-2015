@@ -24,15 +24,18 @@ public class LoadBinOperation implements Strategy {
 			
 			
 			try {
+				
+				
 				frame.getController().getModel().getListOfShapes().removeAll(frame.getController().getModel().getListOfShapes());
 				frame.getController().getModel().getListOfShapes().addAll((ArrayList<geometry.Shape>)inputStream.readObject());
 				frame.getController().getCmdUndoRedo().getUndo().removeAllElements();
 				frame.getController().getCmdUndoRedo().getRedo().removeAllElements();
 				frame.getBtnUndo().setEnabled(false);
 				frame.getBtnRedo().setEnabled(false);
-				Frame.textArea.setText("");
+				frame.getTextArea().setText("");
 			
-				Frame.done = false;
+				
+				frame.setDone(false);
 				
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -47,7 +50,7 @@ public class LoadBinOperation implements Strategy {
 
 			while ((line = br.readLine()) != null) {
 
-				Frame.textArea.append(line + "\n");
+				frame.getTextArea().append(line + "\n");
 			}
 			br.close();
 			inputStream.close();

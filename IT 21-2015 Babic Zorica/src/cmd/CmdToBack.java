@@ -11,7 +11,7 @@ public class CmdToBack implements Command {
 	private Model model = new Model();
 	private Shape s;
 	private int i=0;
-	public static boolean print = true;
+
 	
 	public CmdToBack(Model model, Shape o) {
 		
@@ -29,12 +29,12 @@ public class CmdToBack implements Command {
 		i = model.getListOfShapes().indexOf(s);
 		Collections.swap(model.getListOfShapes(), i, i-1); 
 		
-		if(print == true) {
+		/*if(print == true) {
 			
 			Frame.textArea.append("Move to back: " + s +"\n");
 		}
 		
-		print = true;
+		print = true;*/
 		
 		
 		
@@ -45,14 +45,26 @@ public class CmdToBack implements Command {
 		
 		Collections.swap(model.getListOfShapes(), i-1, i); 
 		
-		if(print == true) {
+		/*if(print == true) {
 			
 			Frame.textArea.append("UNDO >>> Move to front: " + s +"\n");
 		}
 		
-		print = true;
+		print = true;*/
 		
 		
+	}
+
+
+
+	public Shape getS() {
+		return s;
+	}
+
+
+
+	public void setS(Shape s) {
+		this.s = s;
 	}
 
 }

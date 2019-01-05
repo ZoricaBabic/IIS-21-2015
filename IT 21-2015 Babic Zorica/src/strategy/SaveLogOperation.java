@@ -16,16 +16,19 @@ public class SaveLogOperation implements Strategy{
 	@Override
 	public int doOperation(Object o, File f) {
 		
-		
+		Frame frame = (Frame) o;
 		try {
 		
 			BufferedWriter bf = null;
  			try {
  				
  				bf = new BufferedWriter((new FileWriter(f.getAbsolutePath())));
- 				Frame.textArea.write(bf);
+ 				frame.getTextArea().write(bf);
+ 			
  				bf.close();
- 				Frame.done=false;
+ 				
+ 				frame.setDone(false);
+ 				
  				
  			} catch (IOException ee) {
 

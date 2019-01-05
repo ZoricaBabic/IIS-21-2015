@@ -57,28 +57,32 @@ import strategy.SavePngOperation;
 
 public class Controller {
 
-	
+
 	private Model model;
 	private Frame frame;
 	private Context context;
 	private Subject subject;
 	private boolean justRead = false;
 	private CmdUndoRedo cmdUndoRedo;
+	private boolean print = true;
 
 
 	public Controller(Model model, Frame frame) {
 
 		this.model = model;
 		this.frame = frame;
-		CmdUpdateShape.model = model;
+		//CmdUpdateShape.setModel(model);
 
 		//button = new Button(frame);
 		//cmdUndoRedo = new CmdUndoRedo(model);
 		cmdUndoRedo = new CmdUndoRedo();
 		subject = new Subject();
-		subject.attach(Frame.btnDelete);
-		subject.attach(Frame.btnModify);
-		
+
+
+
+		subject.attach(frame.getBtnDelete());
+		subject.attach(frame.getBtnModify());
+
 		checkIfSelectedShapeExists();
 
 	} 
@@ -114,23 +118,23 @@ public class Controller {
 		context = new Context(new LoadLogOperation());
 		context.executeStrategy(frame, f);
 	}
-	
+
 	public void loadPainting(File f) {
-		
+
 		context = new Context(new LoadBinOperation());
 		context.executeStrategy(frame, f);
 	}
-	
+
 	public void saveBin(File f) {
-		
+
 		context = new Context(new SaveBinOperation());
 		context.executeStrategy(frame, f);
 	}
 
 	public void runCommandByCommand(String line,String lineBefore) {
-		
-		
-		CmdAddShape.print = false;
+
+		print = false;
+		/*CmdAddShape.print = false;
 		CmdBringToBack.print = false;
 		CmdBringToFront.print = false;
 		CmdDeselectShape.print = false;
@@ -139,68 +143,69 @@ public class Controller {
 		CmdToBack.print = false;
 		CmdToFront.print = false;
 		CmdUpdateSelectedShapes.print = false;
-		CmdUpdateShape.print = false;
-		
-		
+		CmdUpdateShape.print = false;*/
+
+
 		if (line.contains("UNDO >>> Selected: ")) {
-			
-			CmdDeselectShape.print=false;
+
+		
 			undo();
-			
+
 		}else if(line.contains("UNDO >>> Removed:")) {
 
-	
-			CmdAddShape.setPrint(false);
+
+			//CmdAddShape.setPrint(false);
 			undo();
 
 
 		} else if(line.contains("UNDO >>> Deselected: ")) {
+
 			
-			CmdSelectShape.print = false;
 			undo();
-			
-			
+
+
 		}  else if(line.contains("UNDO >>> Bring to front: ")) {
+
 			
-			CmdBringToBack.print = false;
+			
 			undo();
-			
+
 		} else if(line.contains("UNDO >>> Bring to back: ")) {
+
 			
-			CmdBringToFront.print = false;
 			undo();
 		}  else if(line.contains("UNDO >>> Move to front: ")) {
+
 			
-			CmdToBack.print=false;
 			undo();
 		}  else if (line.contains("UNDO >>> Move to back: ")) {
+
 			
-			CmdToFront.print=false;
 			undo();
-			
+
 		}  else if(line.contains("UNDO >>> Multiple shapes added: ")) {
-			
-			
-			
-			CmdRemoveShape.print = false;
+
+
+
+		
 			undo();
-			
-			
+
+
 		} else if (line.contains("UNDO >>> Added:")){
+
+
 			
-			
-			CmdRemoveShape.print = false;
 			undo();
-			
+
 		} else if (line.contains("UNDO >>> Multiple shapes selected: ")) {
+
 			
-			CmdUpdateSelectedShapes.print = false;
 			undo();
-			
-			
+
+
 		} else if (line.contains("UNDO >>> Modified: ")) {
+
 			
-			CmdUpdateShape.print = false;
 			undo();
 		} else if(line.contains("Added:")) {
 
@@ -295,7 +300,7 @@ public class Controller {
 				model.setNewX(Integer.parseInt(newX));
 				model.setNewY(Integer.parseInt(newY));
 
-		;
+				;
 
 				model.setTwoClicks(true);
 				justRead=true;
@@ -347,11 +352,11 @@ public class Controller {
 				justRead=true;
 				mouseClickedPnl(Integer.parseInt(x),Integer.parseInt(y));
 			}
-			
-			
+
+
 		}  else if(line.contains("Selected:")) {
-			
-			CmdSelectShape.print = false;
+
+		
 			//Selected: Circle: (398,139), radius: 50, outline: #000000, fill: #ffffff, Selected? true
 
 			if(line.contains("Circle")) {
@@ -370,9 +375,19 @@ public class Controller {
 					if(model.getListOfShapes().get(i).equals(k)) {
 
 						CmdSelectShape cmdSelectShape = new CmdSelectShape(model.getListOfShapes().get(i));
+						
+						if(print == true) {
+							
+							frame.getTextArea().append("Selected: " + model.getListOfShapes().get(i).toString() +"\n");
+						}
+						print = true;
+						
 					
+
 						cmdSelectShape.execute();
 						cmdUndoRedo.addToCommandList(cmdSelectShape);
+						frame.setDone(true);
+
 					}
 				}
 			} else if (line.contains("Hexagon")) {
@@ -395,16 +410,23 @@ public class Controller {
 					if(model.getListOfShapes().get(i).equals(ha)) {
 
 						CmdSelectShape cmdSelectShape = new CmdSelectShape(model.getListOfShapes().get(i));
-					
+						
+	if(print == true) {
+							
+							frame.getTextArea().append("Selected: " + model.getListOfShapes().get(i).toString() +"\n");
+						}
+						print = true;
+
 						cmdSelectShape.execute();
 						cmdUndoRedo.addToCommandList(cmdSelectShape);
+						frame.setDone(true);
 
 					}
 				}
 
 
 			} else if(line.contains("Line")) {
-				
+
 				String outline = between(line, "outline: ", ", Selected");
 				//startpoint
 				String s = between(line, "startPoint (", "), endPoint");
@@ -418,37 +440,44 @@ public class Controller {
 				String[] myStrings = sa.split(",");
 				String newX = myStrings[0].trim();
 				String newY = myStrings[1].trim();
-				
+
 				Line l = new Line(new Point(Integer.parseInt(x),Integer.parseInt(y)),new Point(Integer.parseInt(newX),Integer.parseInt(newY)), stringToColor(outline));
 				for(int i=0; i<model.getListOfShapes().size(); i++) {
 
 					if(model.getListOfShapes().get(i).equals(l)) {
 
 						CmdSelectShape cmdSelectShape = new CmdSelectShape(model.getListOfShapes().get(i));
-					
+						
+	if(print == true) {
+							
+							frame.getTextArea().append("Selected: " + model.getListOfShapes().get(i).toString() +"\n");
+						}
+						print = true;
+
 						cmdSelectShape.execute();
 						cmdUndoRedo.addToCommandList(cmdSelectShape);
+						frame.setDone(true);
 
 					}
 				}
 			} else if(line.contains("Point")) {
-				
+
 				//Selected: Line: startPoint (310,66), endPoint (555,67), outline: #000000, Selected? true
 
 
-			
+
 				String outline = between(line, "outline: ", ", Selected?");
 
 				String s = between(line, "Point: (",")");
 				String[] myString = s.split(",");
-			
+
 				String x = myString[0];
 				String y = myString[1];
-				
-			
 
-				
-				
+
+
+
+
 
 				Point t = new Point(Integer.parseInt(x),Integer.parseInt(y),stringToColor(outline));
 				for(int i=0; i<model.getListOfShapes().size(); i++) {
@@ -456,16 +485,23 @@ public class Controller {
 					if(model.getListOfShapes().get(i).equals(t)) {
 
 						CmdSelectShape cmdSelectShape = new CmdSelectShape(model.getListOfShapes().get(i));
-					
+						
+	if(print == true) {
+							
+							frame.getTextArea().append("Selected: " + model.getListOfShapes().get(i).toString() +"\n");
+						}
+						print = true;
+
 						cmdSelectShape.execute();
 						cmdUndoRedo.addToCommandList(cmdSelectShape);
+						frame.setDone(true);
 
 					}
 				}
 
 
 			} else if (line.contains("Rectangle")) {
-				
+
 				String outline = between(line, "outline: ", ", fill:");
 				String fill = between(line, "fill: ",", Selected");
 				String s = between(line, "Rectangle: (",")");
@@ -474,23 +510,31 @@ public class Controller {
 				String y = myString[1].trim();
 				String width = between(line, "width: ",", height");
 				String height = between(line,"height: ",", outline");
-				
+
 				Rectangle p = new Rectangle(new Point(Integer.parseInt(x),Integer.parseInt(y)),Integer.parseInt(width),Integer.parseInt(height),stringToColor(outline),stringToColor(fill));
-				
-				
+
+
 				for(int i=0; i<model.getListOfShapes().size(); i++) {
 
 					if(model.getListOfShapes().get(i).equals(p)) {
 
 						CmdSelectShape cmdSelectShape = new CmdSelectShape(model.getListOfShapes().get(i));
 						
+	if(print == true) {
+							
+							frame.getTextArea().append("Selected: " + model.getListOfShapes().get(i).toString() +"\n");
+						}
+						print = true;
+
 						cmdSelectShape.execute();
 						cmdUndoRedo.addToCommandList(cmdSelectShape);
+						frame.setDone(true);
+
 
 					}
 				}
 			} else if (line.contains("Square")) {
-				
+
 				String outline = between(line, "outline: ", ", fill:");
 				String fill = between(line, "fill: ",", Selected");
 				String s = between(line, "Square: (",")");
@@ -498,17 +542,24 @@ public class Controller {
 				String x = myString[0].trim();
 				String y = myString[1].trim();
 				String width = between(line, "width: ",", outline");
-				
+
 				Square k = new Square(new Point(Integer.parseInt(x),Integer.parseInt(y)),Integer.parseInt(width),stringToColor(outline),stringToColor(fill));
-				
+
 				for(int i=0; i<model.getListOfShapes().size(); i++) {
 
 					if(model.getListOfShapes().get(i).equals(k)) {
 
 						CmdSelectShape cmdSelectShape = new CmdSelectShape(model.getListOfShapes().get(i));
-					
+						
+	if(print == true) {
+							
+							frame.getTextArea().append("Selected: " + model.getListOfShapes().get(i).toString() +"\n");
+						}
+						print = true;
+
 						cmdSelectShape.execute();
 						cmdUndoRedo.addToCommandList(cmdSelectShape);
+						frame.setDone(true);
 
 					}
 				}
@@ -518,28 +569,28 @@ public class Controller {
 
 
 		}  else if(line.contains("Bring to back: ")) { //mozda će biti problem zbog containt UNDOO >> BRING TO BACK
-			
-			
-			CmdBringToBack.print = false;
+
+
+		
 			bringToBack();
-			
-			
+
+
 		} else if(line.contains("Bring to front: ")) {
-			
-			CmdBringToFront.print = false;
+
+		
 			bringToFront();
 		}  else if(line.contains("Move to back: ")) {
-			
-			CmdToBack.print = false;
+
+		
 			moveToBack();
-			
+
 		} else if(line.contains("Move to front: ")) {
-			
-			CmdToFront.print=false;
+
+		
 			moveToFront();
 		}  else if(line.contains("Deselected: ") && !line.contains("Multiple")) {
+
 			
-			CmdDeselectShape.print = false;
 			//Selected: Circle: (398,139), radius: 50, outline: #000000, fill: #ffffff, Selected? true
 
 			if(line.contains("Circle")) {
@@ -558,8 +609,16 @@ public class Controller {
 					if(model.getListOfShapes().get(i).equals(k)) {
 
 						CmdDeselectShape cmdDeselectShape = new CmdDeselectShape(model.getListOfShapes().get(i));
+						
+						if(print == true) {
+						
+						frame.getTextArea().append("Deselected: " + model.getListOfShapes().get(i).toString() +"\n");
+						}
+					
+						print = true;
 						cmdDeselectShape.execute();
 						cmdUndoRedo.addToCommandList(cmdDeselectShape);
+						frame.setDone(true);
 					}
 				}
 			} else if (line.contains("Hexagon")) {
@@ -582,15 +641,23 @@ public class Controller {
 					if(model.getListOfShapes().get(i).equals(ha)) {
 
 						CmdDeselectShape cmdDeselectShape = new CmdDeselectShape(model.getListOfShapes().get(i));
+						
+						if(print == true) {
+							
+							frame.getTextArea().append("Deselected: " + model.getListOfShapes().get(i).toString() +"\n");
+							}
+						
+							print = true;
 						cmdDeselectShape.execute();
 						cmdUndoRedo.addToCommandList(cmdDeselectShape);
+						frame.setDone(true);
 
 					}
 				}
 
 
 			} else if(line.contains("Line")) {
-				
+
 				String outline = between(line, "outline: ", ", Selected");
 				//startpoint
 				String s = between(line, "startPoint (", "), endPoint");
@@ -604,36 +671,44 @@ public class Controller {
 				String[] myStrings = sa.split(",");
 				String newX = myStrings[0].trim();
 				String newY = myStrings[1].trim();
-				
+
 				Line l = new Line(new Point(Integer.parseInt(x),Integer.parseInt(y)),new Point(Integer.parseInt(newX),Integer.parseInt(newY)), stringToColor(outline));
 				for(int i=0; i<model.getListOfShapes().size(); i++) {
 
 					if(model.getListOfShapes().get(i).equals(l)) {
 
 						CmdDeselectShape cmdDeselectShape = new CmdDeselectShape(model.getListOfShapes().get(i));
+						
+						if(print == true) {
+							
+							frame.getTextArea().append("Deselected: " + model.getListOfShapes().get(i).toString() +"\n");
+							}
+						
+							print = true;
 						cmdDeselectShape.execute();
 						cmdUndoRedo.addToCommandList(cmdDeselectShape);
+						frame.setDone(true);
 
 					}
 				}
 			} else if(line.contains("Point")) {
-				
+
 				//Selected: Line: startPoint (310,66), endPoint (555,67), outline: #000000, Selected? true
 
 
-			
+
 				String outline = between(line, "outline: ", ", Selected?");
 
 				String s = between(line, "Point: (",")");
 				String[] myString = s.split(",");
-			
+
 				String x = myString[0];
 				String y = myString[1];
-				
-			
 
-				
-				
+
+
+
+
 
 				Point t = new Point(Integer.parseInt(x),Integer.parseInt(y),stringToColor(outline));
 				for(int i=0; i<model.getListOfShapes().size(); i++) {
@@ -641,15 +716,22 @@ public class Controller {
 					if(model.getListOfShapes().get(i).equals(t)) {
 
 						CmdDeselectShape cmdDeselectShape = new CmdDeselectShape(model.getListOfShapes().get(i));
+						if(print == true) {
+							
+							frame.getTextArea().append("Deselected: " + model.getListOfShapes().get(i).toString() +"\n");
+							}
+						
+							print = true;
 						cmdDeselectShape.execute();
 						cmdUndoRedo.addToCommandList(cmdDeselectShape);
+						frame.setDone(true);
 
 					}
 				}
 
 
 			} else if (line.contains("Rectangle")) {
-				
+
 				String outline = between(line, "outline: ", ", fill:");
 				String fill = between(line, "fill: ",", Selected");
 				String s = between(line, "Rectangle: (",")");
@@ -658,22 +740,29 @@ public class Controller {
 				String y = myString[1].trim();
 				String width = between(line, "width: ",", height");
 				String height = between(line,"height: ",", outline");
-				
+
 				Rectangle p = new Rectangle(new Point(Integer.parseInt(x),Integer.parseInt(y)),Integer.parseInt(width),Integer.parseInt(height),stringToColor(outline),stringToColor(fill));
-				
-				
+
+
 				for(int i=0; i<model.getListOfShapes().size(); i++) {
 
 					if(model.getListOfShapes().get(i).equals(p)) {
 
 						CmdDeselectShape cmdDeselectShape = new CmdDeselectShape(model.getListOfShapes().get(i));
+						if(print == true) {
+							
+							frame.getTextArea().append("Deselected: " + model.getListOfShapes().get(i).toString() +"\n");
+							}
+						
+							print = true;
 						cmdDeselectShape.execute();
 						cmdUndoRedo.addToCommandList(cmdDeselectShape);
+						frame.setDone(true);
 
 					}
 				}
 			} else if (line.contains("Square")) {
-				
+
 				String outline = between(line, "outline: ", ", fill:");
 				String fill = between(line, "fill: ",", Selected");
 				String s = between(line, "Square: (",")");
@@ -681,41 +770,47 @@ public class Controller {
 				String x = myString[0].trim();
 				String y = myString[1].trim();
 				String width = between(line, "width: ",", outline");
-				
+
 				Square k = new Square(new Point(Integer.parseInt(x),Integer.parseInt(y)),Integer.parseInt(width),stringToColor(outline),stringToColor(fill));
-				
+
 				for(int i=0; i<model.getListOfShapes().size(); i++) {
 
 					if(model.getListOfShapes().get(i).equals(k)) {
 
 						CmdDeselectShape cmdDeselectShape = new CmdDeselectShape(model.getListOfShapes().get(i));
+						if(print == true) {
+							
+							frame.getTextArea().append("Deselected: " + model.getListOfShapes().get(i).toString() +"\n");
+							}
+						
+							print = true;
 						cmdDeselectShape.execute();
 						cmdUndoRedo.addToCommandList(cmdDeselectShape);
+						frame.setDone(true);
 
 					}
 				}
 
 			}
-			
+
 			//uzmem oblik
 		} else if (line.contains("Removed: ") && !line.contains("Multiple")) {
-			
-			
-			CmdRemoveShape.print = false;
+
+
+		
 			delete();
-			
+
 		}  else if(line.contains("Multiple shapes removed:")){
-			
-			CmdRemoveShape.print = false;
+
 			delete();
-			
+
 		}  else if (line.contains("Multiple shapes deselected: ")) {
-			
-			CmdUpdateSelectedShapes.print = false;
-			
+
+	
+
 			ArrayList<Shape> ss = new ArrayList<Shape>();
 			int k=0;
-	
+
 
 			for(Shape o: model.getListOfShapes()) {
 
@@ -731,29 +826,65 @@ public class Controller {
 
 
 				CmdUpdateSelectedShapes cmdUpdate = new CmdUpdateSelectedShapes(ss);
+				
+				if(!ss.isEmpty()) {
+					
+					if(print == true) {
+						
+						frame.getTextArea().append("Multiple shapes deselected: ");
+					}
+					
+					for(int i=0; i<ss.size(); i++) {
+						
+					
+						
+						if(print == true) {
+							
+							frame.getTextArea().append("        Deselected: " + ss.get(i).toString());
+						}
+						
+						
+					}
+					
+					if(print == true) {
+
+						frame.getTextArea().append("\n");
+					}
+				}
+				
+				print = true;
+			
 				cmdUpdate.execute();
 				cmdUndoRedo.addToCommandList(cmdUpdate);
+				frame.setDone(true);
 
 			} else if (k==1) {
 
 
 				CmdDeselectShape cmdDeselectShape = new CmdDeselectShape(ss.get(0));
+				if(print == true) {
+					
+					frame.getTextArea().append("Deselected: " + ss.get(0).toString() +"\n");
+					}
+				
+					print = true;
 				cmdDeselectShape.execute();
 				cmdUndoRedo.addToCommandList(cmdDeselectShape);
+				frame.setDone(true);
 
 			}
-			
-			
+
+
 		} else if (line.contains("Modified: ")){
-			
+
 			if(lineBefore != null) {
-				
-				CmdUpdateShape.print = false;
+
+			
 				//Selected: Circle: (398,139), radius: 50, outline: #000000, fill: #ffffff, Selected? true
 
 				if(line.contains("Circle") && lineBefore.contains("Circle")) {
-					
-					
+
+
 					String outline1 = between(lineBefore, "outline: ", ", fill:");
 					String fill1 = between(lineBefore, "fill: ",", Selected");
 					String s1 = between(lineBefore, "Circle: (",")");
@@ -761,10 +892,10 @@ public class Controller {
 					String x1 = myString1[0];
 					String y1 = myString1[1];
 					String radius1 = between(lineBefore, "radius: ",", outline");
-					
+
 					Circle k1 = new Circle(new Point(Integer.parseInt(x1),Integer.parseInt(y1)),Integer.parseInt(radius1),stringToColor(outline1),stringToColor(fill1));
 					k1.setSelected(true);
-			
+
 					String outline = between(line, "outline: ", ", fill:");
 					String fill = between(line, "fill: ",", Selected");
 					String s = between(line, "Circle: (",")");
@@ -779,9 +910,15 @@ public class Controller {
 
 						if(model.getListOfShapes().get(i).equals(k1)) {
 
-							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListOfShapes().get(i),k2);
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListOfShapes().get(i),k2,model);
+							if(print == true) {
+
+								frame.getTextArea().append("Modified: " + k2 + "\n");
+							}
+
 							cmdUpdate.execute();
 							cmdUndoRedo.addToCommandList(cmdUpdate);
+							frame.setDone(true);
 						}
 					}
 				} else if (line.contains("Hexagon") && lineBefore.contains("Hexagon")) {
@@ -793,13 +930,13 @@ public class Controller {
 					String x1 = myString1[0];
 					String y1 = myString1[1];
 					String radius1 = between(lineBefore, "radius: ",", outline");
-					
+
 					Hexagon h1 = new Hexagon(Integer.parseInt(x1),Integer.parseInt(y1),Integer.parseInt(radius1));
 					h1.setAreaColor(stringToColor(fill1));
 					h1.setBorderColor(stringToColor(outline1));
 					HexagonAdapter ha1 = new HexagonAdapter(h1);
 					ha1.setSelected(true);
-					
+
 					String outline = between(line, "outline: ", ", fill:");
 					String fill = between(line, "fill: ",", Selected");
 					String s = between(line, "Hexagon: (",")");
@@ -818,35 +955,40 @@ public class Controller {
 
 						if(model.getListOfShapes().get(i).equals(ha1)) {
 
-							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListOfShapes().get(i),ha);
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListOfShapes().get(i),ha,model);
+							if(print == true) {
+
+								frame.getTextArea().append("Modified: " + ha + "\n");
+							}
 							cmdUpdate.execute();
 							cmdUndoRedo.addToCommandList(cmdUpdate);
+							frame.setDone(true);
 
 						}
 					}
 
 
 				} else if(line.contains("Line") && lineBefore.contains("Line")) {
-					
+
 					String outline1 = between(lineBefore, "outline: ", ", Selected");
 					//startpoint
 					String s1 = between(lineBefore, "startPoint (", "), endPoint");
 					String[] myString1 = s1.split(",");
 					String x1 = myString1[0].trim();
 					String y1 = myString1[1].trim();
-					
+
 					//endPoint
 
 					String sa1 = between(lineBefore, "endPoint (", "), outline:");
 					String[] myStrings1 = sa1.split(",");
 					String newX1 = myStrings1[0].trim();
 					String newY1 = myStrings1[1].trim();
-					
-					
+
+
 					Line l1 = new Line(new Point(Integer.parseInt(x1),Integer.parseInt(y1)),new Point(Integer.parseInt(newX1),Integer.parseInt(newY1)), stringToColor(outline1));
 					l1.setSelected(true);
-					
-					
+
+
 
 					String outline = between(line, "outline: ", ", Selected");
 					//startpoint
@@ -854,29 +996,34 @@ public class Controller {
 					String[] myString = s.split(",");
 					String x = myString[0].trim();
 					String y = myString[1].trim();
-					
+
 					//endPoint
 
 					String sa = between(line, "endPoint (", "), outline:");
 					String[] myStrings = sa.split(",");
 					String newX = myStrings[0].trim();
 					String newY = myStrings[1].trim();
-					
+
 					Line l = new Line(new Point(Integer.parseInt(x),Integer.parseInt(y)),new Point(Integer.parseInt(newX),Integer.parseInt(newY)), stringToColor(outline));
 					l.setSelected(true);
-					
+
 					for(int i=0; i<model.getListOfShapes().size(); i++) {
 
 						if(model.getListOfShapes().get(i).equals(l1)) {
 
-							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListOfShapes().get(i),l);
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListOfShapes().get(i),l,model);
+							if(print == true) {
+
+								frame.getTextArea().append("Modified: " + l + "\n");
+							}
 							cmdUpdate.execute();
 							cmdUndoRedo.addToCommandList(cmdUpdate);
+							frame.setDone(true);
 
 						}
 					}
 				} else if(line.contains("Point") && lineBefore.contains("Point")) {
-					
+
 					//Selected: Line: startPoint (310,66), endPoint (555,67), outline: #000000, Selected? true
 
 
@@ -884,44 +1031,49 @@ public class Controller {
 
 					String s1 = between(lineBefore, "Point: (",")");
 					String[] myString1 = s1.split(",");
-				
+
 					String x1 = myString1[0];
 					String y1 = myString1[1];
-					
+
 					Point t1 = new Point(Integer.parseInt(x1),Integer.parseInt(y1),stringToColor(outline1));
 					t1.setSelected(true);
 
-					
+
 					String outline = between(line, "outline: ", ", Selected?");
 					String s = between(line, "Point: (",")");
 					String[] myString = s.split(",");
-				
+
 					String x = myString[0];
 					String y = myString[1];
-					
-				
 
-					
-					
+
+
+
+
 
 					Point t = new Point(Integer.parseInt(x),Integer.parseInt(y),stringToColor(outline));
 					t.setSelected(true);
-					
-					
+
+
 					for(int i=0; i<model.getListOfShapes().size(); i++) {
 
 						if(model.getListOfShapes().get(i).equals(t1)) {
 
-							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListOfShapes().get(i),t);
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListOfShapes().get(i),t,model);
+							if(print == true) {
+
+								frame.getTextArea().append("Modified: " + t + "\n");
+							}
 							cmdUpdate.execute();
 							cmdUndoRedo.addToCommandList(cmdUpdate);
+							frame.setDone(true);
 
 						}
 					}
 
 
 				} else if (line.contains("Rectangle") && lineBefore.contains("Rectangle")) {
-					
+
 					String outline1 = between(lineBefore, "outline: ", ", fill:");
 					String fill1 = between(lineBefore, "fill: ",", Selected");
 					String s1 = between(lineBefore, "Rectangle: (",")");
@@ -930,12 +1082,12 @@ public class Controller {
 					String y1 = myString1[1].trim();
 					String width1 = between(lineBefore, "width: ",", height");
 					String height1 = between(lineBefore,"height: ",", outline");
-					
+
 					Rectangle p1 = new Rectangle(new Point(Integer.parseInt(x1),Integer.parseInt(y1)),Integer.parseInt(width1),Integer.parseInt(height1),stringToColor(outline1),stringToColor(fill1));
 					p1.setSelected(true);
-					
-					
-					
+
+
+
 					String outline = between(line, "outline: ", ", fill:");
 					String fill = between(line, "fill: ",", Selected");
 					String s = between(line, "Rectangle: (",")");
@@ -944,22 +1096,27 @@ public class Controller {
 					String y = myString[1].trim();
 					String width = between(line, "width: ",", height");
 					String height = between(line,"height: ",", outline");
-					
+
 					Rectangle p = new Rectangle(new Point(Integer.parseInt(x),Integer.parseInt(y)),Integer.parseInt(width),Integer.parseInt(height),stringToColor(outline),stringToColor(fill));   
 					p.setSelected(true);
-					
+
 					for(int i=0; i<model.getListOfShapes().size(); i++) {
 
 						if(model.getListOfShapes().get(i).equals(p1)) {
 
-							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListOfShapes().get(i),p);
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListOfShapes().get(i),p,model);
+							if(print == true) {
+
+								frame.getTextArea().append("Modified: " + p + "\n");
+							}
 							cmdUpdate.execute();
 							cmdUndoRedo.addToCommandList(cmdUpdate);
+							frame.setDone(true);
 
 						}
 					}
 				} else if (line.contains("Square") && lineBefore.contains("Square")) {
-					
+
 					String outline1 = between(lineBefore, "outline: ", ", fill:");
 					String fill1 = between(lineBefore, "fill: ",", Selected");
 					String s1 = between(lineBefore, "Square: (",")");
@@ -967,12 +1124,12 @@ public class Controller {
 					String x1 = myString1[0].trim();
 					String y1 = myString1[1].trim();
 					String width1 = between(lineBefore, "width: ",", outline");
-					
+
 					Square k1 = new Square(new Point(Integer.parseInt(x1),Integer.parseInt(y1)),Integer.parseInt(width1),stringToColor(outline1),stringToColor(fill1));
 					k1.setSelected(true);
-					
-					
-					
+
+
+
 					String outline = between(line, "outline: ", ", fill:");
 					String fill = between(line, "fill: ",", Selected");
 					String s = between(line, "Square: (",")");
@@ -980,24 +1137,30 @@ public class Controller {
 					String x = myString[0].trim();
 					String y = myString[1].trim();
 					String width = between(line, "width: ",", outline");
-					
+
 					Square k = new Square(new Point(Integer.parseInt(x),Integer.parseInt(y)),Integer.parseInt(width),stringToColor(outline),stringToColor(fill));
 					k.setSelected(true);
 					for(int i=0; i<model.getListOfShapes().size(); i++) {
 
 						if(model.getListOfShapes().get(i).equals(k1)) {
 
+
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListOfShapes().get(i),k,model);
 							
-							CmdUpdateShape cmdUpdate = new CmdUpdateShape(model.getListOfShapes().get(i),k);
+							if(print == true) {
+
+								frame.getTextArea().append("Modified: " + k + "\n");
+							}
 							cmdUpdate.execute();
 							cmdUndoRedo.addToCommandList(cmdUpdate);
+							frame.setDone(true);
 						}
 					}
 
 				}
 			}
-			
-			
+
+
 		}
 
 
@@ -1052,7 +1215,7 @@ public class Controller {
 	}
 
 	//BRISANJE
-	public void actionPerfomedDelete(ActionEvent e) { //treba odraditi za hexagon
+	public void actionPerfomedDelete(ActionEvent e) { 
 
 		if(checkIfSelectedShapeExists() == 0){
 
@@ -1066,8 +1229,8 @@ public class Controller {
 					"Do you want to delete the shape you selected?","Message", odgovor);
 
 			if(odgovor == JOptionPane.YES_OPTION){
-				
-				
+
+
 				delete();
 
 			}
@@ -1079,41 +1242,72 @@ public class Controller {
 	}
 
 	public void delete() {
-		
+
 
 		ArrayList<Shape> shapes = new ArrayList<Shape>();
 
 		for(int i=0; i<model.getListOfShapes().size(); i++) {
 
-				if(model.getListOfShapes().get(i).isSelected() == true) {
+			if(model.getListOfShapes().get(i).isSelected() == true) {
 
-				
-					shapes.add(model.getListOfShapes().get(i));
 
-				}
+				shapes.add(model.getListOfShapes().get(i));
+
+			}
 
 		}	
 
-	
+
 
 		if(shapes.size() == 1) {
-			
-			
+
 
 			//obirsan je jedan oblik
 			CmdRemoveShape cmdRemove = new CmdRemoveShape(model,shapes.get(0));
+			
+			if(print == true) {
+
+				frame.getTextArea().append("Removed: " + shapes.get(0) +"\n");
+			}
+			print = true;
 			cmdRemove.execute();
 			cmdUndoRedo.addToCommandList(cmdRemove);
+			frame.setDone(true);
 
 
 
 		} else {
-			
-			
+
+
 			//obrisano je više oblika
 			CmdRemoveShape cmdRemove = new CmdRemoveShape(model,shapes);
+			
+			if(print ==true) {
+
+				frame.getTextArea().append("Multiple shapes removed: ");
+			}
+			
+			
+			for(int i =0; i<shapes.size(); i++) {
+
+				model.remove(shapes.get(i));
+
+				if(print == true) {
+
+					frame.getTextArea().append("        Removed: " + shapes.get(i).toString());
+				}
+
+			}
+
+			if(print == true) {
+
+				frame.getTextArea().append("\n");
+			}
+			
+			print = true;
 			cmdRemove.execute();
 			cmdUndoRedo.addToCommandList(cmdRemove);
+			frame.setDone(true);
 
 
 		}
@@ -1153,14 +1347,14 @@ public class Controller {
 
 					if(s instanceof Rectangle){
 
-					
+
 
 						DlgRectangleProperties properties = new DlgRectangleProperties();
 
 
 						properties = new DlgRectangleProperties();
 						properties.setDone(false);
-				
+
 						properties.setxD(((Rectangle) s).getpUpLeft().getX());
 						properties.setyD(((Rectangle) s).getpUpLeft().getY());
 						properties.setLength(((Rectangle) s).getSideLength());
@@ -1184,10 +1378,16 @@ public class Controller {
 							newShape.setSelected(true);
 
 
-							CmdUpdateShape cmdUpdate = new CmdUpdateShape(s,newShape);
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(s,newShape,model);
+							
+							if(print == true) {
+
+								frame.getTextArea().append("Modified: " + newShape + "\n");
+							}
 							cmdUpdate.execute();
 							cmdUndoRedo.addToCommandList(cmdUpdate);
 							properties.setDone(false);
+							frame.setDone(true);
 
 
 						}
@@ -1195,7 +1395,7 @@ public class Controller {
 
 					} else if(s instanceof Square){
 
-					
+
 
 						DlgSquareProperties properties = new DlgSquareProperties();
 						properties.setDone(false);
@@ -1213,19 +1413,24 @@ public class Controller {
 						properties.setVisible(true);
 
 						if(properties.isVisible() == false && properties.isDone() == true) {
-							
-						
+
+
 
 							Square newShape = new Square(new Point(properties.getX(),properties.getY()),properties.getLength(),properties.getBorderColor(),properties.getFillColor());
 							newShape.setSelected(true);
 
 
-							CmdUpdateShape cmdUpdate = new CmdUpdateShape(s,newShape);
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(s,newShape,model);
+							if(print == true) {
+
+								frame.getTextArea().append("Modified: " + newShape + "\n");
+							}
 
 							cmdUpdate.execute();
 
 							cmdUndoRedo.addToCommandList(cmdUpdate);
-							
+							frame.setDone(true);
+
 							properties.setDone(false);
 
 
@@ -1262,23 +1467,28 @@ public class Controller {
 							newShape.setSelected(true);
 
 
-							CmdUpdateShape cmdUpdate = new CmdUpdateShape(s,newShape);
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(s,newShape,model);
+							if(print == true) {
+
+								frame.getTextArea().append("Modified: " + newShape + "\n");
+							}
 							cmdUpdate.execute();
 
 							cmdUndoRedo.addToCommandList(cmdUpdate);
+							frame.setDone(true);
 							//model.getCommands().add(q);
 
-					
+
 							properties.setDone(false);
 
-		
+
 						}
 					} 
 
 
 					else if(s instanceof Point){
 
-						
+
 
 						DlgPointProperties properties = new DlgPointProperties();
 						properties.setDone(false);
@@ -1293,36 +1503,42 @@ public class Controller {
 
 
 						properties.setVisible(true);
-						
+
 						if(properties.isVisible() == false && properties.isDone() == true) {
-							
+
 							Point t = properties.getPoint();
 							//view.repaint();
 
 							t.setSelected(true);
 
+
+
+
+
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(s,t,model);
 							
+							if(print == true) {
 
-						
-
-							CmdUpdateShape cmdUpdate = new CmdUpdateShape(s,t);
+								frame.getTextArea().append("Modified: " + t + "\n");
+							}
 
 							cmdUpdate.execute();
 
 							cmdUndoRedo.addToCommandList(cmdUpdate);
+							frame.setDone(true);
 
 							properties.setDone(false);
 						}
-						
-						
-						
+
+
+
 
 
 
 
 					} else if(s instanceof Line){
 
-					
+
 
 						DlgLineProperties properties = new DlgLineProperties();
 						properties.setDone(false);
@@ -1331,9 +1547,9 @@ public class Controller {
 						properties.setxEnd(((Line) s).getEnd().getX());
 						properties.setyEnd(((Line) s).getEnd().getY());
 						properties.setBorderColor(s.getBorderColor());
-						
-						
-						
+
+
+
 						properties.getTxtXStart().setText(Integer.toString(properties.getxStart()));
 						properties.getTxtYStart().setText(Integer.toString(properties.getyStart()));
 						properties.getTxtXEnd().setText(Integer.toString(properties.getxEnd()));
@@ -1351,15 +1567,20 @@ public class Controller {
 							Line newShape = new Line(new Point(properties.getxStart(),properties.getyStart()), new Point (properties.getxEnd(),properties.getyEnd()),properties.getBorderColor());
 							newShape.setSelected(true);
 
-					
+
 
 							//model.addToStackUndo(s);
 
-							CmdUpdateShape cmdUpdate = new CmdUpdateShape(s,newShape);
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(s,newShape,model);
+							if(print == true) {
+
+								frame.getTextArea().append("Modified: " + newShape + "\n");
+							}
 							cmdUndoRedo.addToCommandList(cmdUpdate);
+							frame.setDone(true);
 
 							cmdUpdate.execute();
-							
+
 							properties.setDone(false);
 
 							//frame.getTextArea().append(novi + "\n");
@@ -1373,7 +1594,7 @@ public class Controller {
 					}else if(s instanceof HexagonAdapter) { 
 
 
-					
+
 						DlgCircleProperties propertiesh = new DlgCircleProperties();
 						propertiesh.setTitle("Hexagon");
 						propertiesh.setDone(false);
@@ -1398,11 +1619,16 @@ public class Controller {
 							hexagon.setSelected(true);
 
 							HexagonAdapter hexagonAdapter = new HexagonAdapter(hexagon);
-							CmdUpdateShape cmdUpdate = new CmdUpdateShape(s,hexagonAdapter);
+							CmdUpdateShape cmdUpdate = new CmdUpdateShape(s,hexagonAdapter,model);
+							if(print == true) {
+
+								frame.getTextArea().append("Modified: " + hexagonAdapter + "\n");
+							}
 							cmdUpdate.execute();
 
 							cmdUndoRedo.addToCommandList(cmdUpdate);
-							
+							frame.setDone(true);
+
 							propertiesh.setDone(false);
 
 
@@ -1455,8 +1681,8 @@ public class Controller {
 
 	//SELEKCIJA
 	public void mouseClickedPnl(int x, int y) {
-		
-	
+
+
 		if(model.getChosenShape() == ""){
 
 			int m =0;
@@ -1471,7 +1697,7 @@ public class Controller {
 			}
 
 			if(m>1) {
-				
+
 				//selektuje poslednji
 				Stack<Shape> stackShape = new Stack<Shape>();
 
@@ -1486,11 +1712,19 @@ public class Controller {
 
 				if(stackShape.peek().isSelected() == false) {
 
-					
+
 
 					CmdSelectShape cmdSelectShape = new CmdSelectShape(stackShape.peek());
+					
+					
+	if(print == true) {
+							
+							frame.getTextArea().append("Selected: " + stackShape.peek().toString() +"\n");
+						}
+						print = true;
 					cmdSelectShape.execute();
 					cmdUndoRedo.addToCommandList(cmdSelectShape);
+					frame.setDone(true);
 
 
 
@@ -1511,12 +1745,19 @@ public class Controller {
 
 						if(model.getListOfShapes().get(i).isSelected() == false) {
 
-							
+
 							CmdSelectShape cmdSelectShape = new CmdSelectShape(model.getListOfShapes().get(i));
+							
+							if(print == true) {
+								
+								frame.getTextArea().append("Selected: " + model.getListOfShapes().get(i).toString() +"\n");
+							}
+							print = true;
 							cmdSelectShape.execute();
 							cmdUndoRedo.addToCommandList(cmdSelectShape);
+							frame.setDone(true);
 
-							
+
 
 
 						}
@@ -1531,7 +1772,7 @@ public class Controller {
 
 
 
-			
+
 
 
 
@@ -1541,8 +1782,8 @@ public class Controller {
 
 				ArrayList<Shape> ss = new ArrayList<Shape>();
 				int k=0;
-				
-				
+
+
 
 				for(Shape s: model.getListOfShapes()) {
 
@@ -1563,14 +1804,22 @@ public class Controller {
 					CmdUpdateSelectedShapes cmdUpdate = new CmdUpdateSelectedShapes(ss);
 					cmdUpdate.execute();
 					cmdUndoRedo.addToCommandList(cmdUpdate);
+					frame.setDone(true);
 
 				} else if (k==1) {
 
-					
+
 					CmdDeselectShape cmdDeselectShape = new CmdDeselectShape(ss.get(0));
+					if(print == true) {
+						
+						frame.getTextArea().append("Deselected: " + ss.get(0).toString() +"\n");
+						}
+					
+						print = true;
 					cmdDeselectShape.execute();
 					cmdUndoRedo.addToCommandList(cmdDeselectShape);
-					
+					frame.setDone(true);
+
 				}
 
 
@@ -1583,8 +1832,8 @@ public class Controller {
 
 		} else {
 
-		
 
+			//kad se crta novi, sve ostale odselektovati
 			ArrayList<Shape> ss = new ArrayList<Shape>();
 			int k=0;
 
@@ -1597,7 +1846,7 @@ public class Controller {
 					ss.add(s);
 					k++;
 
-				
+
 				}
 
 
@@ -1610,6 +1859,7 @@ public class Controller {
 				CmdUpdateSelectedShapes cmdUpdate = new CmdUpdateSelectedShapes(ss);
 				cmdUpdate.execute();
 				cmdUndoRedo.addToCommandList(cmdUpdate);
+				frame.setDone(true);
 
 
 
@@ -1618,10 +1868,19 @@ public class Controller {
 
 
 				CmdDeselectShape cmdDeselectShape = new CmdDeselectShape(ss.get(0));
-				cmdDeselectShape.execute();
-				cmdUndoRedo.addToCommandList(cmdDeselectShape);
-
 				
+if(print == true) {
+					
+					frame.getTextArea().append("Deselected: " + ss.get(0).toString() +"\n");
+					}
+				
+					print = true;
+				cmdDeselectShape.execute();
+
+				cmdUndoRedo.addToCommandList(cmdDeselectShape);
+				frame.setDone(true);
+
+
 			}
 
 
@@ -1648,15 +1907,25 @@ public class Controller {
 
 				cmdAddShape.execute();
 
+				if(print == true) {
 
+
+					frame.getTextArea().append("Added: " + t.toString() +"\n");
+
+				}
+
+
+
+				frame.getBtnSave().setEnabled(true);
 
 				cmdUndoRedo.addToCommandList(cmdAddShape);
+				frame.setDone(true);
 
 				frame.getBtnRedo().setEnabled(false);
 				frame.getBtnUndo().setEnabled(true);
 				frame.getBtnSelect().setEnabled(true);
 
-			
+
 			} else {
 
 
@@ -1665,16 +1934,31 @@ public class Controller {
 
 
 				CmdAddShape cmdAddShape = new CmdAddShape(model,t);
-			
+
 
 				cmdAddShape.execute();
 
+				if(print == true) {
 
-			
+
+
+					frame.getTextArea().append("Added: " + t.toString() +"\n");
+
+
+				}
+
+				frame.getBtnSave().setEnabled(true);
+
+
+
 
 				cmdUndoRedo.addToCommandList(cmdAddShape);
-
+				frame.setDone(true);
 				
+				
+				frame.getBtnSelect().setEnabled(true);
+
+
 
 
 				justRead=false;
@@ -1687,20 +1971,19 @@ public class Controller {
 
 		if(model.getChosenShape() == "Hexagon") {
 
-		
+
 
 			String s=null;
 
 			if(model.getR() == -1) {
 
-				
 
 				try{
-					
+
 					s=JOptionPane.showInputDialog("Enter the radius of the hexagon");
-			
+
 					int r = Integer.parseInt(s);
-					
+
 					if(r > 0){
 
 						model.setR(r);
@@ -1722,7 +2005,19 @@ public class Controller {
 						CmdAddShape cmdAddShape = new CmdAddShape(model,h);
 						cmdAddShape.execute();
 
+						if(print == true) {
+
+
+
+							frame.getTextArea().append("Added: " + h.toString() +"\n");
+
+
+						}
+
+						frame.getBtnSave().setEnabled(true);
+
 						cmdUndoRedo.addToCommandList(cmdAddShape);
+						frame.setDone(true);
 
 						/*Oblik l = CopyShape(h);
 						model.addToStackUndo(l);*/
@@ -1731,60 +2026,75 @@ public class Controller {
 						frame.getBtnRedo().setEnabled(false);
 						frame.getBtnUndo().setEnabled(true);
 						//frame.getBtnSelektuj().setEnabled(true);
+						
+						frame.getBtnSelect().setEnabled(true);
 
 						//frame.getTextArea().append("Drawing: " + h.toString() +"\n");
 
 					} else {
-						
+
 						JOptionPane.showMessageDialog(null, "Niste dobro uneli poluprecnik hexagona!");
 					}
 
 				} catch (Exception e){
-					
-						if(s!=null) {
-							
-							JOptionPane.showMessageDialog(null, "\n" + 
-									"You did not enter the radius of hexagon well! ");
-						}
-						
-						
-					
+
+					if(s!=null) {
+
+						JOptionPane.showMessageDialog(null, "\n" + 
+								"You did not enter the radius of hexagon well! ");
+					}
+
+
+
 				}
 
 
 			} else {
-				
-				
-					int r = model.getR();
-					if(r > 0){
-
-						Hexagon hexagon = new Hexagon(model.getX(),model.getY(),model.getR());
-						hexagon.setAreaColor(model.getFillColor());
-						hexagon.setBorderColor(model.getBorderColor());
-						HexagonAdapter h = new HexagonAdapter(hexagon);
-						h.setSelected(false);
 
 
+				int r = model.getR();
+				if(r > 0){
 
-						//HexagonAdapter h = new HexagonAdapter(new Tacka(model.getX(),model.getY()),model.getR(),model.getBojaIvice(),model.getBojaUnutrasnjosti());
-
-						CmdAddShape cmdAddShape = new CmdAddShape(model,h);
-					
-						cmdAddShape.execute();
-						cmdUndoRedo.addToCommandList(cmdAddShape);
+					Hexagon hexagon = new Hexagon(model.getX(),model.getY(),model.getR());
+					hexagon.setAreaColor(model.getFillColor());
+					hexagon.setBorderColor(model.getBorderColor());
+					HexagonAdapter h = new HexagonAdapter(hexagon);
+					h.setSelected(false);
 
 
 
-					
+					//HexagonAdapter h = new HexagonAdapter(new Tacka(model.getX(),model.getY()),model.getR(),model.getBojaIvice(),model.getBojaUnutrasnjosti());
+
+					CmdAddShape cmdAddShape = new CmdAddShape(model,h);
+
+					cmdAddShape.execute();
+
+					if(print == true) {
 
 
 
-					} else {
+						frame.getTextArea().append("Added: " + h.toString() +"\n");
 
-						JOptionPane.showMessageDialog(null, "You did not enter the radius of hexagon well!");
+
 					}
 
-			
+					frame.getBtnSave().setEnabled(true);
+					cmdUndoRedo.addToCommandList(cmdAddShape);
+					frame.setDone(true);
+					frame.getBtnSelect().setEnabled(true);
+
+
+
+
+
+
+
+				} else {
+
+					JOptionPane.showMessageDialog(null, "You did not enter the radius of hexagon well!");
+				}
+
+
 			}
 
 
@@ -1820,20 +2130,32 @@ public class Controller {
 
 				CmdAddShape cmdAddShape = new CmdAddShape(model,l);
 
-				
+
 
 				cmdAddShape.execute();
+				if(print == true) {
+
+
+
+					frame.getTextArea().append("Added: " + l.toString() +"\n");
+
+
+				}
+
+				frame.getBtnSave().setEnabled(true);
 
 
 
 				cmdUndoRedo.addToCommandList(cmdAddShape);
+				frame.setDone(true);
+				frame.getBtnSelect().setEnabled(true);
 
 				/*Oblik k = CopyShape(l);
 				model.addToStackUndo(k);*/
 
 
 
-			
+
 				//frame.getBtnSelektuj().setEnabled(true);
 
 				//frame.getTextArea().append("Drawing: " + l.toString() +"\n");
@@ -1850,27 +2172,27 @@ public class Controller {
 			String s=null;
 			if(model.getLength() == -1) {
 
-				
-				
+
+
 				try{
-					
-					
+
+
 					d=JOptionPane.showInputDialog("Enter the length of the rectangle");
 					model.setX(x);
 					model.setY(y);
 					int length = Integer.parseInt(d);
-					
-					
-					
+
+
+
 					if(length>0){
 
 						model.setLength(length);
-						
+
 
 
 						try{
-							
-							
+
+
 							s = JOptionPane.showInputDialog("Enter the width of the rectangle");
 							int width = Integer.parseInt(s);
 							if(width>0){
@@ -1887,11 +2209,24 @@ public class Controller {
 								CmdAddShape cmdAddShape = new CmdAddShape(model,p);
 								cmdAddShape.execute();
 
+								if(print == true) {
+
+
+
+									frame.getTextArea().append("Added: " + p.toString() +"\n");
+
+
+								}
+								frame.getBtnSelect().setEnabled(true);
+
+								frame.getBtnSave().setEnabled(true);
+
 								cmdUndoRedo.addToCommandList(cmdAddShape);
+								frame.setDone(true);
 
 								frame.getBtnRedo().setEnabled(false);
 								frame.getBtnUndo().setEnabled(true);
-					
+
 
 
 
@@ -1904,11 +2239,11 @@ public class Controller {
 						} catch(NumberFormatException a){
 
 							if(s!=null) {
-								
+
 								JOptionPane.showMessageDialog(null, "\n" + 
 										"You did not enter the correct width of the rectangle!");
 							}
-							
+
 
 						} 
 
@@ -1918,59 +2253,73 @@ public class Controller {
 								"You did not enter the correct length of the rectangle!");
 					}
 				} catch(NumberFormatException a){
-					
+
 					if(d!=null) {
-						
+
 						JOptionPane.showMessageDialog(null, "\n" + 
 								"You did not enter the correct length of the rectangle!");
 					}
 
-					
-					
+
+
 
 				} 
 			} else {
 
 
-				
 
-					model.setX(x);
-					model.setY(y);
-					int length = model.getLength();
-					if(length>0){
+
+				model.setX(x);
+				model.setY(y);
+				int length = model.getLength();
+				if(length>0){
+
+					model.setLength(length);
+
+
+
+
+					int width = model.getWidth();
+
+					if(width>0){
+
+						model.setWidth(width);
 
 						model.setLength(length);
+						//view.repaint();
+						Rectangle p = new Rectangle(new Point(model.getX(),model.getY()), model.getLength(),model.getWidth());
+
+						p.setBorderColor(model.getBorderColor());
+						p.setFillColor(model.getFillColor());
+
+						CmdAddShape cmdAddShape = new CmdAddShape(model,p);
+
+						cmdAddShape.execute();
+
+						if(print == true) {
 
 
 
-					
-							int width = model.getWidth();
-
-							if(width>0){
-
-								model.setWidth(width);
-
-								model.setLength(length);
-								//view.repaint();
-								Rectangle p = new Rectangle(new Point(model.getX(),model.getY()), model.getLength(),model.getWidth());
-
-								p.setBorderColor(model.getBorderColor());
-								p.setFillColor(model.getFillColor());
-
-								CmdAddShape cmdAddShape = new CmdAddShape(model,p);
-							
-								cmdAddShape.execute();
-
-								cmdUndoRedo.addToCommandList(cmdAddShape);
+							frame.getTextArea().append("Added: " + p.toString() +"\n");
 
 
-							
+						}
+
+						frame.getBtnSave().setEnabled(true);
+
+						cmdUndoRedo.addToCommandList(cmdAddShape);
+						frame.setDone(true);
+						
+						frame.getBtnSelect().setEnabled(true);
 
 
 
 
-							} 
-			}
+
+
+
+					} 
+				}
 			}
 
 
@@ -1978,8 +2327,8 @@ public class Controller {
 
 			model.setLength(-1);
 			model.setWidth(-1);
-			
-			
+
+
 
 		}
 
@@ -1990,11 +2339,11 @@ public class Controller {
 
 			if(model.getSideLength() == -1) {
 
-			
-				
+
+
 				try{
-					
-					
+
+
 					s=JOptionPane.showInputDialog("\n" + 
 							"Enter the length");
 					int sideLength = Integer.parseInt(s);
@@ -2009,8 +2358,22 @@ public class Controller {
 						square.setFillColor(model.getFillColor());
 						CmdAddShape cmdAddShape = new CmdAddShape(model,square);
 						cmdAddShape.execute();
-						
+
+						if(print == true) {
+
+
+
+							frame.getTextArea().append("Added: " + square.toString() +"\n");
+
+
+						}
+
+						frame.getBtnSave().setEnabled(true);
+
 						cmdUndoRedo.addToCommandList(cmdAddShape);
+						frame.setDone(true);
+						
+						frame.getBtnSelect().setEnabled(true);
 
 
 
@@ -2025,57 +2388,71 @@ public class Controller {
 						//frame.getTextArea().append("Drawing: " + kv.toString() +"\n");
 
 					} else {
-						
+
 						JOptionPane.showMessageDialog(null, "You did not enter the length correctly!");
 					}
 
 				} catch(NumberFormatException a){
-					
+
 					if(s!=null) {
-						
+
 						JOptionPane.showMessageDialog(null, "You did not enter the length correctly!");
 					}
 
-					
+
 
 				} 
 
 			} else {
 
-				
-
-			
-
-					int sideLength = model.getSideLength();
-
-					if(sideLength>0){
-
-						model.setSideLength(sideLength);
-						model.setX(x);
-						model.setY(y);
-						//view.repaint();
-						Square square = new Square(new Point(model.getX(),model.getY()), model.getSideLength());
-						square.setBorderColor(model.getBorderColor());
-						square.setFillColor(model.getFillColor());
-						CmdAddShape cmdAddShape = new CmdAddShape(model,square);
-						
-						cmdAddShape.execute();
-
-						cmdUndoRedo.addToCommandList(cmdAddShape);
 
 
 
-						/*Oblik l = CopyShape(kv);
+
+				int sideLength = model.getSideLength();
+
+				if(sideLength>0){
+
+					model.setSideLength(sideLength);
+					model.setX(x);
+					model.setY(y);
+					//view.repaint();
+					Square square = new Square(new Point(model.getX(),model.getY()), model.getSideLength());
+					square.setBorderColor(model.getBorderColor());
+					square.setFillColor(model.getFillColor());
+					CmdAddShape cmdAddShape = new CmdAddShape(model,square);
+
+					cmdAddShape.execute();
+
+					if(print == true) {
+
+
+
+						frame.getTextArea().append("Added: " + square.toString() +"\n");
+
+
+					}
+
+					frame.getBtnSave().setEnabled(true);
+
+					cmdUndoRedo.addToCommandList(cmdAddShape);
+					frame.setDone(true);
+					
+					frame.getBtnSelect().setEnabled(true);
+
+
+
+					/*Oblik l = CopyShape(kv);
 						model.addToStackUndo(l);*/
 
 
-						//frame.getBtnSelektuj().setEnabled(true);
+					//frame.getBtnSelektuj().setEnabled(true);
 
-						//frame.getTextArea().append("Drawing: " + kv.toString() +"\n");
+					//frame.getTextArea().append("Drawing: " + kv.toString() +"\n");
 
-					} 
+				} 
 
-				
+
 
 
 			}
@@ -2095,12 +2472,12 @@ public class Controller {
 
 			if(model.getR() == -1) {
 
-				
 
-				
+
+
 
 				try{
-					
+
 					s=JOptionPane.showInputDialog("Enter the radius of the circle");
 					r = Integer.parseInt(s);
 
@@ -2120,9 +2497,23 @@ public class Controller {
 						CmdAddShape cmdAddShape = new CmdAddShape(model,circle); 
 						cmdAddShape.execute();
 
-		
+						if(print == true) {
+
+
+
+							frame.getTextArea().append("Added: " + circle.toString() +"\n");
+
+
+						}
+
+						frame.getBtnSave().setEnabled(true);
+
+
 
 						cmdUndoRedo.addToCommandList(cmdAddShape);
+						frame.setDone(true);
+						
+						frame.getBtnSelect().setEnabled(true);
 
 
 
@@ -2152,13 +2543,13 @@ public class Controller {
 					}
 
 				} catch (NumberFormatException k){
-					
+
 					if(s!=null) {
-						
+
 						JOptionPane.showMessageDialog(null, "You did not enter the radius of circle well!");
 					}
 
-					
+
 
 
 				} 
@@ -2166,30 +2557,39 @@ public class Controller {
 			} else {
 
 
-				
-			
-
-
-					if(model.getR() > -1){
-
-
-
-						Circle circle = new Circle(new Point(model.getX(),model.getY()),model.getR());
-						circle.setBorderColor(model.getBorderColor());
-						circle.setFillColor(model.getFillColor());
-
-						CmdAddShape cmdAddShape = new CmdAddShape(model,circle);
-					
-						cmdAddShape.execute();
-
-			
-
-						cmdUndoRedo.addToCommandList(cmdAddShape);
 
 
 
 
-				
+				if(model.getR() > -1){
+
+
+
+					Circle circle = new Circle(new Point(model.getX(),model.getY()),model.getR());
+					circle.setBorderColor(model.getBorderColor());
+					circle.setFillColor(model.getFillColor());
+
+					CmdAddShape cmdAddShape = new CmdAddShape(model,circle);
+
+					cmdAddShape.execute();
+
+					if(print == true) {
+
+
+
+						frame.getTextArea().append("Added: " + circle.toString() +"\n");
+
+
+					}
+
+					frame.getBtnSave().setEnabled(true);
+
+
+
+
+					cmdUndoRedo.addToCommandList(cmdAddShape);
+					frame.setDone(true);
+					frame.getBtnSelect().setEnabled(true);
 
 
 
@@ -2197,7 +2597,12 @@ public class Controller {
 
 
 
-					} 
+
+
+
+
+
+				} 
 
 			}
 
@@ -2273,20 +2678,150 @@ public class Controller {
 
 		if(!cmdUndoRedo.getUndo().isEmpty()) {
 
+			if(cmdUndoRedo.getUndo().peek() instanceof CmdAddShape && print == true) {
+
+				frame.getTextArea().append("UNDO >>> Removed: " + ((CmdAddShape) cmdUndoRedo.getUndo().peek()).getShape().toString() +"\n");
+				
+			} else if (cmdUndoRedo.getUndo().peek() instanceof CmdBringToBack && print == true) {
+				
+			
+				frame.getTextArea().append("UNDO >>> Bring to front: " + ((CmdBringToBack) cmdUndoRedo.getUndo().peek()).getS().toString() +"\n");
+		
+			} else if (cmdUndoRedo.getUndo().peek() instanceof CmdBringToFront && print == true) {
+				
+				frame.getTextArea().append("UNDO >>> Bring to back: " + ((CmdBringToBack) cmdUndoRedo.getUndo().peek()).getS().toString() +"\n");
+				
+				
+			} else if (cmdUndoRedo.getUndo().peek() instanceof CmdDeselectShape && print == true) {
+				
+				frame.getTextArea().append("UNDO >>> Selected: " + ((CmdBringToBack) cmdUndoRedo.getUndo().peek()).getS().toString().toString() +"\n");
+				
+			} else if (cmdUndoRedo.getUndo().peek() instanceof CmdRemoveShape && print == true) {
+				
+				((CmdRemoveShape) cmdUndoRedo.getUndo().peek()).getRemovedShapes().isEmpty();
+				if(!((CmdRemoveShape) cmdUndoRedo.getUndo().peek()).getRemovedShapes().isEmpty()  && ((CmdRemoveShape) cmdUndoRedo.getUndo().peek()).getRemovedShapes().size() > 1) {
+
+					if(print == true) {
+
+						frame.getTextArea().append("UNDO >>> Multiple shapes added: ");
+					}
+
+
+					for(int i =0; i<((CmdRemoveShape) cmdUndoRedo.getUndo().peek()).getRemovedShapes().size(); i++) {
+
+						//model.add(removedShapes.get(i));
+						if(print == true) {
+
+							frame.getTextArea().append("        Added: " + ((CmdRemoveShape) cmdUndoRedo.getUndo().peek()).getRemovedShapes().get(i).toString());
+						}
+
+					}
+
+					if(print == true) {
+
+				
+						frame.getTextArea().append("\n");
+					}
+				} else {
+
+					//model.add(s);
+
+					if(print == true) {
+						
+						frame.getTextArea().append("UNDO >>> Added: " + ((CmdBringToBack) cmdUndoRedo.getUndo().peek()).getS().toString() +"\n");
+
+					}
+
+				}
+				
+			} else if (cmdUndoRedo.getUndo().peek() instanceof CmdSelectShape && print == true) {
+				
+				if(print == true) {
+					
+					frame.getTextArea().append("UNDO >>> Deselected: " + ((CmdSelectShape) cmdUndoRedo.getUndo().peek()).getO().toString() +"\n");
+				}
+			
+				print = true;
+			} else if (cmdUndoRedo.getUndo().peek() instanceof CmdToBack && print == true) {
+				
+				if(print == true) {
+					
+					frame.getTextArea().append("UNDO >>> Move to front: " + ((CmdBringToBack) cmdUndoRedo.getUndo().peek()).getS().toString() +"\n");
+				}
+				
+				print = true;
+			} else if (cmdUndoRedo.getUndo().peek() instanceof CmdToFront && print == true) {
+				
+				if(print == true) {
+					
+					frame.getTextArea().append("Move to front: " + ((CmdBringToBack) cmdUndoRedo.getUndo().peek()).getS().toString() +"\n");
+				}
+				
+				print = true;
+			} else if (cmdUndoRedo.getUndo().peek() instanceof CmdUpdateSelectedShapes && print == true) {
+				
+			
+				if(!((CmdUpdateSelectedShapes) cmdUndoRedo.getUndo().peek()).getSelectedShapes().isEmpty()) {
+					
+					if(print == true) {
+						
+						frame.getTextArea().append("UNDO >>> Multiple shapes selected: ");
+					}
+					
+					
+					for(int i=0; i<((CmdUpdateSelectedShapes) cmdUndoRedo.getUndo().peek()).getSelectedShapes().size(); i++) {
+						
+						((CmdUpdateSelectedShapes) cmdUndoRedo.getUndo().peek()).getSelectedShapes().get(i).setSelected(true);
+						
+						if(print == true) {
+							
+							frame.getTextArea().append("        Selected: " + ((CmdUpdateSelectedShapes) cmdUndoRedo.getUndo().peek()).getSelectedShapes().get(i).toString());
+						}
+						
+						
+					}
+					
+					if(print == true) {
+
+						frame.getTextArea().append("\n");
+					}
+					
+				}
+				
+				print = true;
+				
+			} else if (cmdUndoRedo.getUndo().peek() instanceof CmdUpdateShape && print == true) {
+				
+				if(print == true) {
+
+					frame.getTextArea().append("UNDO >>> Modified: " + ((CmdUpdateShape) cmdUndoRedo.getUndo().peek()).getOriginal() + "\n");
+				}
+			}
+			
+			
 			cmdUndoRedo.execute();
+
+
 
 			if(cmdUndoRedo.getUndo().isEmpty()) {
 
 				frame.getBtnUndo().setEnabled(false);
 				frame.getBtnRedo().setEnabled(true);
-				
+
 			} else {
 
 				frame.getBtnUndo().setEnabled(true);
 			}
 		} 
 
+
+		if(model.getListOfShapes().isEmpty()) {
+
+			frame.getBtnSelect().setEnabled(false);
+		}
+
 		checkIfSelectedShapeExists();
+		print = true;
 
 
 
@@ -2324,10 +2859,10 @@ public class Controller {
 
 
 	public void moveToFront() {
-		
+
 		if(checkIfSelectedShapeExists() == 1) {
-			
-	
+
+
 
 			for(int i=0; i<model.getListOfShapes().size(); i++) {
 
@@ -2336,11 +2871,19 @@ public class Controller {
 
 
 					if((i+1)< model.getListOfShapes().size()) {
-						
+
 
 						CmdToFront cmdToFront = new CmdToFront(model,model.getListOfShapes().get(i));
+						
+						if(print == true) {
+							
+							frame.getTextArea().append("Move to front: " + model.getListOfShapes().get(i) +"\n");
+						}
+						
+						print = true;
 						cmdToFront.execute();
 						cmdUndoRedo.addToCommandList(cmdToFront);
+						frame.setDone(true);
 						//Collections.swap(model.getListaObjekata(), i, i+1); 
 						i=model.getListOfShapes().size()-1;
 
@@ -2361,8 +2904,8 @@ public class Controller {
 			}*/
 		}
 
-	
-		
+
+
 
 
 
@@ -2373,11 +2916,11 @@ public class Controller {
 
 
 	public void bringToFront() {
-		
-		
+
+
 		if(checkIfSelectedShapeExists() == 1) {
-			
-		
+
+
 
 
 			for(int i=0; i<model.getListOfShapes().size(); i++) {
@@ -2386,11 +2929,20 @@ public class Controller {
 
 					if((i+1)<model.getListOfShapes().size()) {
 
-				
+
 
 						CmdBringToFront cmdBringToFront = new CmdBringToFront(model,model.getListOfShapes().get(i));
+						
+						
+						if(print==true) {
+							
+							frame.getTextArea().append("Bring to front: " + model.getListOfShapes().get(i).toString() +"\n");
+						}
+						
+						print =true;
 						cmdBringToFront.execute();
 						cmdUndoRedo.addToCommandList(cmdBringToFront);
+						frame.setDone(true);
 						//Collections.swap(model.getListaObjekata(), i, model.getListaObjekata().size()-1); 
 						//i=model.getListaObjekata().size()-1;
 
@@ -2407,8 +2959,8 @@ public class Controller {
 
 		}
 
-		
-		
+
+
 		/*if(o!=null) {
 
 			frame.getTextArea().append("Bring to front: " + o +"\n");
@@ -2421,8 +2973,8 @@ public class Controller {
 	public void moveToBack() {
 
 		if(checkIfSelectedShapeExists() == 1) {
-			
-		
+
+
 
 			for(int i=0; i<model.getListOfShapes().size(); i++) {
 
@@ -2431,10 +2983,18 @@ public class Controller {
 
 					if(i>0) {
 
-						
+
 						CmdToBack cmdToBack = new CmdToBack(model,model.getListOfShapes().get(i));
+						
+						if(print == true) {
+							
+							frame.getTextArea().append("Move to back: " + model.getListOfShapes().get(i).toString() +"\n");
+						}
+						
+						print = true;
 						cmdToBack.execute();
 						cmdUndoRedo.addToCommandList(cmdToBack);
+						frame.setDone(true);
 						//Collections.swap(model.getListaObjekata(), i, i-1); 
 
 
@@ -2451,7 +3011,7 @@ public class Controller {
 				frame.getTextArea().append("Move to back: " + o +"\n");
 			}*/
 		}
-	
+
 
 
 
@@ -2463,10 +3023,10 @@ public class Controller {
 	public void bringToBack() {
 
 		//checkIfSelectedShapeExists();
-		
+
 		if(checkIfSelectedShapeExists() == 1) {
-			
-		
+
+
 			for(int i=0; i<model.getListOfShapes().size(); i++) {
 
 				if(model.getListOfShapes().get(i).isSelected() == true) {
@@ -2475,11 +3035,23 @@ public class Controller {
 
 					if(i>0) {
 
-					
+
 						CmdBringToBack cmdBringToBack = new CmdBringToBack(model,model.getListOfShapes().get(i));
+						if(print == true) {
+
+							frame.getTextArea().append("Bring to back: " + model.getListOfShapes().get(i).toString() +"\n");
+							//i=0;
+						}
 						cmdBringToBack.execute();
+						
+						if(print == false) {
+							
+							print = true;
+						}
+
 
 						cmdUndoRedo.addToCommandList(cmdBringToBack);
+						frame.setDone(true);
 						/*o = model.getListaObjekata().get(i);
 						Collections.swap(model.getListaObjekata(), i, 0); 
 						i=0;*/
@@ -2532,18 +3104,20 @@ public class Controller {
 		if(n==1) {
 
 			subject.setState(true);
-			
+
 		} else if (n==0) {
 
 			subject.setState(false);
 		} else if (n>1) {
 
-			Frame.btnModify.setEnabled(false);
+
+
+			frame.getBtnModify().setEnabled(false);
 		}
 
 		return n;
 
-		
+
 
 	}
 
